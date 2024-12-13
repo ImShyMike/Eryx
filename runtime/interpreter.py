@@ -47,7 +47,7 @@ def eval_binary_expression(
     left = evaluate(binop.left, environtment)
     right = evaluate(binop.right, environtment)
 
-    if isinstance(left.kind, NumberValue) and isinstance(right.kind, NumberValue):
+    if isinstance(left, NumberValue) and isinstance(right, NumberValue):
         return eval_numeric_binary_expression(left, right, binop.operator)
 
     return NullValue()
@@ -96,7 +96,7 @@ def eval_assignment_expression(
     node: AssignmentExpression, environtment: Environment
 ) -> RuntimeValue:
     """Evaluate an assignment expression."""
-    if not isinstance(node.assigne.kind, Identifier):
+    if not isinstance(node.assigne, Identifier):
         raise RuntimeError("Expected an identifier on the left side of an assignment.")
 
     return environtment.assign_variable(
