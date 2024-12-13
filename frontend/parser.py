@@ -8,6 +8,8 @@ from frontend.ast import (
     Program,
     Statement,
     VariableDeclaration,
+    AssignmentExpression,
+    Property,
 )
 from frontend.lexer import Token, TokenType, tokenize
 
@@ -82,9 +84,48 @@ class Parser:
             case _:
                 raise RuntimeError(f"Unexpected token: {token}")
 
+    def parse_assignment_expression(self) -> Expression:
+        """Parse an assignment expression."""
+        left = self.parse_object_expression() # TODO: support objects and stuff
+
+        if self.at().type == TokenType.EQUALS:
+            self.next() # Skip the equals sign
+
+            value = self.parse_assignment_expression()
+            return AssignmentExpression(left, value)
+
+        return left
+
     def parse_expression(self) -> Expression:
         """Parse an expression."""
-        return self.parse_additive_expression()
+        return self.parse_assignment_expression()
+
+    def parse_object_expression(self) -> Expression:
+        """Parse an object expression."""
+        if self.at().type != TokenType.OPEN_BRACE:
+            return self.parse_additive_expression()
+
+        self.next() # Skip the open brace
+
+        properties = []
+        while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
+            key = self.assert_next(TokenType.IDENTIFIER, "Expected an identifier as a key.")
+
+            if self.at().type == TokenType.COMMA:
+                self.next() # Skip the comma
+                properties.append(Property(key.value))
+                continue
+            elif self.at().type == TokenType.CLOSE_BRACE:
+                properties.append(Property(key.value))
+                continue
+
+        self.assert_next(TokenType.COLON, "Expected a colon after the key.")
+
+        value = self.parse_expression()
+        properties.append(Property(key.value), value)
+
+        if self.at().type != TokenType.CLOSE_BRACE:
+            self.assert_next(TokenType.COMMA, "Expected a comma or closing brace after the value.")
 
     def parse_variable_declaration(self) -> Statement:
         """Parse a variable declaration."""

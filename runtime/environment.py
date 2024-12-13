@@ -1,17 +1,23 @@
 """Environment class for storing variables (also called scope)."""
 
-from runtime.values import RuntimeValue
+from runtime.values import BooleanValue, NullValue, RuntimeValue
 
 
 class Environment:
     """Environment class."""
 
     def __init__(self, parent_env: "Environment" = None):
+        self.is_global = parent_env is None
         self.parent = parent_env
         self.constants = []
         self.variables = {}
 
-    def declare_variable(self, variable_name: str, value: RuntimeValue, constant: bool = False) -> RuntimeValue:
+        if self.is_global:
+            self.setup_scope()
+
+    def declare_variable(
+        self, variable_name: str, value: RuntimeValue, constant: bool = False
+    ) -> RuntimeValue:
         """Declare a variable in the current scope."""
         # Raise an exception if the variable is already declared
         if variable_name in self.variables:
@@ -49,3 +55,9 @@ class Environment:
             return self.parent.resolve(variable_name)
         # If it does not exist in the parent scope, raise an exception
         raise RuntimeError(f'Variable "{variable_name}" not found in scope')
+
+    def setup_scope(self) -> None:
+        """Setup the global scope."""
+        self.declare_variable("true", BooleanValue(True), True)
+        self.declare_variable("false", BooleanValue(False), True)
+        self.declare_variable("null", NullValue(), True)

@@ -3,16 +3,11 @@
 from frontend.parser import Parser
 from runtime.environment import Environment
 from runtime.interpreter import evaluate
-from runtime.values import BooleanValue, NullValue
+from pretty_print import pprint
 
 if __name__ == "__main__":
     # Create the global scope
     environment = Environment()
-
-    # Global constants
-    environment.declare_variable("true", BooleanValue(True), True)
-    environment.declare_variable("false", BooleanValue(False), True)
-    environment.declare_variable("null", NullValue(), True)
 
     # Initialize the parser
     parser = Parser()
@@ -29,9 +24,12 @@ if __name__ == "__main__":
 
         # Parse the source code into ast
         ast = parser.produce_ast(source_code)
+        print("AST:")
+        pprint(ast)
 
         # Evaluate the ast and print the result
         result = evaluate(ast, environment)
-        print(result)
+        print("\nResult:")
+        pprint(result)
 
     exit(0)

@@ -10,15 +10,18 @@ class TokenType(Enum):
     IDENTIFIER = auto()
     STRING = auto()
 
-    EQUALS = auto()
-
     OPEN_PAREN = auto()
     CLOSE_PAREN = auto()
+    OPEN_BRACE = auto()
+    CLOSE_BRACE = auto()
 
     BINARY_OPERATOR = auto()
 
     LET = auto()
     CONST = auto()
+    EQUALS = auto()
+    COMMA = auto()
+    COLON = auto()
     SEMICOLON = auto()
 
     EOF = auto()
@@ -43,7 +46,7 @@ KEYWORDS = {
 
 def is_skipable(char: str) -> bool:
     """Check if a character is a skipable character."""
-    return char in (" ", "\n", "\t")
+    return char in (" ", "\n", "\t", "\r")
 
 
 def tokenize(source_code: str) -> list[Token]:
@@ -56,12 +59,20 @@ def tokenize(source_code: str) -> list[Token]:
             tokens.append(Token(src.pop(0), TokenType.OPEN_PAREN))
         elif src[0] == ")":
             tokens.append(Token(src.pop(0), TokenType.CLOSE_PAREN))
+        elif src[0] == "[":
+            tokens.append(Token(src.pop(0), TokenType.OPEN_BRACE))
+        elif src[0] == "]":
+            tokens.append(Token(src.pop(0), TokenType.CLOSE_BRACE))
         elif src[0] in ("+", "-", "*", "/", "%"):
             tokens.append(Token(src.pop(0), TokenType.BINARY_OPERATOR))
         elif src[0] == "=":
             tokens.append(Token(src.pop(0), TokenType.EQUALS))
         elif src[0] == ";":
             tokens.append(Token(src.pop(0), TokenType.SEMICOLON))
+        elif src[0] == ",":
+            tokens.append(Token(src.pop(0), TokenType.COMMA))
+        elif src[0] == ":":
+            tokens.append(Token(src.pop(0), TokenType.COLON))
         else:
             if src[0].isdigit():
                 number = src.pop(0)
