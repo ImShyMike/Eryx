@@ -12,8 +12,8 @@ class TokenType(Enum):
 
     OPEN_PAREN = auto()
     CLOSE_PAREN = auto()
-    OPEN_BRACE = auto()
-    CLOSE_BRACE = auto()
+    OPEN_BRACKET = auto()
+    CLOSE_BRACKET = auto()
 
     BINARY_OPERATOR = auto()
 
@@ -46,7 +46,7 @@ KEYWORDS = {
 
 def is_skipable(char: str) -> bool:
     """Check if a character is a skipable character."""
-    return char in (" ", "\n", "\t", "\r")
+    return char in (" ", "\n", "\t", "\r") # Skip spaces, newlines, tabs, and carriage returns
 
 
 def tokenize(source_code: str) -> list[Token]:
@@ -59,10 +59,10 @@ def tokenize(source_code: str) -> list[Token]:
             tokens.append(Token(src.pop(0), TokenType.OPEN_PAREN))
         elif src[0] == ")":
             tokens.append(Token(src.pop(0), TokenType.CLOSE_PAREN))
-        elif src[0] == "[":
-            tokens.append(Token(src.pop(0), TokenType.OPEN_BRACE))
-        elif src[0] == "]":
-            tokens.append(Token(src.pop(0), TokenType.CLOSE_BRACE))
+        elif src[0] == "{":
+            tokens.append(Token(src.pop(0), TokenType.OPEN_BRACKET))
+        elif src[0] == "}":
+            tokens.append(Token(src.pop(0), TokenType.CLOSE_BRACKET))
         elif src[0] in ("+", "-", "*", "/", "%"):
             tokens.append(Token(src.pop(0), TokenType.BINARY_OPERATOR))
         elif src[0] == "=":

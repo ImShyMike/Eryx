@@ -7,10 +7,13 @@ from frontend.ast import (
     Program,
     Statement,
     VariableDeclaration,
-    NumericLiteral
+    NumericLiteral,
+    ObjectLiteral,
 )
 from runtime.environment import Environment
-from runtime.values import NullValue, NumberValue, RuntimeValue
+from runtime.values import NullValue, NumberValue, RuntimeValue, ObjectValue
+
+from pretty_print import pprint
 
 
 # STATEMENTS
@@ -70,6 +73,20 @@ def eval_numeric_binary_expression(
     return NullValue()
 
 
+def eval_object_literal(obj: ObjectLiteral, environtment: Environment) -> RuntimeValue:
+    """Evaluate an object literal."""
+    properties = {}
+
+    for prop in obj.properties:
+        if prop.value:
+            properties[prop.key] = evaluate(prop.value, environtment)
+        else:
+            # If the property does not have a value, look up the variable in the environment
+            # So that { x } will be evaluated as { x: x }
+            properties[prop.key] = environtment.lookup_variable(prop.key)
+
+    return ObjectValue(properties)
+
 def eval_identifier(identifier: Identifier, environtment: Environment) -> RuntimeValue:
     """Evaluate an identifier."""
     return environtment.lookup_variable(identifier.symbol)
@@ -103,5 +120,9 @@ def evaluate(ast_node: Statement, environtment: Environment) -> RuntimeValue:
         return eval_program(ast_node, environtment)
     elif node_type == VariableDeclaration:
         return eval_variable_declaration(ast_node, environtment)
+    elif node_type == ObjectLiteral:
+        return eval_object_literal(ast_node, environtment)
     else:
-        raise RuntimeError("Unknown AST node:", ast_node)
+        print("AST node:")
+        pprint(ast_node)
+        raise RuntimeError("Unknown AST node.")

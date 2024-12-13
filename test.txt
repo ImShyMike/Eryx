@@ -1,0 +1,8 @@
+const obj = {
+    a: 10,
+    b: 50,
+    err,
+    nest: {
+        works: true,
+    },
+};

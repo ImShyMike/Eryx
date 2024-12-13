@@ -1,15 +1,16 @@
 """Parser module for the frontend of the compiler."""
 
 from frontend.ast import (
+    AssignmentExpression,
     BinaryExpression,
     Expression,
     Identifier,
     NumericLiteral,
+    ObjectLiteral,
     Program,
+    Property,
     Statement,
     VariableDeclaration,
-    AssignmentExpression,
-    Property,
 )
 from frontend.lexer import Token, TokenType, tokenize
 
@@ -86,7 +87,7 @@ class Parser:
 
     def parse_assignment_expression(self) -> Expression:
         """Parse an assignment expression."""
-        left = self.parse_object_expression() # TODO: support objects and stuff
+        left = self.parse_object_expression()
 
         if self.at().type == TokenType.EQUALS:
             self.next() # Skip the equals sign
@@ -102,37 +103,46 @@ class Parser:
 
     def parse_object_expression(self) -> Expression:
         """Parse an object expression."""
-        if self.at().type != TokenType.OPEN_BRACE:
+        if self.at().type != TokenType.OPEN_BRACKET:
             return self.parse_additive_expression()
 
-        self.next() # Skip the open brace
+        self.next()  # Skip the open brace
 
         properties = []
-        while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
-            key = self.assert_next(TokenType.IDENTIFIER, "Expected an identifier as a key.")
+        while self.not_eof() and self.at().type != TokenType.CLOSE_BRACKET:
+            key = self.assert_next(
+                TokenType.IDENTIFIER, "Expected an identifier as a key."
+            )
 
             if self.at().type == TokenType.COMMA:
                 self.next() # Skip the comma
                 properties.append(Property(key.value))
                 continue
-            elif self.at().type == TokenType.CLOSE_BRACE:
+            elif self.at().type == TokenType.CLOSE_BRACKET:
                 properties.append(Property(key.value))
                 continue
 
-        self.assert_next(TokenType.COLON, "Expected a colon after the key.")
+            self.assert_next(TokenType.COLON, "Expected a colon after the key.")
 
-        value = self.parse_expression()
-        properties.append(Property(key.value), value)
+            value = self.parse_expression()
+            properties.append(Property(key.value, value))
 
-        if self.at().type != TokenType.CLOSE_BRACE:
-            self.assert_next(TokenType.COMMA, "Expected a comma or closing brace after the value.")
+            if self.at().type != TokenType.CLOSE_BRACKET:
+                self.assert_next(
+                    TokenType.COMMA,
+                    "Expected a comma or closing brace after the value.",
+                )
+
+        self.assert_next(
+            TokenType.CLOSE_BRACKET, "Expected a closing brace after the object."
+        )
+        return ObjectLiteral(properties)
 
     def parse_variable_declaration(self) -> Statement:
         """Parse a variable declaration."""
         is_constant = self.next().type == TokenType.CONST
         identifier = self.assert_next(
-            TokenType.IDENTIFIER,
-            "Expected an identifier after a declaration."
+            TokenType.IDENTIFIER, "Expected an identifier after a declaration."
         ).value
 
         if self.at().type == TokenType.SEMICOLON:
@@ -143,19 +153,15 @@ class Parser:
             return VariableDeclaration(is_constant, Identifier(identifier))
 
         self.assert_next(
-            TokenType.EQUALS,
-            "Expected an equals sign after the identifier."
+            TokenType.EQUALS, "Expected an equals sign after the identifier."
         )
 
         declaration = VariableDeclaration(
-            is_constant,
-            Identifier(identifier),
-            self.parse_expression()
+            is_constant, Identifier(identifier), self.parse_expression()
         )
 
         self.assert_next(
-            TokenType.SEMICOLON,
-            "Expected a semicolon after the declaration."
+            TokenType.SEMICOLON, "Expected a semicolon after the declaration."
         )
 
         return declaration

@@ -26,3 +26,10 @@ class BooleanValue(RuntimeValue):
     def __init__(self, value: bool = True) -> None:
         super().__init__()
         self.value = value
+
+class ObjectValue(RuntimeValue):
+    """Object value class."""
+
+    def __init__(self, properties: dict[str, RuntimeValue]) -> None:
+        super().__init__()
+        self.properties = properties
