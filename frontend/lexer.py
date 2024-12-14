@@ -14,15 +14,20 @@ class TokenType(Enum):
     CLOSE_PAREN = auto()
     OPEN_BRACKET = auto()
     CLOSE_BRACKET = auto()
+    OPEN_BRACE = auto()
+    CLOSE_BRACE = auto()
 
     BINARY_OPERATOR = auto()
 
     LET = auto()
     CONST = auto()
+    FUNC = auto()
     EQUALS = auto()
+
     COMMA = auto()
     COLON = auto()
     SEMICOLON = auto()
+    DOT = auto()
 
     EOF = auto()
 
@@ -30,9 +35,10 @@ class TokenType(Enum):
 class Token:
     """Token class."""
 
-    def __init__(self, value, token_type) -> None:
+    def __init__(self, value, token_type: TokenType, line: int) -> None:
         self.value = value
         self.type = token_type
+        self.line = line
 
     def __repr__(self) -> str:
         return "{" + f' "value": "{self.value}", "type": {self.type.name} ' + "}"
@@ -40,7 +46,8 @@ class Token:
 
 KEYWORDS = {
     "let": TokenType.LET,
-    "const": TokenType.CONST
+    "const": TokenType.CONST,
+    "func": TokenType.FUNC
 }
 
 
@@ -49,36 +56,49 @@ def is_skipable(char: str) -> bool:
     return char in (" ", "\n", "\t", "\r") # Skip spaces, newlines, tabs, and carriage returns
 
 
+def get_line(source_code: str, src: list[str]) -> int:
+    """Get the line of the current token."""
+    line = source_code.count("\n", 0, len(source_code) - len(src)) + 1
+
+    return line
+
 def tokenize(source_code: str) -> list[Token]:
     """Tokenize the source code."""
     tokens = []
     src = list(source_code)
 
     while len(src) > 0:
+        line = get_line(source_code, src)
         if src[0] == "(":
-            tokens.append(Token(src.pop(0), TokenType.OPEN_PAREN))
+            tokens.append(Token(src.pop(0), TokenType.OPEN_PAREN, line))
         elif src[0] == ")":
-            tokens.append(Token(src.pop(0), TokenType.CLOSE_PAREN))
+            tokens.append(Token(src.pop(0), TokenType.CLOSE_PAREN, line))
         elif src[0] == "{":
-            tokens.append(Token(src.pop(0), TokenType.OPEN_BRACKET))
+            tokens.append(Token(src.pop(0), TokenType.OPEN_BRACKET, line))
         elif src[0] == "}":
-            tokens.append(Token(src.pop(0), TokenType.CLOSE_BRACKET))
+            tokens.append(Token(src.pop(0), TokenType.CLOSE_BRACKET, line))
+        elif src[0] == "[":
+            tokens.append(Token(src.pop(0), TokenType.OPEN_BRACE, line))
+        elif src[0] == "]":
+            tokens.append(Token(src.pop(0), TokenType.CLOSE_BRACE, line))
         elif src[0] in ("+", "-", "*", "/", "%"):
-            tokens.append(Token(src.pop(0), TokenType.BINARY_OPERATOR))
+            tokens.append(Token(src.pop(0), TokenType.BINARY_OPERATOR, line))
         elif src[0] == "=":
-            tokens.append(Token(src.pop(0), TokenType.EQUALS))
+            tokens.append(Token(src.pop(0), TokenType.EQUALS, line))
         elif src[0] == ";":
-            tokens.append(Token(src.pop(0), TokenType.SEMICOLON))
+            tokens.append(Token(src.pop(0), TokenType.SEMICOLON, line))
         elif src[0] == ",":
-            tokens.append(Token(src.pop(0), TokenType.COMMA))
+            tokens.append(Token(src.pop(0), TokenType.COMMA, line))
         elif src[0] == ":":
-            tokens.append(Token(src.pop(0), TokenType.COLON))
+            tokens.append(Token(src.pop(0), TokenType.COLON, line))
+        elif src[0] == ".":
+            tokens.append(Token(src.pop(0), TokenType.DOT, line))
         else:
             if src[0].isdigit():
                 number = src.pop(0)
                 while len(src) > 0 and src[0].isdigit():
                     number += src.pop(0)
-                tokens.append(Token(number, TokenType.NUMBER))
+                tokens.append(Token(number, TokenType.NUMBER, line))
 
             elif src[0].isalpha():
                 identifier = src.pop(0)
@@ -86,16 +106,17 @@ def tokenize(source_code: str) -> list[Token]:
                     identifier += src.pop(0)
 
                 if identifier in KEYWORDS:
-                    tokens.append(Token(identifier, KEYWORDS[identifier]))
+                    tokens.append(Token(identifier, KEYWORDS[identifier], line))
                 else:
-                    tokens.append(Token(identifier, TokenType.IDENTIFIER))
+                    tokens.append(Token(identifier, TokenType.IDENTIFIER, line))
             elif is_skipable(src[0]):
                 src.pop(0)
             else:
                 print(f"Character not found in source: {src.pop(0)}")
                 exit(1)
 
-    tokens.append(Token("EOF", TokenType.EOF))
+    line = get_line(source_code, src)
+    tokens.append(Token("EOF", TokenType.EOF, line))
 
     return tokens
 

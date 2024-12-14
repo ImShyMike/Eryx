@@ -1,0 +1,38 @@
+const timenow = time();
+
+func add (x, y) {
+    let result = x + y;
+
+    func sub (a, b) {
+        a - b
+    }
+
+    let result2 = sub(y, x);
+
+    let obj2 = {
+        x,
+        y
+    };
+
+    let obj = {
+        result2,
+        timenow,
+        result,
+        object: obj2
+    };
+
+    obj
+}
+
+print(add(5, 7))
+
+func makeAdder(offset) {
+    func add(x, y) {
+        x + y + offset
+    }
+
+    add
+}
+
+let adder = makeAdder(10);
+print(adder(10, 5))

@@ -11,6 +11,9 @@ from frontend.ast import (
     Property,
     Statement,
     VariableDeclaration,
+    CallExpression,
+    MemberExpression,
+    FunctionDeclaration,
 )
 from frontend.lexer import Token, TokenType, tokenize
 
@@ -38,7 +41,8 @@ class Parser:
         token = self.next()
         if token.type != token_type:
             raise RuntimeError(
-                f"Parser error: \n{error} {token} - Expected: {token_type}"
+                f"Parser error on line {token.line}: " \
+                f"\n{error} {token} - Expected: {token_type}"
             )
         return token
 
@@ -53,13 +57,74 @@ class Parser:
 
         return left
 
+    def parse_call_member_expression(self) -> Expression:
+        """Parse a call member expression."""
+        member = self.parse_member_expression()
+
+        if self.at().type == TokenType.OPEN_PAREN:
+            return self.parse_call_expression(member)
+
+        return member
+
+    def parse_call_expression(self, caller: Expression) -> Expression:
+        """Parse a call expression."""
+        call_expression = CallExpression(self.parse_arguments(), caller)
+
+        if self.at().type == TokenType.OPEN_PAREN:
+            call_expression = self.parse_call_expression(call_expression)
+
+        return call_expression
+
+    def parse_arguments(self) -> list[Expression]:
+        """Parse arguments."""
+        self.assert_next(TokenType.OPEN_PAREN, "Expected an open parenthesis.")
+
+        arguments = [] if self.at().type == TokenType.CLOSE_PAREN else self.parse_arguments_list()
+
+        self.assert_next(TokenType.CLOSE_PAREN, "Expected a closing parenthesis.")
+
+        return arguments
+
+    def parse_arguments_list(self) -> list[Expression]:
+        """Parse an arguments list."""
+        arguments = [self.parse_assignment_expression()]
+
+        while self.at().type == TokenType.COMMA:
+            self.next() # Skip the comma
+            arguments.append(self.parse_assignment_expression())
+
+        return arguments
+
+    def parse_member_expression(self) -> Expression:
+        """Parse a member expression."""
+        obj = self.parse_primary_expression()
+
+        while self.at().type in (TokenType.OPEN_BRACE, TokenType.DOT):
+            operator = self.next()
+            proprty = None
+            computed = False
+
+            if operator.type == TokenType.DOT:
+                proprty = self.parse_primary_expression() # Identifier
+
+                if not isinstance(proprty, Identifier):
+                    raise RuntimeError("Expected an identifier as a property.")
+            else:
+                computed = True
+                proprty = self.parse_expression()
+                self.assert_next(TokenType.CLOSE_BRACE, "Expected a closing brace.")
+
+            obj =  MemberExpression(obj, proprty, computed)
+
+        return obj
+
     def parse_multiplicative_expression(self) -> Expression:
         """Parse a multiplicative expression."""
-        left = self.parse_primary_expression()
+        left = self.parse_call_member_expression()
 
         while self.at().value in ("/", "*", "%"):
             operator = self.next().value
-            right = self.parse_primary_expression()
+            right = self.parse_call_member_expression()
             left = BinaryExpression(left, operator, right)
 
         return left
@@ -138,6 +203,32 @@ class Parser:
         )
         return ObjectLiteral(properties)
 
+    def parse_function_declaration(self) -> Statement:
+        """Parse a function declaration."""
+        self.next() # Skip the func keyword
+        name = self.assert_next(
+            TokenType.IDENTIFIER, "Expected an function name after the function keyword."
+        ).value
+        arguments = self.parse_arguments()
+
+        parameters = []
+        for argument in arguments:
+            if not isinstance(argument, Identifier):
+                raise RuntimeError("Function arguments must be identifiers.")
+            parameters.append(argument.symbol)
+
+        self.assert_next(TokenType.OPEN_BRACKET, "Expected an opening bracket.")
+
+        body = []
+        while self.not_eof() and self.at().type != TokenType.CLOSE_BRACKET:
+            body.append(self.parse_statement())
+
+        self.assert_next(
+            TokenType.CLOSE_BRACKET, "Expected a closing bracket after the function body."
+        )
+
+        return FunctionDeclaration(name, parameters, body)
+
     def parse_variable_declaration(self) -> Statement:
         """Parse a variable declaration."""
         is_constant = self.next().type == TokenType.CONST
@@ -173,6 +264,8 @@ class Parser:
                 return self.parse_variable_declaration()
             case TokenType.CONST:
                 return self.parse_variable_declaration()
+            case TokenType.FUNC:
+                return self.parse_function_declaration()
             case _:
                 return self.parse_expression()
 

@@ -20,6 +20,9 @@ def isenum(cls):
     """Check if a variable is an enum."""
     return str(type(cls)).startswith("<enum") and hasattr(cls, "__weakref__")
 
+def isfunction(func):
+    """Check if a variable is a function."""
+    return str(type(func)) == "<class 'function'>"
 
 COLOR_DICT = {
     "class": Fore.MAGENTA,
@@ -29,6 +32,7 @@ COLOR_DICT = {
     "int": Fore.YELLOW,
     "float": Fore.YELLOW,
     "bool": Fore.RED,
+    "function": Fore.CYAN,
     "NoneType": Fore.RED,
 }
 
@@ -96,6 +100,9 @@ def handle_array(
             elif isinstance(item, str):
                 # If string, call handle_str
                 string += handle_str(item, use_color)
+            elif isfunction(val):
+                # If function, add the function name
+                string += get_color(val) + f"{val.__name__}" + Fore.WHITE + "()"
             else:
                 # Else add the value with color
                 string += get_color(item) + str(item) + Fore.WHITE
@@ -153,6 +160,9 @@ def handle_dict(val, use_color, use_newlines, indent, _tabs):
         elif isinstance(value, str):
             # If string, call handle_str
             string += handle_str(value, use_color)
+        elif isfunction(val):
+            # If function, add the function name
+            string += get_color(val) + f"{val.__name__}" + Fore.WHITE + "()"
         else:
             # Else add the value with color
             string += get_color(value) + str(value) + Fore.WHITE
@@ -258,6 +268,9 @@ def pprint(
         elif isinstance(val, str):
             # If string, call handle_str
             string += handle_str(val, use_color)
+        elif isfunction(val):
+            # If function, add the function name
+            string += get_color(val) + f"{val.__name__}" + Fore.WHITE + "()"
         else:
             # Else add the value with color
             string += get_color(val) + str(val) + Fore.WHITE

@@ -1,0 +1,86 @@
+<DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>TestLang WebUI</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="static/style.css?version=4">
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">TestLang v{{ version }} WebUI</div>
+            <div id="help-button" class="help-button">?</div>
+            <div id="help-modal" class="help-modal" style="display: none;">
+                <h2>TestLang WebUI</h2>
+                <p>
+                    TestLang is a simple programming language that is designed to be easy to learn and use. It is a dynamically typed language that supports basic data types, control structures, and functions. The language is interpreted and runs on a stack-based virtual machine.
+                </p>
+                <h3>Basic Data Types</h3>
+                <ul>
+                    <li>Integer</li>
+                    <li>Boolean</li>
+                    <li>Dictionary</li>
+                </ul>
+                <h3>Functions</h3>
+                <ul>
+                    <li>Function Definition</li>
+                    <li>Function Call</li>
+                </ul>
+                <h3>Operators</h3>
+                <ul>
+                    <li>Arithmetic Operators</li>
+                    <li>Assignment Operators</li>
+                </ul>
+                <h3>Comments</h3>
+                <p>
+                    TestLang supports single-line comments with the '#' character.
+                </p>
+                <h3>Examples</h3>
+                <p>
+                    Data types
+                </p>
+                <pre>
+# Hello World
+print("Hello, World!")
+
+# Factorial
+def factorial(n) {
+    if (n == 0) {
+        return 1
+    } else {
+        return n * factorial(n - 1)
+    }
+}
+
+print(factorial(5))
+                </pre>
+            </div>
+        
+            <div class="ide">
+                <div class="dropdown">
+                    <select id="mode-select">
+                        <option value="run">Run</option>
+                        <option value="eval">Eval</option>
+                        <option value="ast">AST</option>
+                    </select>
+                    <div>
+                        <input class="checkbox" type="checkbox" id="memory-enabled"> &nbsp;Keep Memory</input>
+                    </div>
+                    <button class="button" id="clear-memory">Clear Memory</button>
+                    <button class="button" id="clear-console">Clear Output</button>
+                    <button class="button" id="execute-button">Execute</button>
+                </div>
+        
+                <div class="editor">
+                    <textarea class="code" id="code-area"></textarea>
+                </div>
+            </div>
+        
+            <div class="repl">
+                <div class="output" id="repl-output"></div>
+            </div>
+        <script src="static/main.js?version=4"></script>
+    </body>
+</html>
