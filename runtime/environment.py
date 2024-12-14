@@ -1,7 +1,16 @@
 """Environment class for storing variables (also called scope)."""
 
-from runtime.values import BooleanValue, NullValue, NumberValue, RuntimeValue, NativeFunctionValue, ObjectValue
 import time
+
+from runtime.values import (
+    BooleanValue,
+    NativeFunctionValue,
+    NullValue,
+    NumberValue,
+    ObjectValue,
+    RuntimeValue,
+)
+
 
 class Environment:
     """Environment class."""
@@ -67,6 +76,7 @@ class Environment:
         self.declare_variable("print", NativeFunctionValue(_print), True)
         self.declare_variable("time", NativeFunctionValue(_time), True)
 
+
 def get_value(value: RuntimeValue) -> object:
     """Get the value of a RuntimeValue."""
     if isinstance(value, NullValue):
@@ -83,6 +93,7 @@ def get_value(value: RuntimeValue) -> object:
         return result + " }"
     return value
 
+
 # Native functions
 def _print(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     values = []
@@ -90,6 +101,7 @@ def _print(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
         values.append(get_value(arg))
     print(*values)
     return NullValue()
+
 
 def _time(_: list[RuntimeValue], __: Environment) -> RuntimeValue:
     return NumberValue(time.time())

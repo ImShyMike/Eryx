@@ -7,10 +7,10 @@ import sys
 current_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from utils.pretty_print import pprint
 from frontend.parser import Parser
 from runtime.environment import Environment
 from runtime.interpreter import evaluate
+from utils.pretty_print import pprint
 
 environment = Environment()
 parser = Parser()
@@ -20,6 +20,7 @@ def read_file(file_path: str) -> str:
     """Read a text file."""
     with open(os.path.join(current_path, file_path), "r", encoding="utf8") as file:
         return file.read()
+
 
 for test_file in os.listdir(current_path):
     if test_file.endswith(".txt"):

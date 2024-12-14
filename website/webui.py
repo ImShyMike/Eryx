@@ -12,9 +12,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from frontend.parser import Parser
 from main import CURRENT_VERSION
-from utils.pretty_print import pprint
 from runtime.environment import Environment
 from runtime.interpreter import evaluate
+from utils.pretty_print import pprint
 
 app = Flask(__name__)
 app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
@@ -56,6 +56,8 @@ def ansi_to_html(text):
         return LIGHT_TEMPLATE.format(COLOR_DICT[color][0])
 
     return COLOR_REGEX.sub(single_sub, text)
+
+
 # ========
 
 

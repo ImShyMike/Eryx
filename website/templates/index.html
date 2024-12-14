@@ -42,19 +42,33 @@
                     Data types
                 </p>
                 <pre>
-# Hello World
-print("Hello, World!")
+const timenow = time();
 
-# Factorial
-def factorial(n) {
-    if (n == 0) {
-        return 1
-    } else {
-        return n * factorial(n - 1)
+func add (x, y) {
+    let result = x + y;
+
+    func sub (a, b) {
+        a - b
     }
+
+    let result2 = sub(y, x);
+
+    let obj2 = {
+        x,
+        y
+    };
+
+    let obj = {
+        subResult: result2,
+        timenow,
+        result,
+        object: obj2
+    };
+
+    obj
 }
 
-print(factorial(5))
+print(add(5, 7))
                 </pre>
             </div>
         

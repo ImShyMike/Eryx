@@ -12,16 +12,16 @@ from frontend.ast import (
     Statement,
     VariableDeclaration,
 )
-from utils.pretty_print import pprint
 from runtime.environment import Environment
 from runtime.values import (
-    NativeFunctionValue,
     FunctionValue,
+    NativeFunctionValue,
     NullValue,
     NumberValue,
     ObjectValue,
     RuntimeValue,
 )
+from utils.pretty_print import pprint
 
 
 # STATEMENTS
@@ -43,10 +43,10 @@ def eval_function_declaration(
     """Evaluate a function declaration."""
 
     func = FunctionValue(
-        name = ast_node.name,
-        arguments = ast_node.arguments,
-        environment = environment,
-        body = ast_node.body
+        name=ast_node.name,
+        arguments=ast_node.arguments,
+        environment=environment,
+        body=ast_node.body,
     )
 
     return environment.declare_variable(ast_node.name, func, False)
@@ -146,7 +146,9 @@ def eval_call_expression(
 
         for i, function_argument in enumerate(func.arguments):
             # TODO: Bounds check
-            function_environment.declare_variable(function_argument, arguments[i], False)
+            function_environment.declare_variable(
+                function_argument, arguments[i], False
+            )
 
         result = NullValue()
         # Evaluate the function body statement by statement

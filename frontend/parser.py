@@ -3,17 +3,17 @@
 from frontend.ast import (
     AssignmentExpression,
     BinaryExpression,
+    CallExpression,
     Expression,
+    FunctionDeclaration,
     Identifier,
+    MemberExpression,
     NumericLiteral,
     ObjectLiteral,
     Program,
     Property,
     Statement,
     VariableDeclaration,
-    CallExpression,
-    MemberExpression,
-    FunctionDeclaration,
 )
 from frontend.lexer import Token, TokenType, tokenize
 
@@ -41,7 +41,7 @@ class Parser:
         token = self.next()
         if token.type != token_type:
             raise RuntimeError(
-                f"Parser error on line {token.line}: " \
+                f"Parser error on line {token.line}: "
                 f"\n{error} {token} - Expected: {token_type}"
             )
         return token
@@ -79,7 +79,11 @@ class Parser:
         """Parse arguments."""
         self.assert_next(TokenType.OPEN_PAREN, "Expected an open parenthesis.")
 
-        arguments = [] if self.at().type == TokenType.CLOSE_PAREN else self.parse_arguments_list()
+        arguments = (
+            []
+            if self.at().type == TokenType.CLOSE_PAREN
+            else self.parse_arguments_list()
+        )
 
         self.assert_next(TokenType.CLOSE_PAREN, "Expected a closing parenthesis.")
 
@@ -90,7 +94,7 @@ class Parser:
         arguments = [self.parse_assignment_expression()]
 
         while self.at().type == TokenType.COMMA:
-            self.next() # Skip the comma
+            self.next()  # Skip the comma
             arguments.append(self.parse_assignment_expression())
 
         return arguments
@@ -105,7 +109,7 @@ class Parser:
             computed = False
 
             if operator.type == TokenType.DOT:
-                proprty = self.parse_primary_expression() # Identifier
+                proprty = self.parse_primary_expression()  # Identifier
 
                 if not isinstance(proprty, Identifier):
                     raise RuntimeError("Expected an identifier as a property.")
@@ -114,7 +118,7 @@ class Parser:
                 proprty = self.parse_expression()
                 self.assert_next(TokenType.CLOSE_BRACE, "Expected a closing brace.")
 
-            obj =  MemberExpression(obj, proprty, computed)
+            obj = MemberExpression(obj, proprty, computed)
 
         return obj
 
@@ -155,7 +159,7 @@ class Parser:
         left = self.parse_object_expression()
 
         if self.at().type == TokenType.EQUALS:
-            self.next() # Skip the equals sign
+            self.next()  # Skip the equals sign
 
             value = self.parse_assignment_expression()
             return AssignmentExpression(left, value)
@@ -180,7 +184,7 @@ class Parser:
             )
 
             if self.at().type == TokenType.COMMA:
-                self.next() # Skip the comma
+                self.next()  # Skip the comma
                 properties.append(Property(key.value))
                 continue
             elif self.at().type == TokenType.CLOSE_BRACKET:
@@ -205,9 +209,10 @@ class Parser:
 
     def parse_function_declaration(self) -> Statement:
         """Parse a function declaration."""
-        self.next() # Skip the func keyword
+        self.next()  # Skip the func keyword
         name = self.assert_next(
-            TokenType.IDENTIFIER, "Expected an function name after the function keyword."
+            TokenType.IDENTIFIER,
+            "Expected an function name after the function keyword.",
         ).value
         arguments = self.parse_arguments()
 
@@ -224,7 +229,8 @@ class Parser:
             body.append(self.parse_statement())
 
         self.assert_next(
-            TokenType.CLOSE_BRACKET, "Expected a closing bracket after the function body."
+            TokenType.CLOSE_BRACKET,
+            "Expected a closing bracket after the function body.",
         )
 
         return FunctionDeclaration(name, parameters, body)
@@ -237,7 +243,7 @@ class Parser:
         ).value
 
         if self.at().type == TokenType.SEMICOLON:
-            self.next() # Skip the semicolon
+            self.next()  # Skip the semicolon
             if is_constant:
                 raise RuntimeError("Constant declaration must have an initial value.")
 

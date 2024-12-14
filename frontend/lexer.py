@@ -44,16 +44,17 @@ class Token:
         return "{" + f' "value": "{self.value}", "type": {self.type.name} ' + "}"
 
 
-KEYWORDS = {
-    "let": TokenType.LET,
-    "const": TokenType.CONST,
-    "func": TokenType.FUNC
-}
+KEYWORDS = {"let": TokenType.LET, "const": TokenType.CONST, "func": TokenType.FUNC}
 
 
 def is_skipable(char: str) -> bool:
     """Check if a character is a skipable character."""
-    return char in (" ", "\n", "\t", "\r") # Skip spaces, newlines, tabs, and carriage returns
+    return char in (
+        " ",
+        "\n",
+        "\t",
+        "\r",
+    )  # Skip spaces, newlines, tabs, and carriage returns
 
 
 def get_line(source_code: str, src: list[str]) -> int:
@@ -61,6 +62,7 @@ def get_line(source_code: str, src: list[str]) -> int:
     line = source_code.count("\n", 0, len(source_code) - len(src)) + 1
 
     return line
+
 
 def tokenize(source_code: str) -> list[Token]:
     """Tokenize the source code."""

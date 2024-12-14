@@ -1,10 +1,12 @@
 """Abstract syntax tree (AST) for the frontend."""
 
+
 class Statement:
     """Base class for all statements in the AST."""
 
     def __init__(self) -> None:
         pass
+
 
 class Program(Statement):
     """Program class."""
@@ -13,11 +15,13 @@ class Program(Statement):
         super().__init__()
         self.body = body
 
+
 class Expression(Statement):
     """Expression base class."""
 
-    def __init__(self) -> None: # pylint: disable=useless-super-delegation
+    def __init__(self) -> None:  # pylint: disable=useless-super-delegation
         super().__init__()
+
 
 class AssignmentExpression(Expression):
     """Assignment expression class."""
@@ -27,6 +31,7 @@ class AssignmentExpression(Expression):
         self.assigne = assigne
         self.value = value
 
+
 class BinaryExpression(Expression):
     """Binary expression class."""
 
@@ -35,6 +40,8 @@ class BinaryExpression(Expression):
         self.left = left
         self.operator = operator
         self.right = right
+
+
 class Identifier(Expression):
     """Identifier class."""
 
@@ -42,10 +49,13 @@ class Identifier(Expression):
         super().__init__()
         self.symbol = symbol
 
+
 class VariableDeclaration(Statement):
     """Variable declaration class."""
 
-    def __init__(self, constant: bool, identifier: Identifier, value: Expression = None) -> None:
+    def __init__(
+        self, constant: bool, identifier: Identifier, value: Expression = None
+    ) -> None:
         super().__init__()
         self.constant = constant
         self.identifier = identifier
@@ -59,6 +69,7 @@ class NumericLiteral(Expression):
         super().__init__()
         self.value = value
 
+
 class Property(Expression):
     """Property class."""
 
@@ -67,12 +78,14 @@ class Property(Expression):
         self.key = key
         self.value = value
 
+
 class ObjectLiteral(Expression):
     """Object literal class."""
 
     def __init__(self, properties: list[Property]) -> None:
         super().__init__()
         self.properties = properties
+
 
 class CallExpression(Expression):
     """Binary expression class."""
@@ -82,6 +95,7 @@ class CallExpression(Expression):
         self.arguments = arguments
         self.caller = caller
 
+
 class MemberExpression(Expression):
     """Binary expression class."""
 
@@ -90,6 +104,7 @@ class MemberExpression(Expression):
         self.object = obj
         self.property = proprty
         self.computed = computed
+
 
 class FunctionDeclaration(Statement):
     """Function declaration class."""

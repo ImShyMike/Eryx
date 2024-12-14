@@ -174,7 +174,8 @@ body {
     max-height: 80vh;
 }
 
-.help-modal h2, .help-modal h3 {
+.help-modal h2,
+.help-modal h3 {
     color: #ffcc00;
 }
 

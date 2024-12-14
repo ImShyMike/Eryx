@@ -20,9 +20,11 @@ def isenum(cls):
     """Check if a variable is an enum."""
     return str(type(cls)).startswith("<enum") and hasattr(cls, "__weakref__")
 
+
 def isfunction(func):
     """Check if a variable is a function."""
     return str(type(func)) == "<class 'function'>"
+
 
 COLOR_DICT = {
     "class": Fore.MAGENTA,
@@ -327,7 +329,14 @@ if __name__ == "__main__":
             self.number = 42
             self.float_num = 3.14
             self.bool_val = True
-            self.nested_list = [Test2(), 2, [3, 4], {"key": "value"}, (5, 6), set([7, 8])]
+            self.nested_list = [
+                Test2(),
+                2,
+                [3, 4],
+                {"key": "value"},
+                (5, 6),
+                set([7, 8]),
+            ]
             self.nested_dict = {
                 "key1": "value1",
                 "key2": [1, 2, 3],
