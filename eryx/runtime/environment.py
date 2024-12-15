@@ -2,13 +2,14 @@
 
 import time
 
-from runtime.values import (
+from eryx.runtime.values import (
     BooleanValue,
     NativeFunctionValue,
     NullValue,
     NumberValue,
     ObjectValue,
     RuntimeValue,
+    StringValue,
 )
 
 
@@ -77,18 +78,24 @@ class Environment:
         self.declare_variable("time", NativeFunctionValue(_time), True)
 
 
-def get_value(value: RuntimeValue) -> object:
+def get_value(value: RuntimeValue, inside_array: bool = False) -> object:
     """Get the value of a RuntimeValue."""
     if isinstance(value, NullValue):
         return None
-    if isinstance(value, BooleanValue):
+    if (
+        isinstance(value, BooleanValue)
+        or isinstance(value, NumberValue)
+    ):
         return value.value
-    if isinstance(value, NumberValue):
-        return value.value
+    if isinstance(value, StringValue):
+        if inside_array:
+            return "\"" + value.value + "\""
+        else:
+            return value.value
     if isinstance(value, ObjectValue):
         result = "{ "
         for key, val in value.properties.items():
-            result += f"{key}: {get_value(val)}, "
+            result += f"{key}: {get_value(val, inside_array=True)}, "
         result = result[:-2]
         return result + " }"
     return value

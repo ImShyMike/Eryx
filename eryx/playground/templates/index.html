@@ -3,23 +3,29 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>TestLang WebUI</title>
-        <meta name="description" content="">
+        <title>Eryx Playground</title>
+        <meta name="description" content="Online runtime for Eryx">
+        <meta property="og:title" content="Eryx Playground">
+        <meta property="og:description" content="Online runtime for Eryx">
+        <meta property="og:url" content="https://lang.shymike.tech/">
+        <meta property="og:type" content="website">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="static/style.css?version=4">
+        <link rel="stylesheet" href="static/style.css">
     </head>
     <body>
         <div class="container">
-            <div class="header">TestLang v{{ version }} WebUI</div>
+            <div class="header">Eryx v{{ version }} WebUI</div>
             <div id="help-button" class="help-button">?</div>
             <div id="help-modal" class="help-modal" style="display: none;">
-                <h2>TestLang WebUI</h2>
+                <h2>Eryx Playground</h2>
                 <p>
-                    TestLang is a simple programming language that is designed to be easy to learn and use. It is a dynamically typed language that supports basic data types, control structures, and functions. The language is interpreted and runs on a stack-based virtual machine.
+                    Eryx is a decently fast simple dynamically typed programming language similar to javascript/python.
                 </p>
                 <h3>Basic Data Types</h3>
                 <ul>
                     <li>Integer</li>
+                    <li>Float</li>
+                    <li>String</li>
                     <li>Boolean</li>
                     <li>Dictionary</li>
                 </ul>
@@ -33,14 +39,7 @@
                     <li>Arithmetic Operators</li>
                     <li>Assignment Operators</li>
                 </ul>
-                <h3>Comments</h3>
-                <p>
-                    TestLang supports single-line comments with the '#' character.
-                </p>
-                <h3>Examples</h3>
-                <p>
-                    Data types
-                </p>
+                <h3>Example</h3>
                 <pre>
 const timenow = time();
 
@@ -58,17 +57,37 @@ func add (x, y) {
         y
     };
 
+    let five = 10 - 5;
+    const neg_num = -1000;
+    let float = 69.420;
+    const str = "Strings work!!!!";
+
     let obj = {
-        subResult: result2,
+        five,
+        neg_num,
+        float,
+        result2,
         timenow,
         result,
-        object: obj2
+        object: obj2,
+        str
     };
 
     obj
 }
 
 print(add(5, 7))
+
+func makeAdder(offset) {
+    func add(x, y) {
+        x + y + offset
+    }
+
+    add
+}
+
+let adder = makeAdder(10);
+print(adder(10, 5))
                 </pre>
             </div>
         
@@ -95,6 +114,6 @@ print(add(5, 7))
             <div class="repl">
                 <div class="output" id="repl-output"></div>
             </div>
-        <script src="static/main.js?version=4"></script>
+        <script src="static/main.js"></script>
     </body>
 </html>

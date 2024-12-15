@@ -1,5 +1,5 @@
 """
-Class to pretty print a class instance for debugging. (the code is actual garbage but it works)
+Module to pretty print a class instance for debugging. (the code is actual garbage but it works)
 """
 
 import os

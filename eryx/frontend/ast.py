@@ -70,6 +70,14 @@ class NumericLiteral(Expression):
         self.value = value
 
 
+class StringLiteral(Expression):
+    """String literal class."""
+
+    def __init__(self, value: str) -> None:
+        super().__init__()
+        self.value = str(value)
+
+
 class Property(Expression):
     """Property class."""
 

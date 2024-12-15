@@ -1,6 +1,6 @@
 """Parser module for the frontend of the compiler."""
 
-from frontend.ast import (
+from eryx.frontend.ast import (
     AssignmentExpression,
     BinaryExpression,
     CallExpression,
@@ -14,8 +14,9 @@ from frontend.ast import (
     Property,
     Statement,
     VariableDeclaration,
+    StringLiteral,
 )
-from frontend.lexer import Token, TokenType, tokenize
+from eryx.frontend.lexer import Token, TokenType, tokenize
 
 
 class Parser:
@@ -35,6 +36,10 @@ class Parser:
     def next(self) -> Token:
         """Get the current token and skip to next one (also called eat)."""
         return self.tokens.pop(0)
+
+    def look_ahead(self, n: int) -> Token:
+        """Look ahead n tokens."""
+        return self.tokens[n]
 
     def assert_next(self, token_type: TokenType, error: str) -> Token:
         """Assert that the next token is of a certain type and get the current token."""
@@ -103,7 +108,7 @@ class Parser:
         """Parse a member expression."""
         obj = self.parse_primary_expression()
 
-        while self.at().type in (TokenType.OPEN_BRACE, TokenType.DOT):
+        while self.at().type in (TokenType.OPEN_BRACKET, TokenType.DOT):
             operator = self.next()
             proprty = None
             computed = False
@@ -116,7 +121,7 @@ class Parser:
             else:
                 computed = True
                 proprty = self.parse_expression()
-                self.assert_next(TokenType.CLOSE_BRACE, "Expected a closing brace.")
+                self.assert_next(TokenType.CLOSE_BRACKET, "Expected a closing bracket.")
 
             obj = MemberExpression(obj, proprty, computed)
 
@@ -133,6 +138,7 @@ class Parser:
 
         return left
 
+
     def parse_primary_expression(self) -> Expression:
         """Parse a primary expression."""
         token = self.at()
@@ -142,6 +148,8 @@ class Parser:
                 return Identifier(self.next().value)
             case TokenType.NUMBER:
                 return NumericLiteral(float(self.next().value))
+            case TokenType.STRING:
+                return StringLiteral(self.next().value)
             case TokenType.OPEN_PAREN:
                 self.next()  # Skip the open parenthesis
                 expression = self.parse_expression()
@@ -172,13 +180,13 @@ class Parser:
 
     def parse_object_expression(self) -> Expression:
         """Parse an object expression."""
-        if self.at().type != TokenType.OPEN_BRACKET:
+        if self.at().type != TokenType.OPEN_BRACE:
             return self.parse_additive_expression()
 
         self.next()  # Skip the open brace
 
         properties = []
-        while self.not_eof() and self.at().type != TokenType.CLOSE_BRACKET:
+        while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
             key = self.assert_next(
                 TokenType.IDENTIFIER, "Expected an identifier as a key."
             )
@@ -187,7 +195,7 @@ class Parser:
                 self.next()  # Skip the comma
                 properties.append(Property(key.value))
                 continue
-            elif self.at().type == TokenType.CLOSE_BRACKET:
+            elif self.at().type == TokenType.CLOSE_BRACE:
                 properties.append(Property(key.value))
                 continue
 
@@ -196,14 +204,14 @@ class Parser:
             value = self.parse_expression()
             properties.append(Property(key.value, value))
 
-            if self.at().type != TokenType.CLOSE_BRACKET:
+            if self.at().type != TokenType.CLOSE_BRACE:
                 self.assert_next(
                     TokenType.COMMA,
                     "Expected a comma or closing brace after the value.",
                 )
 
         self.assert_next(
-            TokenType.CLOSE_BRACKET, "Expected a closing brace after the object."
+            TokenType.CLOSE_BRACE, "Expected a closing brace after the object."
         )
         return ObjectLiteral(properties)
 
@@ -222,15 +230,15 @@ class Parser:
                 raise RuntimeError("Function arguments must be identifiers.")
             parameters.append(argument.symbol)
 
-        self.assert_next(TokenType.OPEN_BRACKET, "Expected an opening bracket.")
+        self.assert_next(TokenType.OPEN_BRACE, "Expected an opening brace.")
 
         body = []
-        while self.not_eof() and self.at().type != TokenType.CLOSE_BRACKET:
+        while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
             body.append(self.parse_statement())
 
         self.assert_next(
-            TokenType.CLOSE_BRACKET,
-            "Expected a closing bracket after the function body.",
+            TokenType.CLOSE_BRACE,
+            "Expected a closing brace after the function body.",
         )
 
         return FunctionDeclaration(name, parameters, body)

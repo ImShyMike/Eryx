@@ -1,20 +1,18 @@
+"""Web UI for Eryx."""
+
 import io
-import os
+import json
 import re
-import sys
 import uuid
 from contextlib import redirect_stdout
 
 from flask import Flask, jsonify, render_template, request
 
-# Fix to import modules from parent directory
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from frontend.parser import Parser
-from main import CURRENT_VERSION
-from runtime.environment import Environment
-from runtime.interpreter import evaluate
-from utils.pretty_print import pprint
+from eryx.frontend.parser import Parser
+from eryx.runtime.environment import Environment
+from eryx.runtime.interpreter import evaluate
+from eryx.runtime.repl import CURRENT_VERSION
+from eryx.utils.pretty_print import pprint
 
 app = Flask(__name__)
 app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
@@ -148,7 +146,7 @@ def repl():
     """REPL route."""
     try:
         request_json = request.get_json()
-    except Exception:
+    except json.JSONDecodeError:
         return jsonify({"error": "Invalid JSON"})
 
     if not request_json:
@@ -185,4 +183,4 @@ def static_route(path):
 
 
 if __name__ == "__main__":
-    app.run("0.0.0.0", port=80, debug=True, use_reloader=True)
+    app.run("0.0.0.0", port=8080, debug=False, use_reloader=False)

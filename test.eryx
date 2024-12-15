@@ -14,11 +14,20 @@ func add (x, y) {
         y
     };
 
+    let five = 10 - 5;
+    const neg_num = -1000;
+    let float = 69.420;
+    const str = "Strings work!!!!";
+
     let obj = {
+        five,
+        neg_num,
+        float,
         result2,
         timenow,
         result,
-        object: obj2
+        object: obj2,
+        str
     };
 
     obj

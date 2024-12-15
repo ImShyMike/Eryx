@@ -79,3 +79,11 @@ class FunctionValue(RuntimeValue):
         self.arguments = arguments
         self.environment = environment
         self.body = body
+
+
+class StringValue(RuntimeValue):
+    """String value class."""
+
+    def __init__(self, value: str) -> None:
+        super().__init__()
+        self.value = value

@@ -12,10 +12,12 @@ class TokenType(Enum):
 
     OPEN_PAREN = auto()
     CLOSE_PAREN = auto()
-    OPEN_BRACKET = auto()
-    CLOSE_BRACKET = auto()
     OPEN_BRACE = auto()
     CLOSE_BRACE = auto()
+    OPEN_BRACKET = auto()
+    CLOSE_BRACKET = auto()
+
+    DOUBLE_QUOTE = auto()
 
     BINARY_OPERATOR = auto()
 
@@ -70,21 +72,26 @@ def tokenize(source_code: str) -> list[Token]:
     src = list(source_code)
 
     while len(src) > 0:
+        negative_num = False
+        starting_length = len(src)
         line = get_line(source_code, src)
         if src[0] == "(":
             tokens.append(Token(src.pop(0), TokenType.OPEN_PAREN, line))
         elif src[0] == ")":
             tokens.append(Token(src.pop(0), TokenType.CLOSE_PAREN, line))
         elif src[0] == "{":
-            tokens.append(Token(src.pop(0), TokenType.OPEN_BRACKET, line))
-        elif src[0] == "}":
-            tokens.append(Token(src.pop(0), TokenType.CLOSE_BRACKET, line))
-        elif src[0] == "[":
             tokens.append(Token(src.pop(0), TokenType.OPEN_BRACE, line))
-        elif src[0] == "]":
+        elif src[0] == "}":
             tokens.append(Token(src.pop(0), TokenType.CLOSE_BRACE, line))
+        elif src[0] == "[":
+            tokens.append(Token(src.pop(0), TokenType.OPEN_BRACKET, line))
+        elif src[0] == "]":
+            tokens.append(Token(src.pop(0), TokenType.CLOSE_BRACKET, line))
         elif src[0] in ("+", "-", "*", "/", "%"):
-            tokens.append(Token(src.pop(0), TokenType.BINARY_OPERATOR, line))
+            if src[0] == "-" and len(src) > 0 and src[1].isdigit():
+                negative_num = True # Keep size the same
+            else:
+                tokens.append(Token(src.pop(0), TokenType.BINARY_OPERATOR, line))
         elif src[0] == "=":
             tokens.append(Token(src.pop(0), TokenType.EQUALS, line))
         elif src[0] == ";":
@@ -95,27 +102,49 @@ def tokenize(source_code: str) -> list[Token]:
             tokens.append(Token(src.pop(0), TokenType.COLON, line))
         elif src[0] == ".":
             tokens.append(Token(src.pop(0), TokenType.DOT, line))
-        else:
-            if src[0].isdigit():
-                number = src.pop(0)
-                while len(src) > 0 and src[0].isdigit():
-                    number += src.pop(0)
-                tokens.append(Token(number, TokenType.NUMBER, line))
 
-            elif src[0].isalpha():
-                identifier = src.pop(0)
-                while len(src) > 0 and (src[0].isalpha() or src[0].isdigit()):
-                    identifier += src.pop(0)
+        if starting_length != len(src):
+            continue
 
-                if identifier in KEYWORDS:
-                    tokens.append(Token(identifier, KEYWORDS[identifier], line))
-                else:
-                    tokens.append(Token(identifier, TokenType.IDENTIFIER, line))
-            elif is_skipable(src[0]):
-                src.pop(0)
+        if negative_num:
+            src.pop(0) # Remove the negative sign
+
+        if src[0].isdigit():  # Number
+            number = src.pop(0)
+            if negative_num:
+                number = "-" + number
+            dots = 0
+            while len(src) > 0 and (src[0].isdigit() or src[0] == "."):
+                if src[0] == ".":
+                    dots += 1
+                    if dots > 1:
+                        break
+                number += src.pop(0)
+            tokens.append(Token(number, TokenType.NUMBER, line))
+
+        elif src[0].isalpha() or src[0] == "_": # Identifier
+            identifier = src.pop(0)
+            while len(src) > 0 and (src[0].isalpha() or src[0].isdigit() or src[0] == "_"):
+                identifier += src.pop(0)
+
+            if identifier in KEYWORDS:
+                tokens.append(Token(identifier, KEYWORDS[identifier], line))
             else:
-                print(f"Character not found in source: {src.pop(0)}")
-                exit(1)
+                tokens.append(Token(identifier, TokenType.IDENTIFIER, line))
+        elif is_skipable(src[0]):
+            src.pop(0)
+
+        elif src[0] == '"': # String
+            src.pop(0)
+            string = ""
+            while len(src) > 0 and src[0] != '"':
+                string += src.pop(0)
+            src.pop(0)
+            tokens.append(Token(string, TokenType.STRING, line))
+
+        else:
+            print(f"Character not found in source: {src.pop(0)}")
+            exit(1)
 
     line = get_line(source_code, src)
     tokens.append(Token("EOF", TokenType.EOF, line))

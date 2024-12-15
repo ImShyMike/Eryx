@@ -1,6 +1,6 @@
 """Interpreter for the runtime."""
 
-from frontend.ast import (
+from eryx.frontend.ast import (
     AssignmentExpression,
     BinaryExpression,
     CallExpression,
@@ -11,17 +11,19 @@ from frontend.ast import (
     Program,
     Statement,
     VariableDeclaration,
+    StringLiteral,
 )
-from runtime.environment import Environment
-from runtime.values import (
+from eryx.runtime.environment import Environment
+from eryx.runtime.values import (
     FunctionValue,
     NativeFunctionValue,
     NullValue,
     NumberValue,
     ObjectValue,
     RuntimeValue,
+    StringValue,
 )
-from utils.pretty_print import pprint
+from eryx.utils.pretty_print import pprint
 
 
 # STATEMENTS
@@ -166,6 +168,8 @@ def evaluate(ast_node: Statement, environment: Environment) -> RuntimeValue:
     node_type = type(ast_node)
     if node_type == NumericLiteral:
         return NumberValue(ast_node.value)
+    elif node_type == StringLiteral:
+        return StringValue(ast_node.value)
     elif node_type == Identifier:
         return eval_identifier(ast_node, environment)
     elif node_type == BinaryExpression:
