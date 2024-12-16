@@ -3,9 +3,11 @@
 from dataclasses import dataclass
 from typing import Union
 
+
 @dataclass()
 class BaseError(RuntimeError):
     """Base error class."""
+
     message: str
     position: Union[int, tuple[int, int]] = 0
 
@@ -27,21 +29,26 @@ class IndexError(BaseError):
 class KeyError(BaseError):
     message: str = "Key not found"
 
+
 @dataclass()
 class EOFError(BaseError):
     message: str = "End of file reached"
+
 
 @dataclass()
 class ImportError(BaseError):
     message: str = "Import error"
 
+
 @dataclass()
 class NameError(BaseError):
     message: str = "Variable not found"
 
+
 @dataclass()
 class NotImplementedError(BaseError):
     message: str = "Not implemented"
+
 
 @dataclass()
 class SyntaxError(BaseError):

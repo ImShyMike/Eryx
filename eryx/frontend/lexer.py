@@ -1,12 +1,12 @@
 """Lexer for the fronted."""
 
-from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Any, Union
 
-from colorama import init, Fore
+from colorama import Fore, init
 
 init(autoreset=True)
+
 
 class TokenType(Enum):
     """All token types in the language."""
@@ -39,13 +39,13 @@ class TokenType(Enum):
     EOF = auto()
 
 
-@dataclass()
 class Token:
     """Token class."""
 
-    value: Any
-    type: TokenType
-    position: Union[int, tuple[int, int]]
+    def __init__(self, value: Any, type: TokenType, position: Union[int, tuple[int, int]]):
+        self.value = value
+        self.type = type
+        self.position = position
 
     def to_dict(self) -> dict:
         """Return the token as a dictionary."""
@@ -82,6 +82,7 @@ def position_to_line_column(source_code: str, position: int) -> tuple[int, int]:
     column = position - last_newline_pos if last_newline_pos != -1 else position + 1
 
     return (line, column)
+
 
 def get_line_string(source_code: str, line: int) -> str:
     """Get the line string from the source code."""
@@ -187,12 +188,21 @@ def tokenize(source_code: str) -> list[Token]:
             tokens.append(Token(string, TokenType.STRING, (start_pos, end_pos + 1)))
 
         else:
-            current_line, current_col = position_to_line_column(source_code, current_pos)
+            current_line, current_col = position_to_line_column(
+                source_code, current_pos
+            )
             line = get_line_string(source_code, current_line)
             current_line_str = str(current_line).rjust(3)
-            print(f"\n{Fore.CYAN}{current_line_str}{Fore.WHITE} {line}")
-            print(Fore.YELLOW + "^".rjust(current_col + len(current_line_str) + 1) + Fore.WHITE)
-            print(f"{Fore.RED}SyntaxError{Fore.WHITE}: Unknown character found in source '{Fore.MAGENTA}{src.pop(0)}{Fore.WHITE}'")
+            print(f"\n{Fore.CYAN}{current_line_str}:{Fore.WHITE} {line}")
+            print(
+                Fore.YELLOW
+                + "^".rjust(current_col + len(current_line_str) + 2)
+                + Fore.WHITE
+            )
+            print(
+                f"{Fore.RED}SyntaxError{Fore.WHITE}: Unknown character found in source "
+                f"'{Fore.MAGENTA}{src.pop(0)}{Fore.WHITE}'"
+            )
             exit(1)
 
     tokens.append(Token("EOF", TokenType.EOF, source_size - len(src)))

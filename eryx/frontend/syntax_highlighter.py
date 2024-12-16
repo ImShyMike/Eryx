@@ -55,7 +55,7 @@ def highlight(source_code: str) -> str:
 
 
 if __name__ == "__main__":
-    code = """let int = 10;
+    CODE = """let int = 10;
 
 const float = 15.5;
 
@@ -80,4 +80,4 @@ let obj_lookup = "float";
 
 print("test1", obj, obj[obj_lookup], obj.nested.nested_val, obj.nested["nest_squared"].maybe)"""
 
-    print(highlight(code))
+    print(highlight(CODE))

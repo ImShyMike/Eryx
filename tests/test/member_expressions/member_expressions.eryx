@@ -7,6 +7,6 @@ const obj = {
     }
 };
 
-let key = "nested"; ?
+let key = "nested";
 
 print(obj.nested, obj[key], obj.nested.nest_squared.maybe, obj["nested"].nest_squared.maybe, obj.nested["nest_squared"].maybe)
