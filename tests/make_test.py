@@ -8,13 +8,14 @@ from tkinter import messagebox
 current_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(os.path.dirname(current_path)))
 
+from eryx.__init__ import CURRENT_VERSION
 from eryx.frontend.parser import Parser
 from eryx.runtime.environment import Environment
 from eryx.runtime.interpreter import evaluate
 from eryx.utils.pretty_print import pprint
-from eryx.__main__ import CURRENT_VERSION
 
 os.makedirs(os.path.join(current_path, "tests"), exist_ok=True)
+
 
 def generate_ast(code):
     """Generate AST from code using the parser."""
@@ -39,10 +40,10 @@ def capture_output(func, *args, **kwargs):
         sys.stdout = old_stdout
 
 
-def create_test_files(code, description, expected_error, test_name):
+def create_test_files(code, description, test_name):
     """Create the test files with actual values."""
     # Create the folder to store the test files
-    test_folder = os.path.join(current_path, test_name)
+    test_folder = os.path.join(current_path, "test", test_name)
     if not os.path.exists(test_folder):
         os.makedirs(test_folder)
 
@@ -57,28 +58,42 @@ def create_test_files(code, description, expected_error, test_name):
     with open(
         os.path.join(test_folder, f"{test_name}.eryx.ast"), "w", encoding="utf8"
     ) as f:
-        f.write(pprint(test_ast, print_output=False))
+        try:
+            f.write(pprint(test_ast, print_output=False, use_color=False))
+        except RuntimeError as e:
+            print(f"Parser Error: {e}")
+            os.removedirs(os.path.join(current_path, "test", test_name))
+            return
 
     # Evaluate the AST
     test_result = evaluate_code(test_ast, Environment())
     with open(
         os.path.join(test_folder, f"{test_name}.eryx.eval"), "w", encoding="utf8"
     ) as f:
-        f.write(pprint(test_result, print_output=False))
+        try:
+            f.write(pprint(test_result, print_output=False, use_color=False))
+        except RuntimeError as e:
+            print(f"Runtime Error: {e}")
+            os.removedirs(os.path.join(current_path, "test", test_name))
+            return
 
     # Capture printed output
-    output = capture_output(evaluate_code, test_ast, Environment())
+    try:
+        output = capture_output(evaluate_code, test_ast, Environment())
+    except RuntimeError as e:
+        print(f"Runtime Error: {e}")
+        os.removedirs(os.path.join(current_path, "test", test_name))
+        return
     with open(
         os.path.join(test_folder, f"{test_name}.eryx.output"), "w", encoding="utf8"
     ) as f:
-        f.write(output)
+        f.write(output[:-1])
 
     # Create info.test file (Description and expected behavior)
-    with open(os.path.join(test_folder, "info.test"), "w", encoding="utf8") as f:
+    with open(os.path.join(test_folder, "test.info"), "w", encoding="utf8") as f:
         f.write(f"Version: {CURRENT_VERSION}\n")
         f.write(f"Name: {test_name}\n")
-        f.write(f"Description: {description}\n")
-        f.write(f"Expected Error: {expected_error}\n")
+        f.write(f"Description: {description}")
 
     messagebox.showinfo("Success", f"Test files for {test_name} have been created.")
 
@@ -87,7 +102,6 @@ def on_create_test():
     """Handle the create test button click."""
     code = code_text.get("1.0", tk.END).strip()
     description = description_entry.get()
-    expected_error = error_check_var.get()
     test_name = name_entry.get()
 
     if not code or not test_name:
@@ -95,7 +109,7 @@ def on_create_test():
         return
 
     # Call the function to create the test files
-    create_test_files(code, description, expected_error, test_name)
+    create_test_files(code, description, test_name)
 
 
 # Set up the Tkinter GUI
@@ -120,11 +134,6 @@ description_label = tk.Label(root, text="Description:")
 description_label.pack()
 description_entry = tk.Entry(root, width=50)
 description_entry.pack()
-
-# Expected error
-error_check_var = tk.BooleanVar()
-error_check = tk.Checkbutton(root, text="Should Error?", variable=error_check_var)
-error_check.pack()
 
 # Create button
 create_button = tk.Button(root, text="Create Test Files", command=on_create_test)

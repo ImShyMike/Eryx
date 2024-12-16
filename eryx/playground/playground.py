@@ -8,10 +8,10 @@ from contextlib import redirect_stdout
 
 from flask import Flask, jsonify, render_template, request
 
+from eryx.__init__ import CURRENT_VERSION
 from eryx.frontend.parser import Parser
 from eryx.runtime.environment import Environment
 from eryx.runtime.interpreter import evaluate
-from eryx.runtime.repl import CURRENT_VERSION
 from eryx.utils.pretty_print import pprint
 
 app = Flask(__name__)
@@ -182,5 +182,10 @@ def static_route(path):
     return app.send_static_file(path)
 
 
+def start_playground(host="0.0.0.0", port=80):
+    """Start the web playground."""
+    app.run(host=host, port=port, debug=False, use_reloader=False)
+
+
 if __name__ == "__main__":
-    app.run("0.0.0.0", port=8080, debug=False, use_reloader=False)
+    start_playground()

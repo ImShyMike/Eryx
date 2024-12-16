@@ -37,13 +37,25 @@ class TokenType(Enum):
 class Token:
     """Token class."""
 
-    def __init__(self, value, token_type: TokenType, line: int) -> None:
+    def __init__(self, value, token_type: TokenType, position: int | tuple[int, int]) -> None:
         self.value = value
         self.type = token_type
-        self.line = line
+        self.position = position
 
     def __repr__(self) -> str:
-        return "{" + f' "value": "{self.value}", "type": {self.type.name} ' + "}"
+        return (
+            "{"
+            + f' "value": "{self.value}", "type": {self.type.name}, "position", {self.position} '
+            + "}"
+        )
+
+    def to_dict(self) -> dict:
+        """Return the token as a dictionary."""
+        return {
+            "value": self.value,
+            "type": self.type.name,
+            "position": self.position,
+        }
 
 
 KEYWORDS = {"let": TokenType.LET, "const": TokenType.CONST, "func": TokenType.FUNC}
@@ -69,47 +81,51 @@ def get_line(source_code: str, src: list[str]) -> int:
 def tokenize(source_code: str) -> list[Token]:
     """Tokenize the source code."""
     tokens = []
+    source_size = len(source_code)
     src = list(source_code)
 
     while len(src) > 0:
         negative_num = False
         starting_length = len(src)
-        line = get_line(source_code, src)
+        current_pos = source_size - len(src)
         if src[0] == "(":
-            tokens.append(Token(src.pop(0), TokenType.OPEN_PAREN, line))
+            tokens.append(Token(src.pop(0), TokenType.OPEN_PAREN, current_pos))
         elif src[0] == ")":
-            tokens.append(Token(src.pop(0), TokenType.CLOSE_PAREN, line))
+            tokens.append(Token(src.pop(0), TokenType.CLOSE_PAREN, current_pos))
         elif src[0] == "{":
-            tokens.append(Token(src.pop(0), TokenType.OPEN_BRACE, line))
+            tokens.append(Token(src.pop(0), TokenType.OPEN_BRACE, current_pos))
         elif src[0] == "}":
-            tokens.append(Token(src.pop(0), TokenType.CLOSE_BRACE, line))
+            tokens.append(Token(src.pop(0), TokenType.CLOSE_BRACE, current_pos))
         elif src[0] == "[":
-            tokens.append(Token(src.pop(0), TokenType.OPEN_BRACKET, line))
+            tokens.append(Token(src.pop(0), TokenType.OPEN_BRACKET, current_pos))
         elif src[0] == "]":
-            tokens.append(Token(src.pop(0), TokenType.CLOSE_BRACKET, line))
+            tokens.append(Token(src.pop(0), TokenType.CLOSE_BRACKET, current_pos))
         elif src[0] in ("+", "-", "*", "/", "%"):
             if src[0] == "-" and len(src) > 0 and src[1].isdigit():
-                negative_num = True # Keep size the same
+                negative_num = True  # Keep size the same
             else:
-                tokens.append(Token(src.pop(0), TokenType.BINARY_OPERATOR, line))
+                tokens.append(Token(src.pop(0), TokenType.BINARY_OPERATOR, current_pos))
         elif src[0] == "=":
-            tokens.append(Token(src.pop(0), TokenType.EQUALS, line))
+            tokens.append(Token(src.pop(0), TokenType.EQUALS, current_pos))
         elif src[0] == ";":
-            tokens.append(Token(src.pop(0), TokenType.SEMICOLON, line))
+            tokens.append(Token(src.pop(0), TokenType.SEMICOLON, current_pos))
         elif src[0] == ",":
-            tokens.append(Token(src.pop(0), TokenType.COMMA, line))
+            tokens.append(Token(src.pop(0), TokenType.COMMA, current_pos))
         elif src[0] == ":":
-            tokens.append(Token(src.pop(0), TokenType.COLON, line))
+            tokens.append(Token(src.pop(0), TokenType.COLON, current_pos))
         elif src[0] == ".":
-            tokens.append(Token(src.pop(0), TokenType.DOT, line))
+            tokens.append(Token(src.pop(0), TokenType.DOT, current_pos))
 
+        # If the length of the source code has changed, skip the rest of the loop
         if starting_length != len(src):
             continue
 
         if negative_num:
-            src.pop(0) # Remove the negative sign
+            src.pop(0)  # Remove the negative sign from negative numbers
 
         if src[0].isdigit():  # Number
+            start_pos = current_pos
+            end_pos = start_pos + (1 if negative_num else 0)
             number = src.pop(0)
             if negative_num:
                 number = "-" + number
@@ -119,44 +135,44 @@ def tokenize(source_code: str) -> list[Token]:
                     dots += 1
                     if dots > 1:
                         break
+                end_pos += 1
                 number += src.pop(0)
-            tokens.append(Token(number, TokenType.NUMBER, line))
+            tokens.append(Token(number, TokenType.NUMBER, (start_pos, end_pos)))
 
-        elif src[0].isalpha() or src[0] == "_": # Identifier
+        elif src[0].isalpha() or src[0] == "_":  # Identifier
+            start_pos = current_pos
+            end_pos = start_pos
             identifier = src.pop(0)
-            while len(src) > 0 and (src[0].isalpha() or src[0].isdigit() or src[0] == "_"):
+            while len(src) > 0 and (
+                src[0].isalpha() or src[0].isdigit() or src[0] == "_"
+            ):
+                end_pos += 1
                 identifier += src.pop(0)
 
             if identifier in KEYWORDS:
-                tokens.append(Token(identifier, KEYWORDS[identifier], line))
+                tokens.append(Token(identifier, KEYWORDS[identifier], (start_pos, end_pos)))
             else:
-                tokens.append(Token(identifier, TokenType.IDENTIFIER, line))
+                tokens.append(Token(identifier, TokenType.IDENTIFIER, (start_pos, end_pos)))
+
         elif is_skipable(src[0]):
             src.pop(0)
 
-        elif src[0] == '"': # String
+        elif src[0] == '"':  # String
+            start_pos = current_pos
+            end_pos = start_pos
             src.pop(0)
             string = ""
             while len(src) > 0 and src[0] != '"':
+                end_pos += 1
                 string += src.pop(0)
             src.pop(0)
-            tokens.append(Token(string, TokenType.STRING, line))
+            tokens.append(Token(string, TokenType.STRING, (start_pos, end_pos + 1)))
 
         else:
             print(f"Character not found in source: {src.pop(0)}")
             exit(1)
 
-    line = get_line(source_code, src)
-    tokens.append(Token("EOF", TokenType.EOF, line))
+    current_pos = source_size - len(src)
+    tokens.append(Token("EOF", TokenType.EOF, (current_pos, current_pos)))
 
     return tokens
-
-
-if __name__ == "__main__":
-    # Test for the lexer
-    with open("./test.txt", "r", encoding="utf-8") as file:
-        code = file.read()
-
-    # Print the tokenized code
-    for token in tokenize(code):
-        print(token)

@@ -1,0 +1,114 @@
+Program(
+  body: [    
+    VariableDeclaration(
+      constant: False,
+      identifier: Identifier(
+        symbol: "int"
+      ),
+      value: NumericLiteral(
+        value: 10.0
+      )
+    ),
+    
+    VariableDeclaration(
+      constant: True,
+      identifier: Identifier(
+        symbol: "float"
+      ),
+      value: NumericLiteral(
+        value: 15.5
+      )
+    ),
+    
+    VariableDeclaration(
+      constant: False,
+      identifier: Identifier(
+        symbol: "neg_num"
+      ),
+      value: NumericLiteral(
+        value: -100.0
+      )
+    ),
+    
+    VariableDeclaration(
+      constant: False,
+      identifier: Identifier(
+        symbol: "str"
+      ),
+      value: StringLiteral(
+        value: "abc"
+      )
+    ),
+    
+    VariableDeclaration(
+      constant: True,
+      identifier: Identifier(
+        symbol: "obj"
+      ),
+      value: ObjectLiteral(
+        properties: [          
+          Property(
+            key: "int",
+            value: None
+          ),
+          
+          Property(
+            key: "float",
+            value: None
+          ),
+          
+          Property(
+            key: "neg_num",
+            value: None
+          ),
+          
+          Property(
+            key: "abc_str",
+            value: Identifier(
+              symbol: "str"
+            )
+          ),
+          
+          Property(
+            key: "nested",
+            value: ObjectLiteral(
+              properties: [                
+                Property(
+                  key: "nested_val",
+                  value: NumericLiteral(
+                    value: 100.0
+                  )
+                ),
+                
+                Property(
+                  key: "nest_squared",
+                  value: ObjectLiteral(
+                    properties: [                      
+                      Property(
+                        key: "maybe",
+                        value: StringLiteral(
+                          value: "works"
+                        )
+                      )
+                    ]
+                  )
+                )
+              ]
+            )
+          )
+        ]
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        Identifier(
+          symbol: "obj"
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    )
+  ]
+)

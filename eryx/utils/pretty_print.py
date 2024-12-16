@@ -104,10 +104,14 @@ def handle_array(
                 string += handle_str(item, use_color)
             elif isfunction(val):
                 # If function, add the function name
-                string += get_color(val) + f"{val.__name__}" + Fore.WHITE + "()"
+                string += (
+                    get_color(val) + f"{val.__name__}" + Fore.WHITE
+                    if use_color
+                    else "" + "()"
+                )
             else:
                 # Else add the value with color
-                string += get_color(item) + str(item) + Fore.WHITE
+                string += (get_color(val) if use_color else "") + str(item) + (Fore.WHITE if use_color else "")
     if use_newlines:
         string += f"\n{' '*(indent*(_tabs))}"
     string += "}" if is_set else "]" if not is_tuple else ")"
@@ -164,10 +168,14 @@ def handle_dict(val, use_color, use_newlines, indent, _tabs):
             string += handle_str(value, use_color)
         elif isfunction(val):
             # If function, add the function name
-            string += get_color(val) + f"{val.__name__}" + Fore.WHITE + "()"
+            string += (
+                get_color(val) + f"{val.__name__}" + Fore.WHITE
+                if use_color
+                else "" + "()"
+            )
         else:
             # Else add the value with color
-            string += get_color(value) + str(value) + Fore.WHITE
+            string += (get_color(value) if use_color else "") + str(value) + (Fore.WHITE if use_color else "")
 
         if use_color:
             string += Fore.WHITE
@@ -184,6 +192,8 @@ def handle_dict(val, use_color, use_newlines, indent, _tabs):
 def handle_str(val, use_color):
     """Helper function to handle strings."""
     if use_color:
+        return f'{get_color(val)}"{val}"{Fore.WHITE}'
+    else:
         return f'"{val}"'
     return val
 
@@ -272,10 +282,14 @@ def pprint(
             string += handle_str(val, use_color)
         elif isfunction(val):
             # If function, add the function name
-            string += get_color(val) + f"{val.__name__}" + Fore.WHITE + "()"
+            string += (
+                get_color(val) + f"{val.__name__}" + Fore.WHITE
+                if use_color
+                else "" + "()"
+            )
         else:
             # Else add the value with color
-            string += get_color(val) + str(val) + Fore.WHITE
+            string += (get_color(val) if use_color else "") + str(val) + (Fore.WHITE if use_color else "")
 
         # Reset color
         if use_color:

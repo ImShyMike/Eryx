@@ -1,0 +1,12 @@
+const obj = {
+    nested: {
+        nested_val: 100,
+        nest_squared: {
+            maybe: "works"
+        }
+    }
+};
+
+let key = "nested";
+
+print(obj.nested, obj[key], obj.nested.nest_squared.maybe, obj["nested"].nest_squared.maybe, obj.nested["nest_squared"].maybe)

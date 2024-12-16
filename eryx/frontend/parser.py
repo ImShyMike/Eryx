@@ -46,7 +46,7 @@ class Parser:
         token = self.next()
         if token.type != token_type:
             raise RuntimeError(
-                f"Parser error on line {token.line}: "
+                f"Parser error on position {token.position}: "
                 f"\n{error} {token} - Expected: {token_type}"
             )
         return token

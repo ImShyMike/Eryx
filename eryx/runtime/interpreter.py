@@ -10,8 +10,9 @@ from eryx.frontend.ast import (
     ObjectLiteral,
     Program,
     Statement,
-    VariableDeclaration,
     StringLiteral,
+    VariableDeclaration,
+    MemberExpression,
 )
 from eryx.runtime.environment import Environment
 from eryx.runtime.values import (
@@ -76,6 +77,28 @@ def eval_binary_expression(
         return eval_numeric_binary_expression(left, right, binop.operator)
 
     return NullValue()
+
+
+def eval_member_expression(
+    member: MemberExpression, environment: Environment
+) -> RuntimeValue:
+    """Evaluate a member expression."""
+    object_value = evaluate(member.object, environment)
+
+    if member.computed:
+        property_value = evaluate(member.property, environment)
+        if not isinstance(property_value, StringValue):
+            raise RuntimeError("Expected a string as a property.")
+        property_value = property_value.value
+    else:
+        if not isinstance(member.property, Identifier):
+            raise RuntimeError("Expected an identifier as a property.")
+        property_value = member.property.symbol
+
+    if isinstance(object_value, ObjectValue):
+        return object_value.properties.get(property_value, NullValue())
+
+    raise RuntimeError("Cannot access property of a non-object value.")
 
 
 def eval_numeric_binary_expression(
@@ -184,6 +207,8 @@ def evaluate(ast_node: Statement, environment: Environment) -> RuntimeValue:
         return eval_variable_declaration(ast_node, environment)
     elif node_type == FunctionDeclaration:
         return eval_function_declaration(ast_node, environment)
+    elif node_type == MemberExpression:
+        return eval_member_expression(ast_node, environment)	
     elif node_type == ObjectLiteral:
         return eval_object_expression(ast_node, environment)
     else:

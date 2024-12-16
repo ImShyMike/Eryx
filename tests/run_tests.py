@@ -9,15 +9,16 @@ import pytest
 current_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(os.path.dirname(current_path)))
 
-from eryx.frontend.parser import Parser
-from eryx.runtime.environment import Environment
-from eryx.runtime.interpreter import evaluate
-from eryx.utils.pretty_print import pprint
-from eryx.__main__ import CURRENT_VERSION
+# pylint: disable=wrong-import-position
+from eryx.__init__ import CURRENT_VERSION  # noqa: E402
+from eryx.frontend.parser import Parser  # noqa: E402
+from eryx.runtime.environment import Environment  # noqa: E402
+from eryx.runtime.interpreter import evaluate  # noqa: E402
+from eryx.utils.pretty_print import pprint  # noqa: E402
+# pylint: enable=wrong-import-position
 
-environment = Environment()
-parser = Parser()
-os.makedirs(os.path.join(current_path, "tests"), exist_ok=True)
+os.makedirs(os.path.join(current_path, "test"), exist_ok=True)
+base_folder = os.path.join(current_path, "test")
 
 
 def read_file(file_path: str) -> str:
@@ -34,23 +35,36 @@ def read_info(file_path: str) -> dict:
             "version": lines[0].split(":")[1].strip(),
             "name": lines[1].split(":")[1].strip(),
             "description": lines[2].split(":")[1].strip(),
-            "expected_error": lines[3].split(":")[1].strip().lower() == "true",
         }
     return info
 
 
 @pytest.mark.parametrize(
-    "test_folder", [f for f in os.listdir(os.path.join(current_path, "tests")) if os.path.isdir(f)]
+    "test_folder",
+    [
+        f
+        for f in os.listdir(os.path.join(current_path, "test"))
+        if os.path.isdir(os.path.join(current_path, "test", f))
+    ],
 )
 def test_eryx_code(test_folder: str, capfd: pytest.fixture):
     """Test Eryx code by parsing, producing the AST, evaluating it, and checking output."""
 
+    environment = Environment()
+    parser = Parser()
+
     # Get the paths to the test files
-    eryx_code_path = os.path.join(test_folder, f"{test_folder}.eryx")
-    eval_expected_path = os.path.join(test_folder, f"{test_folder}.eryx.eval")
-    ast_expected_path = os.path.join(test_folder, f"{test_folder}.eryx.ast")
-    output_expected_path = os.path.join(test_folder, f"{test_folder}.eryx.output")
-    info_path = os.path.join(test_folder, "info.test")
+    eryx_code_path = os.path.join(base_folder, test_folder, f"{test_folder}.eryx")
+    eval_expected_path = os.path.join(
+        base_folder, test_folder, f"{test_folder}.eryx.eval"
+    )
+    ast_expected_path = os.path.join(
+        base_folder, test_folder, f"{test_folder}.eryx.ast"
+    )
+    output_expected_path = os.path.join(
+        base_folder, test_folder, f"{test_folder}.eryx.output"
+    )
+    info_path = os.path.join(base_folder, test_folder, "test.info")
 
     # Read the info file
     info = read_info(info_path)
@@ -67,11 +81,13 @@ def test_eryx_code(test_folder: str, capfd: pytest.fixture):
 
     expected_ast = read_file(ast_expected_path)
     assert (
-        str(test_ast) == expected_ast
+        pprint(test_ast, use_color=False, print_output=False) == expected_ast
     ), f"AST for {test_folder} does not match expected result."
 
     # Step 2: Evaluate the AST
-    test_result = evaluate(test_ast, environment)
+    test_result = pprint(
+        evaluate(test_ast, environment), use_color=False, print_output=False
+    )
 
     expected_eval = read_file(eval_expected_path)
     assert (
@@ -85,12 +101,6 @@ def test_eryx_code(test_folder: str, capfd: pytest.fixture):
         captured.out.strip() == expected_output
     ), f"Printed output for {test_folder} does not match expected output."
 
-    # Step 4: Check if expected behavior is an error
-    if info["expected_error"]:
-        assert isinstance(
-            test_result, Exception
-        ), f"Expected error in {test_folder}, but got result: {test_result}"
-    else:
-        assert not isinstance(
-            test_result, Exception
-        ), f"Unexpected error in {test_folder}: {test_result}"
+
+if __name__ == "__main__":
+    pytest.main(["-v", __file__])

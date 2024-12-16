@@ -1,0 +1,22 @@
+let int = 10;
+
+const float = 15.5;
+
+let neg_num = -100;
+
+let str = "abc";
+
+const obj = {
+    int,
+    float,
+    neg_num,
+    abc_str: str,
+    nested: {
+        nested_val: 100,
+        nest_squared: {
+            maybe: "works"
+        }
+    }
+};
+
+print(obj)

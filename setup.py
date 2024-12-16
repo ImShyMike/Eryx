@@ -9,11 +9,11 @@ setup(
     long_description=open("README.md", encoding="utf8").read(),
     long_description_content_type="text/markdown",
     install_requires=[
-        "colorama", # For the pretty printing
+        "colorama",  # For the pretty printing
     ],
     extras_require={
         "playground": [
-            "flask",   # Web-based playground dependency
+            "flask",  # Web-based playground dependency
         ],
         "tests": [
             "pytest",  # Testing dependency

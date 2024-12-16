@@ -82,14 +82,11 @@ def get_value(value: RuntimeValue, inside_array: bool = False) -> object:
     """Get the value of a RuntimeValue."""
     if isinstance(value, NullValue):
         return None
-    if (
-        isinstance(value, BooleanValue)
-        or isinstance(value, NumberValue)
-    ):
+    if isinstance(value, BooleanValue) or isinstance(value, NumberValue):
         return value.value
     if isinstance(value, StringValue):
         if inside_array:
-            return "\"" + value.value + "\""
+            return '"' + value.value + '"'
         else:
             return value.value
     if isinstance(value, ObjectValue):

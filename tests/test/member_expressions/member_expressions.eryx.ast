@@ -1,0 +1,144 @@
+Program(
+  body: [    
+    VariableDeclaration(
+      constant: True,
+      identifier: Identifier(
+        symbol: "obj"
+      ),
+      value: ObjectLiteral(
+        properties: [          
+          Property(
+            key: "nested",
+            value: ObjectLiteral(
+              properties: [                
+                Property(
+                  key: "nested_val",
+                  value: NumericLiteral(
+                    value: 100.0
+                  )
+                ),
+                
+                Property(
+                  key: "nest_squared",
+                  value: ObjectLiteral(
+                    properties: [                      
+                      Property(
+                        key: "maybe",
+                        value: StringLiteral(
+                          value: "works"
+                        )
+                      )
+                    ]
+                  )
+                )
+              ]
+            )
+          )
+        ]
+      )
+    ),
+    
+    VariableDeclaration(
+      constant: False,
+      identifier: Identifier(
+        symbol: "key"
+      ),
+      value: StringLiteral(
+        value: "nested"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        MemberExpression(
+          computed: False,
+          object: Identifier(
+            symbol: "obj"
+          ),
+          property: Identifier(
+            symbol: "nested"
+          )
+        ),
+        
+        MemberExpression(
+          computed: True,
+          object: Identifier(
+            symbol: "obj"
+          ),
+          property: Identifier(
+            symbol: "key"
+          )
+        ),
+        
+        MemberExpression(
+          computed: False,
+          object: MemberExpression(
+            computed: False,
+            object: MemberExpression(
+              computed: False,
+              object: Identifier(
+                symbol: "obj"
+              ),
+              property: Identifier(
+                symbol: "nested"
+              )
+            ),
+            property: Identifier(
+              symbol: "nest_squared"
+            )
+          ),
+          property: Identifier(
+            symbol: "maybe"
+          )
+        ),
+        
+        MemberExpression(
+          computed: False,
+          object: MemberExpression(
+            computed: False,
+            object: MemberExpression(
+              computed: True,
+              object: Identifier(
+                symbol: "obj"
+              ),
+              property: StringLiteral(
+                value: "nested"
+              )
+            ),
+            property: Identifier(
+              symbol: "nest_squared"
+            )
+          ),
+          property: Identifier(
+            symbol: "maybe"
+          )
+        ),
+        
+        MemberExpression(
+          computed: False,
+          object: MemberExpression(
+            computed: True,
+            object: MemberExpression(
+              computed: False,
+              object: Identifier(
+                symbol: "obj"
+              ),
+              property: Identifier(
+                symbol: "nested"
+              )
+            ),
+            property: StringLiteral(
+              value: "nest_squared"
+            )
+          ),
+          property: Identifier(
+            symbol: "maybe"
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    )
+  ]
+)
