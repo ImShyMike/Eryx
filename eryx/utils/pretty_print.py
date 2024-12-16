@@ -111,7 +111,11 @@ def handle_array(
                 )
             else:
                 # Else add the value with color
-                string += (get_color(val) if use_color else "") + str(item) + (Fore.WHITE if use_color else "")
+                string += (
+                    (get_color(val) if use_color else "")
+                    + str(item)
+                    + (Fore.WHITE if use_color else "")
+                )
     if use_newlines:
         string += f"\n{' '*(indent*(_tabs))}"
     string += "}" if is_set else "]" if not is_tuple else ")"
@@ -175,7 +179,11 @@ def handle_dict(val, use_color, use_newlines, indent, _tabs):
             )
         else:
             # Else add the value with color
-            string += (get_color(value) if use_color else "") + str(value) + (Fore.WHITE if use_color else "")
+            string += (
+                (get_color(value) if use_color else "")
+                + str(value)
+                + (Fore.WHITE if use_color else "")
+            )
 
         if use_color:
             string += Fore.WHITE
@@ -289,7 +297,11 @@ def pprint(
             )
         else:
             # Else add the value with color
-            string += (get_color(val) if use_color else "") + str(val) + (Fore.WHITE if use_color else "")
+            string += (
+                (get_color(val) if use_color else "")
+                + str(val)
+                + (Fore.WHITE if use_color else "")
+            )
 
         # Reset color
         if use_color:

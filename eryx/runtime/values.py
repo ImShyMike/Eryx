@@ -1,89 +1,73 @@
 """Values and their types in the runtime environment."""
 
-from typing import TYPE_CHECKING
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Dict, List
 
 if TYPE_CHECKING:
     from frontend.ast import Statement
     from runtime.environment import Environment
 
 
+@dataclass()
 class RuntimeValue:
     """Base class for all runtime values."""
 
-    def __init__(self) -> None:
-        pass
 
-
+@dataclass()
 class NullValue(RuntimeValue):
     """Null value class."""
 
-    def __init__(self) -> None:
-        super().__init__()
-        self.value = None
+    value: None = None
 
 
+@dataclass()
 class NumberValue(RuntimeValue):
     """Number value class."""
 
-    def __init__(self, number: float) -> None:
-        super().__init__()
-        self.value = number
+    value: float
 
 
+@dataclass()
 class BooleanValue(RuntimeValue):
     """Boolean value class."""
 
-    def __init__(self, value: bool = True) -> None:
-        super().__init__()
-        self.value = value
+    value: bool
 
 
+@dataclass()
 class ObjectValue(RuntimeValue):
     """Object value class."""
 
-    def __init__(self, properties: dict[str, RuntimeValue]) -> None:
-        super().__init__()
-        self.properties = properties
+    properties: Dict[str, RuntimeValue]
 
 
+@dataclass()
 class FunctionCall:
     """Function call class."""
 
-    def __init__(
-        self, arguments: list[RuntimeValue], environment: EnvironmentError
-    ) -> RuntimeValue:
-        self.arguments = arguments
-        self.environment = environment
+    arguments: List[RuntimeValue]
+    environment: "Environment"
 
 
+@dataclass()
 class NativeFunctionValue(RuntimeValue):
     """Native function value class."""
 
-    def __init__(self, call: FunctionCall) -> None:
-        super().__init__()
-        self.call = call
+    call: FunctionCall
 
 
+@dataclass()
 class FunctionValue(RuntimeValue):
     """Function value class."""
 
-    def __init__(
-        self,
-        name: str,
-        arguments: list[str],
-        environment: "Environment",
-        body: list["Statement"],
-    ) -> None:
-        super().__init__()
-        self.name = name
-        self.arguments = arguments
-        self.environment = environment
-        self.body = body
+    name: str
+    arguments: List[str]
+    environment: "Environment"
+    body: List["Statement"]
 
 
+@dataclass()
 class StringValue(RuntimeValue):
     """String value class."""
 
-    def __init__(self, value: str) -> None:
-        super().__init__()
-        self.value = value
+    value: str

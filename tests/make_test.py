@@ -1,3 +1,5 @@
+"""Script to generate test files."""
+
 import os
 import sys
 import tkinter as tk
@@ -8,11 +10,13 @@ from tkinter import messagebox
 current_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(os.path.dirname(current_path)))
 
-from eryx.__init__ import CURRENT_VERSION
-from eryx.frontend.parser import Parser
-from eryx.runtime.environment import Environment
-from eryx.runtime.interpreter import evaluate
-from eryx.utils.pretty_print import pprint
+# pylint: disable=wrong-import-position
+from eryx.__init__ import CURRENT_VERSION  # noqa: E402
+from eryx.frontend.parser import Parser  # noqa: E402
+from eryx.runtime.environment import Environment  # noqa: E402
+from eryx.runtime.interpreter import evaluate  # noqa: E402
+from eryx.utils.pretty_print import pprint  # noqa: E402
+# pylint: enable=wrong-import-position
 
 os.makedirs(os.path.join(current_path, "test"), exist_ok=True)
 

@@ -1,7 +1,12 @@
 """Lexer for the fronted."""
 
+from dataclasses import dataclass
 from enum import Enum, auto
+from typing import Any, Union
 
+from colorama import init, Fore
+
+init(autoreset=True)
 
 class TokenType(Enum):
     """All token types in the language."""
@@ -34,20 +39,13 @@ class TokenType(Enum):
     EOF = auto()
 
 
+@dataclass()
 class Token:
     """Token class."""
 
-    def __init__(self, value, token_type: TokenType, position: int | tuple[int, int]) -> None:
-        self.value = value
-        self.type = token_type
-        self.position = position
-
-    def __repr__(self) -> str:
-        return (
-            "{"
-            + f' "value": "{self.value}", "type": {self.type.name}, "position", {self.position} '
-            + "}"
-        )
+    value: Any
+    type: TokenType
+    position: Union[int, tuple[int, int]]
 
     def to_dict(self) -> dict:
         """Return the token as a dictionary."""
@@ -71,11 +69,25 @@ def is_skipable(char: str) -> bool:
     )  # Skip spaces, newlines, tabs, and carriage returns
 
 
-def get_line(source_code: str, src: list[str]) -> int:
-    """Get the line of the current token."""
-    line = source_code.count("\n", 0, len(source_code) - len(src)) + 1
+def position_to_line_column(source_code: str, position: int) -> tuple[int, int]:
+    """Convert a position to a line and column number."""
+    # Get the substring up to the given position
+    substring = source_code[:position]
 
-    return line
+    # Count the number of newline characters to determine the line
+    line = substring.count("\n") + 1
+
+    # Find the column by looking for the last newline
+    last_newline_pos = substring.rfind("\n")
+    column = position - last_newline_pos if last_newline_pos != -1 else position + 1
+
+    return (line, column)
+
+def get_line_string(source_code: str, line: int) -> str:
+    """Get the line string from the source code."""
+    lines = source_code.split("\n")
+
+    return lines[line - 1]
 
 
 def tokenize(source_code: str) -> list[Token]:
@@ -86,43 +98,45 @@ def tokenize(source_code: str) -> list[Token]:
 
     while len(src) > 0:
         negative_num = False
-        starting_length = len(src)
         current_pos = source_size - len(src)
-        if src[0] == "(":
-            tokens.append(Token(src.pop(0), TokenType.OPEN_PAREN, current_pos))
-        elif src[0] == ")":
-            tokens.append(Token(src.pop(0), TokenType.CLOSE_PAREN, current_pos))
-        elif src[0] == "{":
-            tokens.append(Token(src.pop(0), TokenType.OPEN_BRACE, current_pos))
-        elif src[0] == "}":
-            tokens.append(Token(src.pop(0), TokenType.CLOSE_BRACE, current_pos))
-        elif src[0] == "[":
-            tokens.append(Token(src.pop(0), TokenType.OPEN_BRACKET, current_pos))
-        elif src[0] == "]":
-            tokens.append(Token(src.pop(0), TokenType.CLOSE_BRACKET, current_pos))
-        elif src[0] in ("+", "-", "*", "/", "%"):
-            if src[0] == "-" and len(src) > 0 and src[1].isdigit():
-                negative_num = True  # Keep size the same
-            else:
-                tokens.append(Token(src.pop(0), TokenType.BINARY_OPERATOR, current_pos))
-        elif src[0] == "=":
-            tokens.append(Token(src.pop(0), TokenType.EQUALS, current_pos))
-        elif src[0] == ";":
-            tokens.append(Token(src.pop(0), TokenType.SEMICOLON, current_pos))
-        elif src[0] == ",":
-            tokens.append(Token(src.pop(0), TokenType.COMMA, current_pos))
-        elif src[0] == ":":
-            tokens.append(Token(src.pop(0), TokenType.COLON, current_pos))
-        elif src[0] == ".":
-            tokens.append(Token(src.pop(0), TokenType.DOT, current_pos))
 
-        # If the length of the source code has changed, skip the rest of the loop
-        if starting_length != len(src):
+        single_char_tokens = {
+            "(": TokenType.OPEN_PAREN,
+            ")": TokenType.CLOSE_PAREN,
+            "{": TokenType.OPEN_BRACE,
+            "}": TokenType.CLOSE_BRACE,
+            "[": TokenType.OPEN_BRACKET,
+            "]": TokenType.CLOSE_BRACKET,
+            "+": TokenType.BINARY_OPERATOR,
+            "*": TokenType.BINARY_OPERATOR,
+            "/": TokenType.BINARY_OPERATOR,
+            "%": TokenType.BINARY_OPERATOR,
+            "=": TokenType.EQUALS,
+            ";": TokenType.SEMICOLON,
+            ",": TokenType.COMMA,
+            ":": TokenType.COLON,
+            ".": TokenType.DOT,
+        }
+
+        # Check for single character tokens first
+        if src[0] in single_char_tokens:
+            token = src.pop(0)
+            tokens.append(Token(token, single_char_tokens[token], current_pos))
             continue
 
-        if negative_num:
-            src.pop(0)  # Remove the negative sign from negative numbers
+        # If its not a single character token, check for negative numbers
+        if src[0] == "-":
+            if len(src) > 0 and src[1].isdigit():
+                negative_num = True
+            else:
+                tokens.append(Token(src.pop(0), TokenType.BINARY_OPERATOR, current_pos))
+                continue
 
+        # If its a negative number, remove the negative sign
+        if negative_num:
+            src.pop(0)
+
+        # Check for multi character tokens
         if src[0].isdigit():  # Number
             start_pos = current_pos
             end_pos = start_pos + (1 if negative_num else 0)
@@ -150,11 +164,15 @@ def tokenize(source_code: str) -> list[Token]:
                 identifier += src.pop(0)
 
             if identifier in KEYWORDS:
-                tokens.append(Token(identifier, KEYWORDS[identifier], (start_pos, end_pos)))
+                tokens.append(
+                    Token(identifier, KEYWORDS[identifier], (start_pos, end_pos))
+                )
             else:
-                tokens.append(Token(identifier, TokenType.IDENTIFIER, (start_pos, end_pos)))
+                tokens.append(
+                    Token(identifier, TokenType.IDENTIFIER, (start_pos, end_pos))
+                )
 
-        elif is_skipable(src[0]):
+        elif is_skipable(src[0]):  # Skip spaces, newlines, tabs, and carriage returns
             src.pop(0)
 
         elif src[0] == '"':  # String
@@ -169,10 +187,14 @@ def tokenize(source_code: str) -> list[Token]:
             tokens.append(Token(string, TokenType.STRING, (start_pos, end_pos + 1)))
 
         else:
-            print(f"Character not found in source: {src.pop(0)}")
+            current_line, current_col = position_to_line_column(source_code, current_pos)
+            line = get_line_string(source_code, current_line)
+            current_line_str = str(current_line).rjust(3)
+            print(f"\n{Fore.CYAN}{current_line_str}{Fore.WHITE} {line}")
+            print(Fore.YELLOW + "^".rjust(current_col + len(current_line_str) + 1) + Fore.WHITE)
+            print(f"{Fore.RED}SyntaxError{Fore.WHITE}: Unknown character found in source '{Fore.MAGENTA}{src.pop(0)}{Fore.WHITE}'")
             exit(1)
 
-    current_pos = source_size - len(src)
-    tokens.append(Token("EOF", TokenType.EOF, (current_pos, current_pos)))
+    tokens.append(Token("EOF", TokenType.EOF, source_size - len(src)))
 
     return tokens

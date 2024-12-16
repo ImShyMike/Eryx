@@ -113,7 +113,8 @@ def eval_numeric_binary_expression(
         case "*":
             return NumberValue(left.value * right.value)
         case "/":
-            # TODO: Handle division by zero
+            if right.value == 0:
+                raise RuntimeError("Division by zero.")
             return NumberValue(left.value / right.value)
         case "%":
             return NumberValue(left.value % right.value)
@@ -170,7 +171,6 @@ def eval_call_expression(
         function_environment = Environment(func.environment)
 
         for i, function_argument in enumerate(func.arguments):
-            # TODO: Bounds check
             function_environment.declare_variable(
                 function_argument, arguments[i], False
             )
@@ -188,30 +188,30 @@ def eval_call_expression(
 # MAIN
 def evaluate(ast_node: Statement, environment: Environment) -> RuntimeValue:
     """Evaluate an AST node."""
-    node_type = type(ast_node)
-    if node_type == NumericLiteral:
-        return NumberValue(ast_node.value)
-    elif node_type == StringLiteral:
-        return StringValue(ast_node.value)
-    elif node_type == Identifier:
-        return eval_identifier(ast_node, environment)
-    elif node_type == BinaryExpression:
-        return eval_binary_expression(ast_node, environment)
-    elif node_type == AssignmentExpression:
-        return eval_assignment_expression(ast_node, environment)
-    elif node_type == CallExpression:
-        return eval_call_expression(ast_node, environment)
-    elif node_type == Program:
-        return eval_program(ast_node, environment)
-    elif node_type == VariableDeclaration:
-        return eval_variable_declaration(ast_node, environment)
-    elif node_type == FunctionDeclaration:
-        return eval_function_declaration(ast_node, environment)
-    elif node_type == MemberExpression:
-        return eval_member_expression(ast_node, environment)	
-    elif node_type == ObjectLiteral:
-        return eval_object_expression(ast_node, environment)
-    else:
-        print("=== AST node ERROR ===")
-        pprint(ast_node)
-        raise RuntimeError("Unknown AST node.")
+    match ast_node:
+        case NumericLiteral():
+            return NumberValue(ast_node.value)
+        case StringLiteral():
+            return StringValue(ast_node.value)
+        case Identifier():
+            return eval_identifier(ast_node, environment)
+        case BinaryExpression():
+            return eval_binary_expression(ast_node, environment)
+        case AssignmentExpression():
+            return eval_assignment_expression(ast_node, environment)
+        case CallExpression():
+            return eval_call_expression(ast_node, environment)
+        case Program():
+            return eval_program(ast_node, environment)
+        case VariableDeclaration():
+            return eval_variable_declaration(ast_node, environment)
+        case FunctionDeclaration():
+            return eval_function_declaration(ast_node, environment)
+        case MemberExpression():
+            return eval_member_expression(ast_node, environment)
+        case ObjectLiteral():
+            return eval_object_expression(ast_node, environment)
+        case _:
+            print("=== AST node ERROR ===")
+            pprint(ast_node)
+            raise RuntimeError("Unknown AST node.")

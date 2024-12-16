@@ -1,124 +1,109 @@
 """Abstract syntax tree (AST) for the frontend."""
 
+from dataclasses import dataclass
+from typing import List, Union
 
+
+@dataclass()
 class Statement:
     """Base class for all statements in the AST."""
 
-    def __init__(self) -> None:
-        pass
 
-
+@dataclass()
 class Program(Statement):
     """Program class."""
 
-    def __init__(self, body: list[Statement]) -> None:
-        super().__init__()
-        self.body = body
+    body: List[Statement]
 
 
+@dataclass()
 class Expression(Statement):
     """Expression base class."""
 
-    def __init__(self) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__()
 
-
+@dataclass()
 class AssignmentExpression(Expression):
     """Assignment expression class."""
 
-    def __init__(self, assigne: Expression, value: Expression) -> None:
-        super().__init__()
-        self.assigne = assigne
-        self.value = value
+    assigne: Expression
+    value: Expression
 
 
+@dataclass()
 class BinaryExpression(Expression):
     """Binary expression class."""
 
-    def __init__(self, left: Expression, operator: str, right: Expression) -> None:
-        super().__init__()
-        self.left = left
-        self.operator = operator
-        self.right = right
+    left: Expression
+    operator: str
+    right: Expression
 
 
+@dataclass()
 class Identifier(Expression):
     """Identifier class."""
 
-    def __init__(self, symbol: str) -> None:
-        super().__init__()
-        self.symbol = symbol
+    symbol: str
 
 
+@dataclass()
 class VariableDeclaration(Statement):
     """Variable declaration class."""
 
-    def __init__(
-        self, constant: bool, identifier: Identifier, value: Expression = None
-    ) -> None:
-        super().__init__()
-        self.constant = constant
-        self.identifier = identifier
-        self.value = value
+    constant: bool
+    identifier: Identifier
+    value: Union[Expression, None] = None
 
 
+@dataclass()
 class NumericLiteral(Expression):
     """Numeric literal class."""
 
-    def __init__(self, value: int) -> None:
-        super().__init__()
-        self.value = value
+    value: int
 
 
+@dataclass()
 class StringLiteral(Expression):
     """String literal class."""
 
-    def __init__(self, value: str) -> None:
-        super().__init__()
-        self.value = str(value)
+    value: str
 
 
+@dataclass()
 class Property(Expression):
     """Property class."""
 
-    def __init__(self, key: str, value: Expression = None) -> None:
-        super().__init__()
-        self.key = key
-        self.value = value
+    key: str
+    value: Union[Expression, None] = None
 
 
+@dataclass()
 class ObjectLiteral(Expression):
     """Object literal class."""
 
-    def __init__(self, properties: list[Property]) -> None:
-        super().__init__()
-        self.properties = properties
+    properties: List[Property]
 
 
+@dataclass()
 class CallExpression(Expression):
     """Binary expression class."""
 
-    def __init__(self, arguments: list[Expression], caller: Expression) -> None:
-        super().__init__()
-        self.arguments = arguments
-        self.caller = caller
+    arguments: List[Expression]
+    caller: Expression
 
 
+@dataclass()
 class MemberExpression(Expression):
     """Binary expression class."""
 
-    def __init__(self, obj: Expression, proprty: Expression, computed: bool) -> None:
-        super().__init__()
-        self.object = obj
-        self.property = proprty
-        self.computed = computed
+    object: Expression
+    property: Expression
+    computed: bool
 
 
+@dataclass()
 class FunctionDeclaration(Statement):
     """Function declaration class."""
 
-    def __init__(self, name: str, arguments: list[str], body: Statement) -> None:
-        super().__init__()
-        self.name = name
-        self.arguments = arguments
-        self.body = body
+    name: str
+    arguments: List[str]
+    body: Statement

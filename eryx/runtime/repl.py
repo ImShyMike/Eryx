@@ -40,7 +40,9 @@ def start_repl(
                 try:
                     tokenized = tokenize(source_code)
                     print("Tokenized:")
-                    print(json.dumps([token.to_dict() for token in tokenized], indent=2))
+                    print(
+                        json.dumps([token.to_dict() for token in tokenized], indent=2)
+                    )
                 except RuntimeError as e:
                     print(f"{Fore.RED}Tokenizer Error: {e}{Fore.WHITE}")
                     return

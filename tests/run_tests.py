@@ -1,4 +1,4 @@
-"""Run tests for the multiple components."""
+"""Script to run all tests using pytest."""
 
 import os
 import sys
