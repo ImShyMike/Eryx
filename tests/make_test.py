@@ -14,7 +14,7 @@ from eryx.runtime.environment import Environment
 from eryx.runtime.interpreter import evaluate
 from eryx.utils.pretty_print import pprint
 
-os.makedirs(os.path.join(current_path, "tests"), exist_ok=True)
+os.makedirs(os.path.join(current_path, "test"), exist_ok=True)
 
 
 def generate_ast(code):
@@ -62,18 +62,6 @@ def create_test_files(code, description, test_name):
             f.write(pprint(test_ast, print_output=False, use_color=False))
         except RuntimeError as e:
             print(f"Parser Error: {e}")
-            os.removedirs(os.path.join(current_path, "test", test_name))
-            return
-
-    # Evaluate the AST
-    test_result = evaluate_code(test_ast, Environment())
-    with open(
-        os.path.join(test_folder, f"{test_name}.eryx.eval"), "w", encoding="utf8"
-    ) as f:
-        try:
-            f.write(pprint(test_result, print_output=False, use_color=False))
-        except RuntimeError as e:
-            print(f"Runtime Error: {e}")
             os.removedirs(os.path.join(current_path, "test", test_name))
             return
 

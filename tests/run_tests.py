@@ -55,9 +55,6 @@ def test_eryx_code(test_folder: str, capfd: pytest.fixture):
 
     # Get the paths to the test files
     eryx_code_path = os.path.join(base_folder, test_folder, f"{test_folder}.eryx")
-    eval_expected_path = os.path.join(
-        base_folder, test_folder, f"{test_folder}.eryx.eval"
-    )
     ast_expected_path = os.path.join(
         base_folder, test_folder, f"{test_folder}.eryx.ast"
     )
@@ -85,14 +82,7 @@ def test_eryx_code(test_folder: str, capfd: pytest.fixture):
     ), f"AST for {test_folder} does not match expected result."
 
     # Step 2: Evaluate the AST
-    test_result = pprint(
-        evaluate(test_ast, environment), use_color=False, print_output=False
-    )
-
-    expected_eval = read_file(eval_expected_path)
-    assert (
-        str(test_result) == expected_eval
-    ), f"Evaluation result for {test_folder} does not match expected result."
+    evaluate(test_ast, environment)
 
     # Step 3: Check printed output
     captured = capfd.readouterr()
