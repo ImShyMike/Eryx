@@ -3,7 +3,12 @@
 import os
 import sys
 
-import pytest
+
+try:
+    import pytest
+except ImportError:
+    print("Please install with \"pip install eryx[tests]\" to run the tests.")
+    sys.exit(1)
 
 # Add the parent directory to the sys.path for imports
 current_path = os.path.dirname(os.path.abspath(__file__))

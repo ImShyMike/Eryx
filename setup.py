@@ -13,7 +13,7 @@ setup(
     ],
     extras_require={
         "playground": [
-            "flask",  # Web-based playground dependency
+            "flask",  # Web playground dependency
         ],
         "tests": [
             "pytest",  # Testing dependency

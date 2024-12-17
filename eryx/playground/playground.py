@@ -3,12 +3,21 @@
 import io
 import json
 import re
+import sys
 import uuid
 from contextlib import redirect_stdout
 
-from flask import Flask, jsonify, render_template, request
+try:
+    from flask import Flask, jsonify, render_template, request
+except ImportError:
+    print(
+        'Please install with "pip install eryx[playground]" to use the web playground.'
+    )
+    sys.exit(1)
+
 
 from eryx.__init__ import CURRENT_VERSION
+from eryx.frontend.lexer import tokenize
 from eryx.frontend.parser import Parser
 from eryx.runtime.environment import Environment
 from eryx.runtime.interpreter import evaluate
@@ -37,6 +46,7 @@ LIGHT_TEMPLATE = '<span style="color: rgb{}">'
 
 
 def ansi_to_html(text):
+    """Format ANSI color codes to HTML."""
     text = text.replace("[m", "</span>")
 
     def single_sub(match):
@@ -90,9 +100,9 @@ def ast():
     )
 
 
-@app.route("/eval", methods=["POST"])
-def evaluate_route():
-    """Eval route."""
+@app.route("/result", methods=["POST"])
+def result_route():
+    """Result route."""
     request_json = request.get_json()
     source_code = request_json["source_code"]
     try:
@@ -139,6 +149,24 @@ def run():
     except RuntimeError as e:
         return jsonify({"error": str(e)})
     return jsonify({"result": ansi_to_html(captured_output).replace("\n", "<br>")})
+
+
+@app.route("/tokenize", methods=["POST"])
+def tokenize_route():
+    """Run route."""
+    request_json = request.get_json()
+    source_code = request_json["source_code"]
+    try:
+        tokens = tokenize(source_code)
+    except RuntimeError as e:
+        return jsonify({"error": str(e)})
+    return jsonify(
+        {
+            "result": json.dumps([token.to_dict() for token in tokens], indent=2).replace(
+                "\n", "<br>"
+            )
+        }
+    )
 
 
 @app.route("/repl", methods=["POST"])

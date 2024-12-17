@@ -1,5 +1,6 @@
 """Lexer for the fronted."""
 
+import sys
 from enum import Enum, auto
 from typing import Any, Union
 
@@ -271,7 +272,7 @@ def tokenize(source_code: str) -> list[Token]:
                 f"{Fore.RED}SyntaxError{Fore.WHITE}: Unknown character found in source "
                 f"'{Fore.MAGENTA}{src.pop(0)}{Fore.WHITE}'"
             )
-            exit(1)
+            sys.exit(1)
 
     tokens.append(Token("EOF", TokenType.EOF, source_size - len(src)))
 
