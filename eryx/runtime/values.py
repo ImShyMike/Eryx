@@ -71,3 +71,10 @@ class StringValue(RuntimeValue):
     """String value class."""
 
     value: str
+
+
+@dataclass()
+class ArrayValue(RuntimeValue):
+    """Array value class."""
+
+    elements: List[RuntimeValue]

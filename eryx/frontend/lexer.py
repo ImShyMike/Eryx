@@ -29,6 +29,10 @@ class TokenType(Enum):
     LET = auto()
     CONST = auto()
     FUNC = auto()
+    IF = auto()
+    ELSE = auto()
+    RETURN = auto()
+
     EQUALS = auto()
 
     COMMA = auto()
@@ -42,10 +46,15 @@ class TokenType(Enum):
 class Token:
     """Token class."""
 
-    def __init__(self, value: Any, type: TokenType, position: Union[int, tuple[int, int]]):
+    def __init__(
+        self, value: Any, token_type: TokenType, position: Union[int, tuple[int, int]]
+    ):
         self.value = value
-        self.type = type
+        self.type = token_type
         self.position = position
+
+    def __repr__(self) -> str:
+        return f'Token("{self.value}", {self.type.name}, {self.position})'
 
     def to_dict(self) -> dict:
         """Return the token as a dictionary."""
@@ -56,7 +65,14 @@ class Token:
         }
 
 
-KEYWORDS = {"let": TokenType.LET, "const": TokenType.CONST, "func": TokenType.FUNC}
+KEYWORDS = {
+    "let": TokenType.LET,
+    "const": TokenType.CONST,
+    "func": TokenType.FUNC,
+    "if": TokenType.IF,
+    "else": TokenType.ELSE,
+    "return": TokenType.RETURN,
+}
 
 
 def is_skipable(char: str) -> bool:
@@ -112,7 +128,6 @@ def tokenize(source_code: str) -> list[Token]:
             "*": TokenType.BINARY_OPERATOR,
             "/": TokenType.BINARY_OPERATOR,
             "%": TokenType.BINARY_OPERATOR,
-            "=": TokenType.EQUALS,
             ";": TokenType.SEMICOLON,
             ",": TokenType.COMMA,
             ":": TokenType.COLON,
@@ -187,7 +202,60 @@ def tokenize(source_code: str) -> list[Token]:
             src.pop(0)
             tokens.append(Token(string, TokenType.STRING, (start_pos, end_pos + 1)))
 
+        elif src[0] in ("=", "<", ">"):  # Binary operator
+            if len(src) > 1:
+                if src[0] == "=" and src[1] == "=":
+                    tokens.append(
+                        Token(
+                            "==",
+                            TokenType.BINARY_OPERATOR,
+                            (current_pos, current_pos + 1),
+                        )
+                    )
+                    src.pop(0)
+                    src.pop(0)
+                    continue
+
+                if src[0] == "<" and src[1] == "=":
+                    tokens.append(
+                        Token(
+                            "<=",
+                            TokenType.BINARY_OPERATOR,
+                            (current_pos, current_pos + 1),
+                        )
+                    )
+                    src.pop(0)
+                    src.pop(0)
+                    continue
+
+                if src[0] == ">" and src[1] == "=":
+                    tokens.append(
+                        Token(
+                            ">=",
+                            TokenType.BINARY_OPERATOR,
+                            (current_pos, current_pos + 1),
+                        )
+                    )
+                    src.pop(0)
+                    src.pop(0)
+                    continue
+
+            if src[0] in ("<", ">"):
+                tokens.append(Token(src.pop(0), TokenType.BINARY_OPERATOR, current_pos))
+                continue
+
+            if src[0] == "=":
+                tokens.append(Token(src.pop(0), TokenType.EQUALS, current_pos))
+
+        elif src[0] == "!" and len(src) > 1 and src[1] == "=":  # Binary operator
+            tokens.append(
+                Token("!=", TokenType.BINARY_OPERATOR, (current_pos, current_pos + 1))
+            )
+            src.pop(0)
+            src.pop(0)
+
         else:
+            # If this is reached, its an unknown character
             current_line, current_col = position_to_line_column(
                 source_code, current_pos
             )

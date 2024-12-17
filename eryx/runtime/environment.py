@@ -3,7 +3,9 @@
 import time
 
 from eryx.runtime.values import (
+    ArrayValue,
     BooleanValue,
+    FunctionValue,
     NativeFunctionValue,
     NullValue,
     NumberValue,
@@ -89,6 +91,16 @@ def get_value(value: RuntimeValue, inside_array: bool = False) -> object:
             return '"' + value.value + '"'
         else:
             return value.value
+    if isinstance(value, NativeFunctionValue):
+        return f"<native function {value.call.__name__[1:]}>"
+    if isinstance(value, FunctionValue):
+        return f"<function {value.name}>"
+    if isinstance(value, ArrayValue):
+        result = "[ "
+        for val in value.elements:
+            result += f"{get_value(val, inside_array=True)}, "
+        result = result[:-2]
+        return result + " ]"
     if isinstance(value, ObjectValue):
         result = "{ "
         for key, val in value.properties.items():

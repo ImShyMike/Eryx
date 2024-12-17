@@ -84,6 +84,13 @@ class ObjectLiteral(Expression):
 
 
 @dataclass()
+class ArrayLiteral(Expression):
+    """Represents an array literal."""
+
+    elements: List[Expression]
+
+
+@dataclass()
 class CallExpression(Expression):
     """Binary expression class."""
 
@@ -107,3 +114,19 @@ class FunctionDeclaration(Statement):
     name: str
     arguments: List[str]
     body: Statement
+
+
+@dataclass()
+class IfStatement(Statement):
+    """If statement class."""
+
+    condition: Expression
+    then: Statement
+    else_: Union[Statement, None] = None
+
+
+@dataclass()
+class ReturnStatement(Statement):
+    """Return statement class."""
+
+    value: Union[Expression, None] = None

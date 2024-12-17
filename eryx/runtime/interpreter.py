@@ -1,21 +1,26 @@
 """Interpreter for the runtime."""
 
 from eryx.frontend.ast import (
+    ArrayLiteral,
     AssignmentExpression,
     BinaryExpression,
     CallExpression,
     FunctionDeclaration,
     Identifier,
+    IfStatement,
+    MemberExpression,
     NumericLiteral,
     ObjectLiteral,
     Program,
+    ReturnStatement,
     Statement,
     StringLiteral,
     VariableDeclaration,
-    MemberExpression,
 )
 from eryx.runtime.environment import Environment
 from eryx.runtime.values import (
+    ArrayValue,
+    BooleanValue,
     FunctionValue,
     NativeFunctionValue,
     NullValue,
@@ -65,6 +70,26 @@ def eval_program(program: Program, environment: Environment) -> RuntimeValue:
     return last_evaluated
 
 
+def eval_if_statement(
+    if_statement: IfStatement, environment: Environment
+) -> RuntimeValue:
+    """Evaluate an if statement."""
+    condition = evaluate(if_statement.condition, environment)
+    if condition.value:
+        result = []
+        for statement in if_statement.then:
+            result = evaluate(statement, environment)
+        return result
+
+    if if_statement.else_:
+        result = []
+        for statement in if_statement.else_:
+            result = evaluate(statement, environment)
+        return result
+
+    return NullValue()
+
+
 # EXPRESSIONS
 def eval_binary_expression(
     binop: BinaryExpression, environment: Environment
@@ -74,7 +99,14 @@ def eval_binary_expression(
     right = evaluate(binop.right, environment)
 
     if isinstance(left, NumberValue) and isinstance(right, NumberValue):
-        return eval_numeric_binary_expression(left, right, binop.operator)
+        if binop.operator in ["+", "-", "*", "/", "%"]:
+            return eval_numeric_binary_expression(left, right, binop.operator)
+        elif binop.operator in ["==", "!=", "<", ">", "<=", ">="]:
+            return BooleanValue(
+                eval_numeric_comparison_expression(left, right, binop.operator)
+            )
+        else:
+            raise RuntimeError(f"Unknown binary operator {binop.operator}.")
 
     return NullValue()
 
@@ -120,6 +152,27 @@ def eval_numeric_binary_expression(
             return NumberValue(left.value % right.value)
 
     return NullValue()
+
+
+def eval_numeric_comparison_expression(
+    left: NumberValue, right: NumberValue, operator: str
+) -> bool:
+    """Evaluate a numeric comparison expression."""
+    match operator:
+        case "==":
+            return left.value == right.value
+        case "!=":
+            return left.value != right.value
+        case "<":
+            return left.value < right.value
+        case ">":
+            return left.value > right.value
+        case "<=":
+            return left.value <= right.value
+        case ">=":
+            return left.value >= right.value
+
+    return False
 
 
 def eval_object_expression(
@@ -178,7 +231,9 @@ def eval_call_expression(
         result = NullValue()
         # Evaluate the function body statement by statement
         for statement in func.body:
-            result = evaluate(statement, function_environment)
+            if isinstance(statement, ReturnStatement):
+                return evaluate(statement, function_environment)
+            evaluate(statement, function_environment)
 
         return result
 
@@ -193,6 +248,10 @@ def evaluate(ast_node: Statement, environment: Environment) -> RuntimeValue:
             return NumberValue(ast_node.value)
         case StringLiteral():
             return StringValue(ast_node.value)
+        case ArrayLiteral():
+            return ArrayValue(
+                [evaluate(element, environment) for element in ast_node.elements]
+            )
         case Identifier():
             return eval_identifier(ast_node, environment)
         case BinaryExpression():
@@ -211,6 +270,10 @@ def evaluate(ast_node: Statement, environment: Environment) -> RuntimeValue:
             return eval_member_expression(ast_node, environment)
         case ObjectLiteral():
             return eval_object_expression(ast_node, environment)
+        case IfStatement():
+            return eval_if_statement(ast_node, environment)
+        case ReturnStatement():
+            return evaluate(ast_node.value, environment)
         case _:
             print("=== AST node ERROR ===")
             pprint(ast_node)
