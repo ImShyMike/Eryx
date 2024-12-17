@@ -52,32 +52,3 @@ def highlight(source_code: str) -> str:
         offset += 2
 
     return "".join(highlighted_code)
-
-
-if __name__ == "__main__":
-    CODE = """let int = 10;
-
-const float = 15.5;
-
-let neg_num = -100;
-
-let str = "abc";
-
-const obj = {
-    int,
-    float,
-    neg_num,
-    abc_str: str,
-    nested: {
-        nested_val: 100,
-        nest_squared: {
-            maybe: "works"
-        }
-    }
-};
-
-let obj_lookup = "float";
-
-print("test1", obj, obj[obj_lookup], obj.nested.nested_val, obj.nested["nest_squared"].maybe)"""
-
-    print(highlight(CODE))

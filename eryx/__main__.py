@@ -1,63 +1,16 @@
 """Eryx entry point and Command Line Interface (CLI) module."""
 
 import argparse
-import json
 
-from colorama import Fore, init
+from colorama import init
 
-from eryx.frontend.lexer import tokenize
-from eryx.frontend.parser import Parser
 from eryx.playground.playground import start_playground
-from eryx.runtime.environment import Environment
-from eryx.runtime.interpreter import evaluate
 from eryx.runtime.repl import start_repl
-from eryx.utils.pretty_print import pprint
+from eryx.runtime.runner import run_code
 
 CURRENT_VERSION = "0.1.0"
 
 init(autoreset=True)
-
-
-def run_file(
-    file_path: str,
-    log_ast: bool = False,
-    log_result: bool = False,
-    log_tokens: bool = False,
-) -> None:
-    """Run an Eryx file."""
-    with open(file_path, "r", encoding="utf8") as file:
-        source_code = file.read()
-
-    environment = Environment()
-    parser = Parser()
-
-    if log_tokens:
-        try:
-            tokenized = tokenize(source_code)
-            print("Tokenized:")
-            print(json.dumps([token.to_dict() for token in tokenized], indent=2))
-        except RuntimeError as e:
-            print(f"{Fore.RED}Tokenizer Error: {e}{Fore.WHITE}")
-            return
-
-    try:
-        ast = parser.produce_ast(source_code)
-        if log_ast:
-            print("AST:")
-            pprint(ast)
-    except RuntimeError as e:
-        print(f"{Fore.RED}Parser Error: {e}{Fore.WHITE}")
-        return
-
-    try:
-        result = evaluate(ast, environment)
-        if log_result:
-            print("\nResult:")
-            pprint(result)
-    except RuntimeError as e:
-        print(f"{Fore.RED}Runtime Error: {e}{Fore.WHITE}")
-
-    return
 
 
 def main():
@@ -119,8 +72,10 @@ def main():
     if args.command == "repl":
         start_repl(log_ast=args.ast, log_result=args.result, log_tokens=args.tokenize)
     elif args.command == "run":
-        run_file(
-            args.filepath,
+        with open(args.filepath, "r", encoding="utf8") as file:
+            source_code = file.read()
+        run_code(
+            source_code,
             log_ast=args.ast,
             log_result=args.result,
             log_tokens=args.tokenize,

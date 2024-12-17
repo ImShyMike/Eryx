@@ -82,32 +82,42 @@ class Environment:
 
 def get_value(value: RuntimeValue, inside_array: bool = False) -> object:
     """Get the value of a RuntimeValue."""
+    result = ""
+
     if isinstance(value, NullValue):
-        return None
-    if isinstance(value, BooleanValue) or isinstance(value, NumberValue):
-        return value.value
-    if isinstance(value, StringValue):
+        result = None
+
+    elif isinstance(value, (BooleanValue, NumberValue)):
+        result = value.value
+
+    elif isinstance(value, StringValue):
         if inside_array:
-            return '"' + value.value + '"'
+            result = '"' + value.value + '"'
         else:
-            return value.value
-    if isinstance(value, NativeFunctionValue):
-        return f"<native function {value.call.__name__[1:]}>"
-    if isinstance(value, FunctionValue):
-        return f"<function {value.name}>"
-    if isinstance(value, ArrayValue):
-        result = "[ "
+            result = value.value
+
+    elif isinstance(value, NativeFunctionValue):
+        result = f"<native function {value.call.__name__[1:]}>"
+
+    elif isinstance(value, FunctionValue):
+        result = f"<function {value.name}>"
+
+    elif isinstance(value, ArrayValue):
+        result += "[ "
         for val in value.elements:
             result += f"{get_value(val, inside_array=True)}, "
-        result = result[:-2]
-        return result + " ]"
-    if isinstance(value, ObjectValue):
-        result = "{ "
+        result = result[:-2] + " ]"
+
+    elif isinstance(value, ObjectValue):
+        result += "{ "
         for key, val in value.properties.items():
             result += f"{key}: {get_value(val, inside_array=True)}, "
-        result = result[:-2]
-        return result + " }"
-    return value
+        result = result[:-2] + " }"
+
+    else:
+        result = str(value)
+
+    return result
 
 
 # Native functions

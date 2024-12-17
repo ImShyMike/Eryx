@@ -181,7 +181,7 @@ def repl():
         return jsonify({"error": "No JSON provided"})
 
     if "action" not in request_json:
-        return jsonify({"error": "Invalid JSON format"})
+        return jsonify({"error": "No action provided"})
 
     action = request_json["action"]
 
@@ -191,17 +191,16 @@ def repl():
         environments[env_uuid] = environment
         return jsonify({"env_uuid": env_uuid})
 
-    elif action == "delete":
+    if action == "delete":
         if "env_uuid" not in request_json:
             return jsonify({"error": "No environment UUID provided"})
-        else:
-            env_uuid = request_json["env_uuid"]
-            if env_uuid in environments:
-                del environments[env_uuid]
+
+        env_uuid = request_json["env_uuid"]
+        if env_uuid in environments:
+            del environments[env_uuid]
         return jsonify({})
 
-    else:
-        return jsonify({"error": "Invalid action"})
+    return jsonify({"error": "Invalid action"})
 
 
 @app.route("/static/<path:path>", methods=["GET"])

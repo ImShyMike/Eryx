@@ -101,12 +101,13 @@ def eval_binary_expression(
     if isinstance(left, NumberValue) and isinstance(right, NumberValue):
         if binop.operator in ["+", "-", "*", "/", "%"]:
             return eval_numeric_binary_expression(left, right, binop.operator)
-        elif binop.operator in ["==", "!=", "<", ">", "<=", ">="]:
+
+        if binop.operator in ["==", "!=", "<", ">", "<=", ">="]:
             return BooleanValue(
                 eval_numeric_comparison_expression(left, right, binop.operator)
             )
-        else:
-            raise RuntimeError(f"Unknown binary operator {binop.operator}.")
+
+        raise RuntimeError(f"Unknown binary operator {binop.operator}.")
 
     return NullValue()
 

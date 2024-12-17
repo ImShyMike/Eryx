@@ -201,9 +201,7 @@ def handle_str(val, use_color):
     """Helper function to handle strings."""
     if use_color:
         return f'{get_color(val)}"{val}"{Fore.WHITE}'
-    else:
-        return f'"{val}"'
-    return val
+    return f'"{val}"'
 
 
 def pprint(
@@ -320,67 +318,7 @@ def pprint(
         string += ")"
 
     # Print or return the string
-    if print_output:
-        print(string)
-    else:
+    if not print_output:
         return string
-
-
-if __name__ == "__main__":
-
-    class Test:
-        """Dummy class."""
-
-        def __init__(self, prop, cls):
-            self.prop = prop
-            self.number = 7
-            self.dct = {"abc": 92, "Foo": "Bar"}
-            self.lst = [1, 2, 3, 4]
-            self.abc = "test"
-            self.cls = cls
-
-    class Test2:
-        """Dummy class 2."""
-
-        def __init__(self, cls=None):
-            self.abc = 6
-            self.dict2 = {"Foo": "Bar"}
-            self.cls = cls
-
-    class Test3:
-        """Dummy class 3 with various types."""
-
-        def __init__(self):
-            self.string = "Hello"
-            self.number = 42
-            self.float_num = 3.14
-            self.bool_val = True
-            self.nested_list = [
-                Test2(),
-                2,
-                [3, 4],
-                {"key": "value"},
-                (5, 6),
-                set([7, 8]),
-            ]
-            self.nested_dict = {
-                "key1": "value1",
-                "key2": [1, 2, 3],
-                "key3": {"key": "value"},
-                "key4": Test2(),
-            }
-
-    # Test with nested class instances
-    t = Test("abc", Test2(Test2()))
-    print("Test 1:")
-    pprint(t)
-
-    # Test with a class instance with a class instance
-    t2 = Test2(Test3())
-    print("\nTest 2:")
-    pprint(t2)
-
-    # Test with a class instance with various types
-    t3 = Test3()
-    print("\nTest 3:")
-    pprint(t3)
+    print(string)
+    return None

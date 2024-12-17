@@ -1,16 +1,13 @@
 """Main entry point for the REPL."""
 
-import json
 import sys
 
-from colorama import Fore, init
+from colorama import init
 
 from eryx.__init__ import CURRENT_VERSION
-from eryx.frontend.lexer import tokenize
 from eryx.frontend.parser import Parser
 from eryx.runtime.environment import Environment
-from eryx.runtime.interpreter import evaluate
-from eryx.utils.pretty_print import pprint
+from eryx.runtime.runner import run_code
 
 init(autoreset=True)
 
@@ -36,37 +33,8 @@ def start_repl(
             if source_code in ("exit", ""):
                 break
 
-            # Print the tokenized source code if requested
-            if log_tokens:
-                try:
-                    tokenized = tokenize(source_code)
-                    print("Tokenized:")
-                    print(
-                        json.dumps([token.to_dict() for token in tokenized], indent=2)
-                    )
-                except RuntimeError as e:
-                    print(f"{Fore.RED}Tokenizer Error: {e}{Fore.WHITE}")
-                    return
-
-            # Parse the source code into ast
-            try:
-                ast = parser.produce_ast(source_code)
-                if log_ast:
-                    print("AST:")
-                    pprint(ast)
-            except RuntimeError as e:
-                print(f"{Fore.RED}Parser Error: {e}{Fore.WHITE}")
-                continue
-
-            # Evaluate the ast and print the result
-            try:
-                result = evaluate(ast, environment)
-                if log_result:
-                    print("\nResult:")
-                    pprint(result)
-            except RuntimeError as e:
-                print(f"{Fore.RED}Runtime Error: {e}{Fore.WHITE}")
-                continue
+            # Run the code
+            run_code(source_code, log_ast, log_result, log_tokens, environment, parser)
 
         except KeyboardInterrupt:
             print()
