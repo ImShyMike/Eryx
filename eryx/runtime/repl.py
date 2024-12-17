@@ -1,6 +1,7 @@
 """Main entry point for the REPL."""
 
 import json
+import sys
 
 from colorama import Fore, init
 
@@ -71,7 +72,7 @@ def start_repl(
             print()
             break
 
-    exit(0)
+    sys.exit(0)
 
 
 if __name__ == "__main__":
