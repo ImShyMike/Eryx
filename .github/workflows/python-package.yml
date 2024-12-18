@@ -38,17 +38,17 @@ jobs:
         name: python-package
         path: dist/
     - name: Create GitHub beta release
-      uses: gh actions/create-release@v1
+      uses: softprops/action-gh-release@v1
       with:
         tag_name: beta-${{ github.run_number }}
         release_name: "Beta Release ${{ github.run_number }}"
         body: |
           This is a beta release containing build artifacts.
-        draft: false # Auto-publish the release
+        draft: false # Automatically publish the release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Upload all release assets from dist/
-      uses: gh actions/upload-release-asset@v1
+      uses: softprops/action-gh-release@v1
       with:
         upload_url: ${{ steps.create-release.outputs.upload_url }}
         asset_path: dist/*
