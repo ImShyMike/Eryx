@@ -9,8 +9,6 @@ from eryx.playground.playground import start_playground
 from eryx.runtime.repl import start_repl
 from eryx.runtime.runner import run_code
 
-CURRENT_VERSION = "0.1.0"
-
 init(autoreset=True)
 
 
