@@ -41,16 +41,10 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: beta-${{ github.run_number }}
-        release_name: "Beta Release ${{ github.run_number }}"
+        name: "Beta Release ${{ github.run_number }}"
         body: |
           This is a beta release containing build artifacts.
         draft: false # Automatically publish the release
+        files: dist/*
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Upload all release assets from dist/
-      uses: softprops/action-gh-release@v1
-      with:
-        upload_url: ${{ steps.create-release.outputs.upload_url }}
-        asset_path: dist/*
-        asset_name: python-package-${{ github.run_number }}.tar.gz
-        asset_content_type: application/gzip
+        GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
