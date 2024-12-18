@@ -1,6 +1,6 @@
 # Eryx
 [![Build Status](https://github.com/ImShyMike/Eryx/actions/workflows/python-package.yml/badge.svg)](https://github.com/ImShyMike/Eryx/actions/workflows/python-package.yml)
-[![License](https://img.shields.io/pypi/l/Eryx)](/LICENSE)
+[![License](https://img.shields.io/pypi/l/Eryx)](https://github.com/ImShyMike/Eryx/blob/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/Eryx)][pypi_url]
 [![Python Version](https://img.shields.io/pypi/pyversions/Eryx)][pypi_url]
 [![PyPI - Wheel](https://img.shields.io/pypi/wheel/Eryx)][pypi_url]
