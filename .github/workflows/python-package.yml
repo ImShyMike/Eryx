@@ -40,7 +40,7 @@ jobs:
     - name: Create GitHub beta release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: beta
+        tag_name: beta-${{ github.run_number }}
         name: "Beta Release ${{ github.run_number }}"
         body: |
           This is an automated beta release containing build artifacts from the latest commit.

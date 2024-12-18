@@ -1,9 +1,8 @@
 # Eryx
+[![Build Status](https://github.com/ImShyMike/Eryx/actions/workflows/python-package.yml/badge.svg)](https://github.com/ImShyMike/Eryx/actions/workflows/python-package.yml)
 [![License](https://img.shields.io/pypi/l/Eryx)](/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/Eryx)][pypi_url]
-[![Build Status](https://img.shields.io/github/actions/workflow/status/ImShyMike/Eryx/ci.yml)](https://github.com/ImShyMike/Eryx/actions)
 [![Python Version](https://img.shields.io/pypi/pyversions/Eryx)][pypi_url]
-[![PyPI - Downloads](https://img.shields.io/pypi/dm/Eryx)][pypi_url]
 [![PyPI - Wheel](https://img.shields.io/pypi/wheel/Eryx)][pypi_url]
 
 [pypi_url]: https://pypi.org/project/Eryx
@@ -16,10 +15,26 @@
 ```sh
 pip install eryx
 ```
-If you want to install the latest beta version head over to the [beta releases](https://github.com/ImShyMike/Eryx/releases/tag/beta) page, download the desired `.whl` file and install it using:
+If you want to install the latest beta version head over to the [releases](https://github.com/ImShyMike/Eryx/releases) page, download the desired `.whl` file and install it using:
 ```sh
 pip install Eryx-(version)-py3-none-any.whl
 ```
+
+## Usage
+The CLI can be executed by running one of the following commands after installing:
+```sh
+eryx
+```
+or
+```sh
+python -m eryx
+```
+
+The list of subcommands is:
+- repl => Start the [REPL](https://wikipedia.org/wiki/REPL)
+- run => Run an Eryx file
+- playground => Start the web playground
+- test => Run the test suite
 
 ## Documentation
 Coming soon...
