@@ -109,6 +109,56 @@ def eval_binary_expression(
 
         raise RuntimeError(f"Unknown binary operator {binop.operator}.")
 
+    if binop.operator == "+":
+        if isinstance(left, StringValue) and isinstance(right, StringValue):
+            return StringValue(left.value + right.value)
+
+        if isinstance(left, ArrayValue) and isinstance(right, ArrayValue):
+            return ArrayValue(left.elements + right.elements)
+
+        if isinstance(left, ObjectValue) and isinstance(right, ObjectValue):
+            return ObjectValue({**left.properties, **right.properties})
+
+        return NullValue()
+
+    if binop.operator == "==":
+        if isinstance(left, ArrayValue) and isinstance(right, ArrayValue):
+            return BooleanValue(left.elements == right.elements)
+
+        if isinstance(left, ObjectValue) and isinstance(right, ObjectValue):
+            return BooleanValue(left.properties == right.properties)
+
+        if isinstance(left, (FunctionValue, NativeFunctionValue)) and isinstance(
+            right, (FunctionValue, NativeFunctionValue)
+        ):
+            return BooleanValue(left == right)
+
+        if isinstance(
+            left, (StringValue, NumberValue, BooleanValue, NullValue)
+        ) and isinstance(right, (StringValue, NumberValue, BooleanValue, NullValue)):
+            return BooleanValue(left.value == right.value)
+
+        return BooleanValue(False)
+
+    if binop.operator == "!=":
+        if isinstance(left, ArrayValue) and isinstance(right, ArrayValue):
+            return BooleanValue(left.elements != right.elements)
+
+        if isinstance(left, ObjectValue) and isinstance(right, ObjectValue):
+            return BooleanValue(left.properties != right.properties)
+
+        if isinstance(left, (FunctionValue, NativeFunctionValue)) and isinstance(
+            right, (FunctionValue, NativeFunctionValue)
+        ):
+            return BooleanValue(left != right)
+
+        if isinstance(
+            left, (StringValue, NumberValue, BooleanValue, NullValue)
+        ) and isinstance(right, (StringValue, NumberValue, BooleanValue, NullValue)):
+            return BooleanValue(left.value != right.value)
+
+        return BooleanValue(True)
+
     return NullValue()
 
 

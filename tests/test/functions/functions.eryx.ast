@@ -1,0 +1,83 @@
+Program(
+  body: [    
+    FunctionDeclaration(
+      arguments: [        
+        "offset"
+      ],
+      body: [        
+        FunctionDeclaration(
+          arguments: [            
+            "x",
+            "y"
+          ],
+          body: [            
+            ReturnStatement(
+              value: BinaryExpression(
+                left: BinaryExpression(
+                  left: Identifier(
+                    symbol: "x"
+                  ),
+                  operator: "+",
+                  right: Identifier(
+                    symbol: "y"
+                  )
+                ),
+                operator: "+",
+                right: Identifier(
+                  symbol: "offset"
+                )
+              )
+            )
+          ],
+          name: "add"
+        ),
+        
+        ReturnStatement(
+          value: Identifier(
+            symbol: "add"
+          )
+        )
+      ],
+      name: "makeAdder"
+    ),
+    
+    VariableDeclaration(
+      constant: False,
+      identifier: Identifier(
+        symbol: "adder"
+      ),
+      value: CallExpression(
+        arguments: [          
+          NumericLiteral(
+            value: 10.0
+          )
+        ],
+        caller: Identifier(
+          symbol: "makeAdder"
+        )
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        CallExpression(
+          arguments: [            
+            NumericLiteral(
+              value: 10.0
+            ),
+            
+            NumericLiteral(
+              value: 5.0
+            )
+          ],
+          caller: Identifier(
+            symbol: "adder"
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    )
+  ]
+)

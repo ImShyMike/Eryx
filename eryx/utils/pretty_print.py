@@ -83,36 +83,34 @@ def handle_array(
             if use_newlines:
                 string += f"\n{' '*(indent*(_tabs+1))}"
 
-            if isinstance(item, list):
-                # If list, call handle_array
-                string += handle_array(item, use_color, use_newlines, indent, _tabs + 1)
-            elif isinstance(item, tuple):
-                # If tuple, call handle_array with is_tuple=True
+            if isinstance(item, (list, tuple, set)):
+                # If list, set or tuple, call handle_array
                 string += handle_array(
-                    item, use_color, use_newlines, indent, _tabs + 1, is_tuple=True
+                    item,
+                    use_color,
+                    use_newlines,
+                    indent,
+                    _tabs + 1,
+                    is_tuple=isinstance(item, tuple),
+                    is_set=isinstance(item, set),
                 )
             elif isinstance(item, dict):
                 # If dict, call handle_dict
                 string += handle_dict(item, use_color, use_newlines, indent, _tabs + 1)
-            elif isinstance(item, set):
-                # If set, call handle_array with is_set=True
-                string += handle_array(
-                    item, use_color, use_newlines, indent, _tabs + 1, is_set=True
-                )
             elif isinstance(item, str):
                 # If string, call handle_str
                 string += handle_str(item, use_color)
-            elif isfunction(val):
+            elif isfunction(item):
                 # If function, add the function name
                 string += (
-                    get_color(val) + f"{val.__name__}" + Fore.WHITE
+                    get_color(item) + f"{val.__name__}" + Fore.WHITE
                     if use_color
                     else "" + "()"
                 )
             else:
                 # Else add the value with color
                 string += (
-                    (get_color(val) if use_color else "")
+                    (get_color(item) if use_color else "")
                     + str(item)
                     + (Fore.WHITE if use_color else "")
                 )
@@ -151,22 +149,20 @@ def handle_dict(val, use_color, use_newlines, indent, _tabs):
                 indent=indent,
                 _tabs=_tabs + 1,
             )
-        elif isinstance(value, list):
-            # If list, call handle_array
-            string += handle_array(value, use_color, use_newlines, indent, _tabs + 1)
+        elif isinstance(value, (list, tuple, set)):
+            # If list, set or tuple, call handle_array
+            string += handle_array(
+                value,
+                use_color,
+                use_newlines,
+                indent,
+                _tabs + 1,
+                is_tuple=isinstance(value, tuple),
+                is_set=isinstance(value, set),
+            )
         elif isinstance(value, dict):
             # If dict, call handle_dict
             string += handle_dict(value, use_color, use_newlines, indent, _tabs + 1)
-        elif isinstance(value, tuple):
-            # If tuple, call handle_array with is_tuple=True
-            string += handle_array(
-                value, use_color, use_newlines, indent, _tabs + 1, is_tuple=True
-            )
-        elif isinstance(value, set):
-            # If set, call handle_array with is_set=True
-            string += handle_array(
-                value, use_color, use_newlines, indent, _tabs + 1, is_set=True
-            )
         elif isinstance(value, str):
             # If string, call handle_str
             string += handle_str(value, use_color)
@@ -267,22 +263,20 @@ def pprint(
                 indent=indent,
                 _tabs=_tabs + 1,
             )
-        elif isinstance(val, list):
-            # If list, call handle_array
-            string += handle_array(val, use_color, use_newlines, indent, _tabs + 1)
+        elif isinstance(val, (list, tuple, set)):
+            # If list, set or tuple, call handle_array
+            string += handle_array(
+                val,
+                use_color,
+                use_newlines,
+                indent,
+                _tabs + 1,
+                is_tuple=isinstance(val, tuple),
+                is_set=isinstance(val, set),
+            )
         elif isinstance(val, dict):
             # If dict, call handle_dict
             string += handle_dict(val, use_color, use_newlines, indent, _tabs + 1)
-        elif isinstance(val, tuple):
-            # If tuple, call handle_array with is_tuple=True
-            string += handle_array(
-                val, use_color, use_newlines, indent, _tabs + 1, is_tuple=True
-            )
-        elif isinstance(val, set):
-            # If set, call handle_array with is_set=True
-            string += handle_array(
-                val, use_color, use_newlines, indent, _tabs + 1, is_set=True
-            )
         elif isinstance(val, str):
             # If string, call handle_str
             string += handle_str(val, use_color)

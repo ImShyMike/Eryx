@@ -1,5 +1,6 @@
 """Environment class for storing variables (also called scope)."""
 
+import sys
 import time
 
 from eryx.runtime.values import (
@@ -78,6 +79,19 @@ class Environment:
         # Declare native methods
         self.declare_variable("print", NativeFunctionValue(_print), True)
         self.declare_variable("time", NativeFunctionValue(_time), True)
+        self.declare_variable("input", NativeFunctionValue(_input), True)
+        self.declare_variable("read", NativeFunctionValue(_readfile), True)
+        self.declare_variable("len", NativeFunctionValue(_len), True)
+        self.declare_variable("exit", NativeFunctionValue(_exit), True)
+        self.declare_variable("str", NativeFunctionValue(_str), True)
+        self.declare_variable("int", NativeFunctionValue(_int), True)
+        self.declare_variable("float", NativeFunctionValue(_float), True)
+        self.declare_variable("bool", NativeFunctionValue(_bool), True)
+        self.declare_variable("array", NativeFunctionValue(_array), True)
+        self.declare_variable("type", NativeFunctionValue(_type), True)
+        self.declare_variable("sum", NativeFunctionValue(_sum), True)
+        self.declare_variable("min", NativeFunctionValue(_min), True)
+        self.declare_variable("max", NativeFunctionValue(_max), True)
 
 
 def get_value(value: RuntimeValue, inside_array: bool = False) -> object:
@@ -131,3 +145,99 @@ def _print(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
 
 def _time(_: list[RuntimeValue], __: Environment) -> RuntimeValue:
     return NumberValue(time.time())
+
+
+def _input(args: list[RuntimeValue], __: Environment) -> RuntimeValue:
+    result = input() if not args else input(args[0].value)
+    return StringValue(result)
+
+
+def _readfile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    with open(args[0].value, "r", encoding="utf8") as file:
+        return StringValue(file.read())
+
+
+def _len(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if isinstance(args[0], StringValue):
+        return NumberValue(len(args[0].value))
+
+    if isinstance(args[0], ArrayValue):
+        return NumberValue(len(args[0].elements))
+
+    if isinstance(args[0], ObjectValue):
+        return NumberValue(len(args[0].properties))
+
+    raise RuntimeError(f"Cannot get length of {args[0]}")
+
+
+def _exit(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    sys.exit(args[0].value)
+
+
+def _str(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) == 0:
+        return StringValue("")
+    return StringValue(get_value(args[0]))
+
+
+def _int(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) == 0:
+        return NumberValue(0)
+    if isinstance(args[0], (StringValue, NumberValue)):
+        return NumberValue(int(args[0].value))
+    raise RuntimeError(f"Cannot convert {args[0]} to int")
+
+
+def _float(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) == 0:
+        return NumberValue(0.0)
+    if isinstance(args[0], (StringValue, NumberValue)):
+        return NumberValue(float(args[0].value))
+    raise RuntimeError(f"Cannot convert {args[0]} to float")
+
+
+def _bool(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) == 0:
+        return BooleanValue(False)
+    if isinstance(args[0], (StringValue, NumberValue, BooleanValue)):
+        return BooleanValue(bool(args[0].value))
+    if isinstance(args[0], ArrayValue):
+        return BooleanValue(bool(args[0].elements))
+    if isinstance(args[0], ObjectValue):
+        return BooleanValue(bool(args[0].properties))
+    raise RuntimeError(f"Cannot convert {args[0]} to bool")
+
+
+def _array(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    return ArrayValue(args)
+
+
+def _type(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    return StringValue(type(args[0]).__name__)
+
+
+def _sum(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) == 0:
+        return NumberValue(0)
+    if isinstance(args[0], ArrayValue):
+        if all(isinstance(i, NumberValue) for i in args[0].elements):
+            return NumberValue(sum(i.value for i in args[0].elements))
+    raise RuntimeError(f"Cannot sum {args[0]}")
+
+
+def _min(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) == 0:
+        return NumberValue(0)
+    if isinstance(args[0], ArrayValue):
+        if all(isinstance(i, NumberValue) for i in args[0].elements):
+            return NumberValue(min(i.value for i in args[0].elements))
+    raise RuntimeError(f"Cannot get min for {args[0]}")
+
+
+def _max(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) == 0:
+        return NumberValue(0)
+    if isinstance(args[0], ArrayValue):
+        if all(isinstance(i, NumberValue) for i in args[0].elements):
+            return NumberValue(max(i.value for i in args[0].elements))
+    raise RuntimeError(f"Cannot get max for {args[0]}")

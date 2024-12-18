@@ -100,10 +100,63 @@ Program(
       )
     ),
     
+    VariableDeclaration(
+      constant: False,
+      identifier: Identifier(
+        symbol: "arr"
+      ),
+      value: ArrayLiteral(
+        elements: [          
+          NumericLiteral(
+            value: 1.0
+          ),
+          
+          NumericLiteral(
+            value: -2.0
+          ),
+          
+          NumericLiteral(
+            value: 3.14
+          ),
+          
+          StringLiteral(
+            value: "4"
+          ),
+          
+          ObjectLiteral(
+            properties: [              
+              Property(
+                key: "n",
+                value: NumericLiteral(
+                  value: 5.0
+                )
+              )
+            ]
+          ),
+          
+          ArrayLiteral(
+            elements: [              
+              NumericLiteral(
+                value: 6.0
+              ),
+              
+              NumericLiteral(
+                value: 7.0
+              )
+            ]
+          ),
+          
+          Identifier(
+            symbol: "obj"
+          )
+        ]
+      )
+    ),
+    
     CallExpression(
       arguments: [        
         Identifier(
-          symbol: "obj"
+          symbol: "arr"
         )
       ],
       caller: Identifier(

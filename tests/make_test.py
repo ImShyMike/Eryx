@@ -27,11 +27,6 @@ def generate_ast(code):
     return parser.produce_ast(code)
 
 
-def evaluate_code(ast, environment):
-    """Evaluate the AST and return the result."""
-    return evaluate(ast, environment)
-
-
 def capture_output(func, *args, **kwargs):
     """Capture output printed during the execution of the code."""
     old_stdout = sys.stdout
@@ -66,15 +61,13 @@ def create_test_files(code, description, test_name):
             f.write(pprint(test_ast, print_output=False, use_color=False))
         except RuntimeError as e:
             print(f"Parser Error: {e}")
-            os.removedirs(os.path.join(current_path, "test", test_name))
             return
 
     # Capture printed output
     try:
-        output = capture_output(evaluate_code, test_ast, Environment())
+        output = capture_output(evaluate, test_ast, Environment())
     except RuntimeError as e:
         print(f"Runtime Error: {e}")
-        os.removedirs(os.path.join(current_path, "test", test_name))
         return
     with open(
         os.path.join(test_folder, f"{test_name}.eryx.output"), "w", encoding="utf8"

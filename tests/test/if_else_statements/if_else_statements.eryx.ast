@@ -1,0 +1,250 @@
+Program(
+  body: [    
+    IfStatement(
+      condition: BinaryExpression(
+        left: NumericLiteral(
+          value: 1.0
+        ),
+        operator: "==",
+        right: NumericLiteral(
+          value: 1.0
+        )
+      ),
+      else_: [        
+        CallExpression(
+          arguments: [            
+            StringLiteral(
+              value: "wrong"
+            )
+          ],
+          caller: Identifier(
+            symbol: "print"
+          )
+        )
+      ],
+      then: [        
+        CallExpression(
+          arguments: [            
+            StringLiteral(
+              value: "1"
+            )
+          ],
+          caller: Identifier(
+            symbol: "print"
+          )
+        )
+      ]
+    ),
+    
+    IfStatement(
+      condition: Identifier(
+        symbol: "true"
+      ),
+      else_: None,
+      then: [        
+        CallExpression(
+          arguments: [            
+            StringLiteral(
+              value: "direct var works"
+            )
+          ],
+          caller: Identifier(
+            symbol: "print"
+          )
+        )
+      ]
+    ),
+    
+    IfStatement(
+      condition: BinaryExpression(
+        left: ArrayLiteral(
+          elements: [            
+            NumericLiteral(
+              value: 1.0
+            ),
+            
+            NumericLiteral(
+              value: 2.0
+            ),
+            
+            NumericLiteral(
+              value: 3.0
+            )
+          ]
+        ),
+        operator: "!=",
+        right: ArrayLiteral(
+          elements: [            
+            NumericLiteral(
+              value: 1.0
+            ),
+            
+            NumericLiteral(
+              value: 2.0
+            ),
+            
+            NumericLiteral(
+              value: 3.0
+            )
+          ]
+        )
+      ),
+      else_: None,
+      then: [        
+        CallExpression(
+          arguments: [            
+            StringLiteral(
+              value: "this should not happen"
+            )
+          ],
+          caller: Identifier(
+            symbol: "print"
+          )
+        )
+      ]
+    ),
+    
+    IfStatement(
+      condition: BinaryExpression(
+        left: ObjectLiteral(
+          properties: [            
+            Property(
+              key: "a",
+              value: NumericLiteral(
+                value: 1.0
+              )
+            ),
+            
+            Property(
+              key: "b",
+              value: NumericLiteral(
+                value: 6.0
+              )
+            )
+          ]
+        ),
+        operator: "==",
+        right: ObjectLiteral(
+          properties: [            
+            Property(
+              key: "a",
+              value: NumericLiteral(
+                value: 1.0
+              )
+            ),
+            
+            Property(
+              key: "b",
+              value: NumericLiteral(
+                value: 6.0
+              )
+            )
+          ]
+        )
+      ),
+      else_: None,
+      then: [        
+        CallExpression(
+          arguments: [            
+            StringLiteral(
+              value: "dicts working"
+            )
+          ],
+          caller: Identifier(
+            symbol: "print"
+          )
+        )
+      ]
+    ),
+    
+    IfStatement(
+      condition: Identifier(
+        symbol: "null"
+      ),
+      else_: None,
+      then: [        
+        CallExpression(
+          arguments: [            
+            StringLiteral(
+              value: "broken"
+            )
+          ],
+          caller: Identifier(
+            symbol: "print"
+          )
+        )
+      ]
+    ),
+    
+    IfStatement(
+      condition: BinaryExpression(
+        left: Identifier(
+          symbol: "print"
+        ),
+        operator: "==",
+        right: Identifier(
+          symbol: "print"
+        )
+      ),
+      else_: None,
+      then: [        
+        CallExpression(
+          arguments: [            
+            StringLiteral(
+              value: "native funcs work"
+            )
+          ],
+          caller: Identifier(
+            symbol: "print"
+          )
+        )
+      ]
+    ),
+    
+    FunctionDeclaration(
+      arguments: [        
+        "a",
+        "b"
+      ],
+      body: [        
+        ReturnStatement(
+          value: BinaryExpression(
+            left: Identifier(
+              symbol: "a"
+            ),
+            operator: "+",
+            right: Identifier(
+              symbol: "b"
+            )
+          )
+        )
+      ],
+      name: "add"
+    ),
+    
+    IfStatement(
+      condition: BinaryExpression(
+        left: Identifier(
+          symbol: "add"
+        ),
+        operator: "==",
+        right: Identifier(
+          symbol: "add"
+        )
+      ),
+      else_: None,
+      then: [        
+        CallExpression(
+          arguments: [            
+            StringLiteral(
+              value: "funcs work"
+            )
+          ],
+          caller: Identifier(
+            symbol: "print"
+          )
+        )
+      ]
+    )
+  ]
+)

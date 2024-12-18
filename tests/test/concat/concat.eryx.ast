@@ -1,0 +1,149 @@
+Program(
+  body: [    
+    VariableDeclaration(
+      constant: False,
+      identifier: Identifier(
+        symbol: "lst"
+      ),
+      value: ArrayLiteral(
+        elements: [          
+          NumericLiteral(
+            value: 1.0
+          ),
+          
+          NumericLiteral(
+            value: 2.0
+          ),
+          
+          NumericLiteral(
+            value: 3.0
+          )
+        ]
+      )
+    ),
+    
+    VariableDeclaration(
+      constant: False,
+      identifier: Identifier(
+        symbol: "obj"
+      ),
+      value: ObjectLiteral(
+        properties: [          
+          Property(
+            key: "a",
+            value: NumericLiteral(
+              value: 1.0
+            )
+          ),
+          
+          Property(
+            key: "b",
+            value: NumericLiteral(
+              value: 3.0
+            )
+          )
+        ]
+      )
+    ),
+    
+    VariableDeclaration(
+      constant: False,
+      identifier: Identifier(
+        symbol: "str"
+      ),
+      value: StringLiteral(
+        value: "Hello,"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        BinaryExpression(
+          left: Identifier(
+            symbol: "lst"
+          ),
+          operator: "+",
+          right: ArrayLiteral(
+            elements: [              
+              NumericLiteral(
+                value: 4.0
+              ),
+              
+              NumericLiteral(
+                value: 5.0
+              )
+            ]
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        BinaryExpression(
+          left: Identifier(
+            symbol: "obj"
+          ),
+          operator: "+",
+          right: ObjectLiteral(
+            properties: [              
+              Property(
+                key: "c",
+                value: NumericLiteral(
+                  value: 6.0
+                )
+              )
+            ]
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        BinaryExpression(
+          left: Identifier(
+            symbol: "str"
+          ),
+          operator: "+",
+          right: StringLiteral(
+            value: " World!"
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        BinaryExpression(
+          left: Identifier(
+            symbol: "obj"
+          ),
+          operator: "+",
+          right: ObjectLiteral(
+            properties: [              
+              Property(
+                key: "a",
+                value: NumericLiteral(
+                  value: 6.0
+                )
+              )
+            ]
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    )
+  ]
+)

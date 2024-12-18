@@ -174,6 +174,8 @@ class Parser:
                 return StringLiteral(self.next().value)
             case TokenType.OPEN_BRACKET:
                 return self.parse_array_expression()
+            case TokenType.OPEN_BRACE:
+                return self.parse_object_expression()
             case TokenType.OPEN_PAREN:
                 self.next()  # Skip the open parenthesis
                 expression = self.parse_expression()
@@ -190,7 +192,7 @@ class Parser:
         """Parse an assignment expression."""
         left = self.parse_object_expression()
 
-        if self.at().type == TokenType.EQUALS:
+        if self.at().type == TokenType.EQUALS and self.look_ahead(1).type != TokenType.EQUALS:
             self.next()  # Skip the equals sign
 
             value = self.parse_assignment_expression()
@@ -205,7 +207,7 @@ class Parser:
     def parse_object_expression(self) -> Expression:
         """Parse an object expression."""
         if self.at().type != TokenType.OPEN_BRACE:
-            return self.parse_additive_expression()
+            return self.parse_comparison_expression()
 
         self.next()  # Skip the open brace
 

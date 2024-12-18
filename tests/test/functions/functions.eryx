@@ -1,0 +1,10 @@
+func makeAdder(offset) {
+    func add(x, y) {
+        return x + y + offset;
+    }
+
+    return add;
+}
+
+let adder = makeAdder(10);
+print(adder(10, 5))

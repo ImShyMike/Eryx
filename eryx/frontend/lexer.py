@@ -57,14 +57,6 @@ class Token:
     def __repr__(self) -> str:
         return f'Token("{self.value}", {self.type.name}, {self.position})'
 
-    def to_dict(self) -> dict:
-        """Return the token as a dictionary."""
-        return {
-            "value": self.value,
-            "type": self.type.name,
-            "position": self.position,
-        }
-
 
 KEYWORDS = {
     "let": TokenType.LET,

@@ -69,6 +69,13 @@ def ansi_to_html(text):
 # ========
 
 
+class TokenList:
+    """List of tokens to use with the pretty printer."""
+
+    def __init__(self, tokens: list):
+        self.tokens = tokens
+
+
 def get_unique_uuid(dictionary):
     """Get a unique UUID that does not exist in dictionary."""
     while True:
@@ -162,9 +169,9 @@ def tokenize_route():
         return jsonify({"error": str(e)})
     return jsonify(
         {
-            "result": json.dumps([token.to_dict() for token in tokens], indent=2).replace(
-                "\n", "<br>"
-            )
+            "result": ansi_to_html(pprint(TokenList(tokens), print_output=False))
+            .replace("\n", "<br>")
+            .replace("\u001b", "")
         }
     )
 
