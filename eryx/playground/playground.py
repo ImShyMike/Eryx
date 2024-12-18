@@ -3,18 +3,10 @@
 import io
 import json
 import re
-import sys
 import uuid
 from contextlib import redirect_stdout
 
-try:
-    from flask import Flask, jsonify, render_template, request
-except ImportError:
-    print(
-        'Please install with "pip install eryx[playground]" to use the web playground.'
-    )
-    sys.exit(1)
-
+from flask import Flask, jsonify, render_template, request
 
 from eryx.__init__ import CURRENT_VERSION
 from eryx.frontend.lexer import tokenize

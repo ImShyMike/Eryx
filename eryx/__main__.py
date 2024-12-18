@@ -2,6 +2,7 @@
 
 import argparse
 
+import pytest
 from colorama import init
 
 from eryx.playground.playground import start_playground
@@ -66,6 +67,9 @@ def main():
         "--host", type=str, help="Host for the web playground."
     )
 
+    # 'test' command
+    subparsers.add_parser("test", help="Run the test suite")
+
     args = arg_parser.parse_args()
 
     # Handling each command
@@ -82,6 +86,8 @@ def main():
         )
     elif args.command == "playground":
         start_playground(args.host or "0.0.0.0", port=args.port or 80)
+    elif args.command == "test":
+        pytest.main(["-v", "tests/run_tests.py"])
     elif args.command is None:
         arg_parser.print_help()
     else:

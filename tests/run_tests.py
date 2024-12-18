@@ -3,12 +3,7 @@
 import os
 import sys
 
-
-try:
-    import pytest
-except ImportError:
-    print("Please install with \"pip install eryx[tests]\" to run the tests.")
-    sys.exit(1)
+import pytest
 
 # Add the parent directory to the sys.path for imports
 current_path = os.path.dirname(os.path.abspath(__file__))
@@ -20,6 +15,7 @@ from eryx.frontend.parser import Parser  # noqa: E402
 from eryx.runtime.environment import Environment  # noqa: E402
 from eryx.runtime.interpreter import evaluate  # noqa: E402
 from eryx.utils.pretty_print import pprint  # noqa: E402
+
 # pylint: enable=wrong-import-position
 
 os.makedirs(os.path.join(current_path, "test"), exist_ok=True)
