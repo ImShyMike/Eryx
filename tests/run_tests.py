@@ -2,6 +2,7 @@
 
 import os
 import sys
+import warnings
 
 import pytest
 
@@ -69,7 +70,9 @@ def test_eryx_code(test_folder: str, capfd: pytest.fixture):
 
     # Version check
     if info["version"] != CURRENT_VERSION:
-        pytest.warns(f"Test {test_folder} was made for version {info['version']}.")
+        warnings.warn(
+            f"Test {test_folder} was made for version {info['version']} and may not work."
+        )
 
     # Read the code
     test_code = read_file(eryx_code_path)
