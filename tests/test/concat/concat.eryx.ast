@@ -49,7 +49,7 @@ Program(
     VariableDeclaration(
       constant: False,
       identifier: Identifier(
-        symbol: "str"
+        symbol: "string"
       ),
       value: StringLiteral(
         value: "Hello,"
@@ -109,7 +109,7 @@ Program(
       arguments: [        
         BinaryExpression(
           left: Identifier(
-            symbol: "str"
+            symbol: "string"
           ),
           operator: "+",
           right: StringLiteral(

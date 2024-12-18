@@ -2,9 +2,9 @@ let lst = [1, 2, 3];
 
 let obj = {a: 1, b: 3};
 
-let str = "Hello,";
+let string = "Hello,";
 
 print(lst + [4, 5])
 print(obj + {c: 6})
-print(str + " World!")
+print(string + " World!")
 print(obj + {a: 6})

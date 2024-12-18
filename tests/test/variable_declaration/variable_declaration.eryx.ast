@@ -3,7 +3,7 @@ Program(
     VariableDeclaration(
       constant: False,
       identifier: Identifier(
-        symbol: "int"
+        symbol: "integer"
       ),
       value: NumericLiteral(
         value: 10.0
@@ -13,7 +13,7 @@ Program(
     VariableDeclaration(
       constant: True,
       identifier: Identifier(
-        symbol: "float"
+        symbol: "flt"
       ),
       value: NumericLiteral(
         value: 15.5
@@ -33,7 +33,7 @@ Program(
     VariableDeclaration(
       constant: False,
       identifier: Identifier(
-        symbol: "str"
+        symbol: "string"
       ),
       value: StringLiteral(
         value: "abc"
@@ -48,12 +48,12 @@ Program(
       value: ObjectLiteral(
         properties: [          
           Property(
-            key: "int",
+            key: "integer",
             value: None
           ),
           
           Property(
-            key: "float",
+            key: "flt",
             value: None
           ),
           
@@ -65,7 +65,7 @@ Program(
           Property(
             key: "abc_str",
             value: Identifier(
-              symbol: "str"
+              symbol: "string"
             )
           ),
           

@@ -1,16 +1,16 @@
-let int = 10;
+let integer = 10;
 
-const float = 15.5;
+const flt = 15.5;
 
 let neg_num = -100;
 
-let str = "abc";
+let string = "abc";
 
 const obj = {
-    int,
-    float,
+    integer,
+    flt,
     neg_num,
-    abc_str: str,
+    abc_str: string,
     nested: {
         nested_val: 100,
         nest_squared: {
