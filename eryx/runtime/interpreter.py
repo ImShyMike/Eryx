@@ -279,14 +279,13 @@ def eval_call_expression(
                 function_argument, arguments[i], False
             )
 
-        result = NullValue()
         # Evaluate the function body statement by statement
         for statement in func.body:
             if isinstance(statement, ReturnStatement):
                 return evaluate(statement, function_environment)
             evaluate(statement, function_environment)
 
-        return result
+        return NullValue()
 
     raise RuntimeError("Cannot call a non-function value.")
 

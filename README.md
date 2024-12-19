@@ -1,4 +1,4 @@
-# Eryx
+# [![Eryx](https://github.com/ImShyMike/Eryx/blob/main/assets/eryx_small.png)][pypi_url]
 [![Build Status](https://github.com/ImShyMike/Eryx/actions/workflows/python-package.yml/badge.svg)](https://github.com/ImShyMike/Eryx/actions/workflows/python-package.yml)
 [![License](https://img.shields.io/pypi/l/Eryx)](https://github.com/ImShyMike/Eryx/blob/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/Eryx)][pypi_url]
@@ -31,10 +31,10 @@ python -m eryx
 ```
 
 The list of subcommands is:
-- repl => Start the [REPL](https://wikipedia.org/wiki/REPL)
-- run => Run an Eryx file
-- playground => Start the web playground
-- test => Run the test suite
+* **repl**: Start the [REPL](https://wikipedia.org/wiki/REPL)
+* **run**: Run an Eryx file
+* **playground**: Start the web playground
+* **test**: Run the test suite
 
 ## Documentation
 Coming soon...

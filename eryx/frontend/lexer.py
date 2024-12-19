@@ -1,10 +1,11 @@
 """Lexer for the fronted."""
 
-import sys
 from enum import Enum, auto
 from typing import Any, Union
 
 from colorama import Fore, init
+
+from eryx.utils.errors import syntax_error
 
 init(autoreset=True)
 
@@ -78,37 +79,22 @@ def is_skipable(char: str) -> bool:
     )  # Skip spaces, newlines, tabs, and carriage returns
 
 
-def position_to_line_column(source_code: str, position: int) -> tuple[int, int]:
-    """Convert a position to a line and column number."""
-    # Get the substring up to the given position
-    substring = source_code[:position]
-
-    # Count the number of newline characters to determine the line
-    line = substring.count("\n") + 1
-
-    # Find the column by looking for the last newline
-    last_newline_pos = substring.rfind("\n")
-    column = position - last_newline_pos if last_newline_pos != -1 else position + 1
-
-    return (line, column)
-
-
-def get_line_string(source_code: str, line: int) -> str:
-    """Get the line string from the source code."""
-    lines = source_code.split("\n")
-
-    return lines[line - 1]
-
-
 def tokenize(source_code: str) -> list[Token]:
     """Tokenize the source code."""
     tokens = []
     source_size = len(source_code)
     src = list(source_code)
+    comment = False
 
     while len(src) > 0:
         negative_num = False
         current_pos = source_size - len(src)
+
+        if comment:
+            if src[0] in ("\n", "\r", ";"):
+                comment = False
+            src.pop(0)
+            continue
 
         single_char_tokens = {
             "(": TokenType.OPEN_PAREN,
@@ -131,6 +117,12 @@ def tokenize(source_code: str) -> list[Token]:
         if src[0] in single_char_tokens:
             token = src.pop(0)
             tokens.append(Token(token, single_char_tokens[token], current_pos))
+            continue
+
+        # Check for comments
+        if src[0] == "#":
+            comment = True
+            src.pop(0)
             continue
 
         # If its not a single character token, check for negative numbers
@@ -249,22 +241,11 @@ def tokenize(source_code: str) -> list[Token]:
 
         else:
             # If this is reached, its an unknown character
-            current_line, current_col = position_to_line_column(
-                source_code, current_pos
+            syntax_error(
+                source_code,
+                current_pos,
+                f"Unknown character found in source '{Fore.MAGENTA}{src.pop(0)}{Fore.WHITE}'",
             )
-            line = get_line_string(source_code, current_line)
-            current_line_str = str(current_line).rjust(3)
-            print(f"\n{Fore.CYAN}{current_line_str}:{Fore.WHITE} {line}")
-            print(
-                Fore.YELLOW
-                + "^".rjust(current_col + len(current_line_str) + 2)
-                + Fore.WHITE
-            )
-            print(
-                f"{Fore.RED}SyntaxError{Fore.WHITE}: Unknown character found in source "
-                f"'{Fore.MAGENTA}{src.pop(0)}{Fore.WHITE}'"
-            )
-            sys.exit(1)
 
     tokens.append(Token("EOF", TokenType.EOF, source_size - len(src)))
 

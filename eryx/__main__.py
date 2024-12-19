@@ -1,6 +1,7 @@
 """Eryx entry point and Command Line Interface (CLI) module."""
 
 import argparse
+import os
 
 import pytest
 from colorama import init
@@ -74,14 +75,17 @@ def main():
     if args.command == "repl":
         start_repl(log_ast=args.ast, log_result=args.result, log_tokens=args.tokenize)
     elif args.command == "run":
-        with open(args.filepath, "r", encoding="utf8") as file:
-            source_code = file.read()
-        run_code(
-            source_code,
-            log_ast=args.ast,
-            log_result=args.result,
-            log_tokens=args.tokenize,
-        )
+        try:
+            with open(args.filepath, "r", encoding="utf8") as file:
+                source_code = file.read()
+            run_code(
+                source_code,
+                log_ast=args.ast,
+                log_result=args.result,
+                log_tokens=args.tokenize,
+            )
+        except Exception as e: # pylint: disable=broad-except
+            print(f"eryx: can't open file '{args.filepath}': [Errno {e.args[0]}] {e.args[1]}")
     elif args.command == "playground":
         start_playground(args.host or "0.0.0.0", port=args.port or 80)
     elif args.command == "test":

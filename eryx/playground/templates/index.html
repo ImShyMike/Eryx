@@ -4,10 +4,9 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Eryx Playground</title>
-        <meta name="description" content="Online runtime for Eryx">
+        <meta name="description" content="Online playground for the Eryx programming language">
         <meta property="og:title" content="Eryx Playground">
-        <meta property="og:description" content="Online runtime for Eryx">
-        <meta property="og:url" content="https://lang.shymike.tech/">
+        <meta property="og:description" content="Online playground for the Eryx programming language">
         <meta property="og:type" content="website">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="static/style.css">
@@ -48,6 +47,10 @@
                 <ul>
                     <li>If/Else Statements</li>
                 <ul>
+                <h3>Comments</h3>
+                <ul>
+                    <li>Single Line Comments</li>
+                </ul>
                 <h3>Example</h3>
                 <pre>
 const timenow = time();
@@ -55,8 +58,8 @@ const timenow = time();
 func add (x, y) {
     let result = x + y;
 
-    func sub (a, b) {
-        a - b
+    func sub(a, b) {
+        return a - b;
     }
 
     let result2 = sub(y, x);
@@ -66,33 +69,35 @@ func add (x, y) {
         y
     };
 
-    let five = 10 - 5;
+    let five;
+    five = 10 - 5;
     const neg_num = -1000;
-    let float = 69.420;
-    const str = "Strings work!!!!";
+    let flt = 69.420;
+    const string = "Strings work!!!!";
 
     let obj = {
         five,
         neg_num,
-        float,
+        flt,
         result2,
         timenow,
         result,
         object: obj2,
-        str
+        string,
+        arr: [1, 2, 3, 4, 5]
     };
 
-    obj
+    return obj;
 }
 
 print(add(5, 7))
 
 func makeAdder(offset) {
     func add(x, y) {
-        x + y + offset
+        return x + y + offset;
     }
 
-    add
+    return add;
 }
 
 let adder = makeAdder(10);

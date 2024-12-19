@@ -1,4 +1,4 @@
-"""Web UI for Eryx."""
+"""Web playground for Eryx."""
 
 import io
 import json
@@ -206,6 +206,12 @@ def repl():
 def static_route(path):
     """Static file route."""
     return app.send_static_file(path)
+
+
+@app.route("/favicon.ico")
+def favicon():
+    """Serve the favicon."""
+    return app.send_static_file("favicon.ico")
 
 
 def start_playground(host="0.0.0.0", port=80):

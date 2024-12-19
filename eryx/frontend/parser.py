@@ -21,11 +21,13 @@ from eryx.frontend.ast import (
 )
 from eryx.frontend.lexer import Token, TokenType, tokenize
 
+from eryx.utils.errors import syntax_error
 
 class Parser:
     """Parser class."""
 
     def __init__(self) -> None:
+        self.source_code = ""
         self.tokens = []
 
     def not_eof(self) -> bool:
@@ -48,10 +50,7 @@ class Parser:
         """Assert that the next token is of a certain type and return it."""
         token = self.next()
         if token.type != token_type:
-            raise RuntimeError(
-                f"Parser error on position {token.position}: "
-                f"\n{error} {token} - Expected: {token_type}"
-            )
+            syntax_error(self.source_code, token.position, error)
         return token
 
     def parse_additive_expression(self) -> Expression:
@@ -120,7 +119,11 @@ class Parser:
                 proprty = self.parse_primary_expression()  # Identifier
 
                 if not isinstance(proprty, Identifier):
-                    raise RuntimeError("Expected an identifier as a property.")
+                    syntax_error(
+                        self.source_code,
+                        self.at().position,
+                        "Expected an identifier as a property.",
+                    )
             else:
                 computed = True
                 proprty = self.parse_expression()
@@ -186,7 +189,7 @@ class Parser:
                 )  # Skip the close parenthesis
                 return expression
             case _:
-                raise RuntimeError(f"Unexpected token: {token}")
+                syntax_error(self.source_code, token.position, "Unexpected token.")
 
     def parse_assignment_expression(self) -> Expression:
         """Parse an assignment expression."""
@@ -319,7 +322,11 @@ class Parser:
         parameters = []
         for argument in arguments:
             if not isinstance(argument, Identifier):
-                raise RuntimeError("Function arguments must be identifiers.")
+                syntax_error(
+                    self.source_code,
+                    self.at().position,
+                    "Function arguments must be identifiers.",
+                )
             parameters.append(argument.symbol)
 
         self.assert_next(TokenType.OPEN_BRACE, "Expected an opening brace.")
@@ -345,7 +352,11 @@ class Parser:
         if self.at().type == TokenType.SEMICOLON:
             self.next()  # Skip the semicolon
             if is_constant:
-                raise RuntimeError("Constant declaration must have an initial value.")
+                syntax_error(
+                    self.source_code,
+                    self.at().position,
+                    "Constant declaration must have an initial value.",
+                )
 
             return VariableDeclaration(is_constant, Identifier(identifier))
 
@@ -381,6 +392,7 @@ class Parser:
 
     def produce_ast(self, source_code: str) -> Program:
         """Produce an abstract syntax tree (AST) from source code."""
+        self.source_code = source_code
         self.tokens = tokenize(source_code)
         program = Program(body=[])
 
