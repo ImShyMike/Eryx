@@ -8,6 +8,7 @@ from colorama import init
 from eryx.playground.playground import start_playground
 from eryx.runtime.repl import start_repl
 from eryx.runtime.runner import run_code
+from eryx.__init__ import CURRENT_VERSION
 
 init(autoreset=True)
 
@@ -16,6 +17,12 @@ def main():
     """CLI entry point."""
     arg_parser = argparse.ArgumentParser(
         description="Eryx Command Line Interface",
+    )
+    arg_parser.add_argument(
+        "--version",
+        action="version",
+        version=f"Eryx, version {CURRENT_VERSION}",
+        help="Show the version number and exit.",
     )
 
     # Set the program name if executed as a module

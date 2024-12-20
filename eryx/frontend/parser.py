@@ -55,11 +55,11 @@ class Parser:
 
     def parse_additive_expression(self) -> Expression:
         """Parse an additive expression."""
-        left = self.parse_multiplicative_expression()
+        left = self.parse_exponentiation_expression()
 
         while self.at().value in ("+", "-"):
             operator = self.next().value
-            right = self.parse_multiplicative_expression()
+            right = self.parse_exponentiation_expression()
             left = BinaryExpression(left, operator, right)
 
         return left
@@ -140,6 +140,17 @@ class Parser:
         while self.at().value in ("/", "*", "%"):
             operator = self.next().value
             right = self.parse_call_member_expression()
+            left = BinaryExpression(left, operator, right)
+
+        return left
+
+    def parse_exponentiation_expression(self) -> Expression:
+        """Parse an exponentiation expression."""
+        left = self.parse_multiplicative_expression()
+
+        while self.at().value == "**":
+            operator = self.next().value
+            right = self.parse_multiplicative_expression()
             left = BinaryExpression(left, operator, right)
 
         return left

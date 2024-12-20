@@ -116,6 +116,13 @@ def tokenize(source_code: str) -> list[Token]:
         # Check for single character tokens first
         if src[0] in single_char_tokens:
             token = src.pop(0)
+
+            # Power operator
+            if token == '*' and len(src) > 0 and src[0] == '*':
+                src.pop(0)
+                tokens.append(Token("**", TokenType.BINARY_OPERATOR, current_pos))
+                continue
+
             tokens.append(Token(token, single_char_tokens[token], current_pos))
             continue
 

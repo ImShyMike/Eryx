@@ -29,10 +29,6 @@ def start_repl(
             # Accept input from the user
             source_code = input("> ")
 
-            # Handle exiting
-            if source_code in ("exit", ""):
-                break
-
             # Run the code
             run_code(source_code, log_ast, log_result, log_tokens, environment, parser)
 

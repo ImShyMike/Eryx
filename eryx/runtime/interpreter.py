@@ -32,6 +32,14 @@ from eryx.runtime.values import (
 from eryx.utils.pretty_print import pprint
 
 
+# Custom exception to manage returns with
+class ReturnException(Exception):
+    """Dummy exception to manage return statements."""
+
+    def __init__(self, value):
+        self.value = value
+
+
 # STATEMENTS
 def eval_variable_declaration(
     declaration: VariableDeclaration, environment: Environment
@@ -75,14 +83,14 @@ def eval_if_statement(
 ) -> RuntimeValue:
     """Evaluate an if statement."""
     condition = evaluate(if_statement.condition, environment)
+    result = []
+
     if condition.value:
-        result = []
         for statement in if_statement.then:
             result = evaluate(statement, environment)
         return result
 
     if if_statement.else_:
-        result = []
         for statement in if_statement.else_:
             result = evaluate(statement, environment)
         return result
@@ -106,6 +114,9 @@ def eval_binary_expression(
             return BooleanValue(
                 eval_numeric_comparison_expression(left, right, binop.operator)
             )
+
+        if binop.operator == "**":
+            return NumberValue(left.value**right.value)
 
         raise RuntimeError(f"Unknown binary operator {binop.operator}.")
 
@@ -168,20 +179,31 @@ def eval_member_expression(
     """Evaluate a member expression."""
     object_value = evaluate(member.object, environment)
 
-    if member.computed:
-        property_value = evaluate(member.property, environment)
-        if not isinstance(property_value, StringValue):
-            raise RuntimeError("Expected a string as a property.")
-        property_value = property_value.value
-    else:
-        if not isinstance(member.property, Identifier):
-            raise RuntimeError("Expected an identifier as a property.")
-        property_value = member.property.symbol
-
     if isinstance(object_value, ObjectValue):
+        if member.computed:
+            property_value = evaluate(member.property, environment)
+            if not isinstance(property_value, StringValue):
+                raise RuntimeError("Expected a string as a property.")
+            property_value = property_value.value
+        else:
+            if not isinstance(member.property, Identifier):
+                raise RuntimeError("Expected an identifier as a property.")
+            property_value = member.property.symbol
+
         return object_value.properties.get(property_value, NullValue())
 
-    raise RuntimeError("Cannot access property of a non-object value.")
+    elif isinstance(object_value, ArrayValue):
+        if member.computed:
+            property_value = evaluate(member.property, environment)
+            if not isinstance(property_value, NumberValue):
+                raise RuntimeError("Expected a number as an index.")
+
+            return object_value.elements[int(property_value.value)]
+
+        raise RuntimeError("Expected a computed property for an array (number).")
+
+    else:
+        raise RuntimeError("Expected an object or array.")
 
 
 def eval_numeric_binary_expression(
@@ -280,10 +302,11 @@ def eval_call_expression(
             )
 
         # Evaluate the function body statement by statement
-        for statement in func.body:
-            if isinstance(statement, ReturnStatement):
-                return evaluate(statement, function_environment)
-            evaluate(statement, function_environment)
+        try:
+            for statement in func.body:
+                evaluate(statement, function_environment)
+        except ReturnException as ret:
+            return ret.value
 
         return NullValue()
 
@@ -323,7 +346,9 @@ def evaluate(ast_node: Statement, environment: Environment) -> RuntimeValue:
         case IfStatement():
             return eval_if_statement(ast_node, environment)
         case ReturnStatement():
-            return evaluate(ast_node.value, environment)
+            # Directly evaluate and raise ReturnException if it's a return statement
+            value = evaluate(ast_node.value, environment)
+            raise ReturnException(value)
         case _:
             print("=== AST node ERROR ===")
             pprint(ast_node)

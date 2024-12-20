@@ -161,3 +161,6 @@ cython_debug/
 
 # PyPI upload script
 upload.py
+
+# Generated documentation website
+docs/site

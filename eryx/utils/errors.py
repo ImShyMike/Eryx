@@ -22,20 +22,20 @@ def get_line_strings(source_code: str, line: int) -> str:
     """Get the line string from the source code."""
     lines = source_code.split("\n")
 
-    return lines[line - 10: line]
+    return lines[line - 2]
 
-def syntax_error(source_code: str, pos: int, error_message: str) -> None:
+def syntax_error(source_code: str, pos: int | tuple[int, int], error_message: str) -> None:
     """Handle a syntax error."""
+    length = 1 if isinstance(pos, int) else (pos[1] - pos[0])
     current_line, current_col = position_to_line_column(
-        source_code, pos
+        source_code, pos if isinstance(pos, int) else pos[0]
     )
-    lines = get_line_strings(source_code, current_line)
+    line = get_line_strings(source_code, current_line)
     print()
-    for n, line in enumerate(lines):
-        print(f"{Fore.CYAN}{str(current_line - (len(lines) - n) + 1).rjust(3)}:{Fore.WHITE} {line}")
+    print(f"{Fore.CYAN}{str(current_line).rjust(3)}:{Fore.WHITE} {line}")
     print(
         Fore.YELLOW
-        + "^".rjust(current_col + len(str(current_line).rjust(3)) + 2)
+        + ("^"*length).rjust(current_col + len(str(current_line).rjust(3)) + 2)
         + Fore.WHITE
     )
     print(f"{Fore.RED}SyntaxError{Fore.WHITE}: {error_message}")

@@ -85,7 +85,6 @@ class Environment:
         self.declare_variable("exit", NativeFunctionValue(_exit), True)
         self.declare_variable("str", NativeFunctionValue(_str), True)
         self.declare_variable("int", NativeFunctionValue(_int), True)
-        self.declare_variable("float", NativeFunctionValue(_float), True)
         self.declare_variable("bool", NativeFunctionValue(_bool), True)
         self.declare_variable("array", NativeFunctionValue(_array), True)
         self.declare_variable("type", NativeFunctionValue(_type), True)
@@ -99,10 +98,13 @@ def get_value(value: RuntimeValue, inside_array: bool = False) -> object:
     result = ""
 
     if isinstance(value, NullValue):
-        result = None
+        result = "null"
 
-    elif isinstance(value, (BooleanValue, NumberValue)):
-        result = value.value
+    elif isinstance(value, BooleanValue):
+        result = str(value.value).lower()
+
+    elif isinstance(value, NumberValue):
+        result = str(value.value) if int(value.value) != value.value else str(int(value.value))
 
     elif isinstance(value, StringValue):
         if inside_array:
@@ -171,7 +173,9 @@ def _len(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
 
 
 def _exit(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
-    sys.exit(args[0].value)
+    if args:
+        sys.exit(args[0].value)
+    sys.exit(0)
 
 
 def _str(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
@@ -186,14 +190,6 @@ def _int(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     if isinstance(args[0], (StringValue, NumberValue)):
         return NumberValue(int(args[0].value))
     raise RuntimeError(f"Cannot convert {args[0]} to int")
-
-
-def _float(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
-    if len(args) == 0:
-        return NumberValue(0.0)
-    if isinstance(args[0], (StringValue, NumberValue)):
-        return NumberValue(float(args[0].value))
-    raise RuntimeError(f"Cannot convert {args[0]} to float")
 
 
 def _bool(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
