@@ -5,7 +5,7 @@ import argparse
 import pytest
 from colorama import init
 
-from eryx.playground.playground import start_playground
+from eryx.server.ide import start_ide
 from eryx.runtime.repl import start_repl
 from eryx.runtime.runner import run_code
 from eryx.__init__ import CURRENT_VERSION
@@ -61,15 +61,15 @@ def main():
         "--tokenize", action="store_true", help="Print the tokenized source code."
     )
 
-    # 'playground' command
-    playground_parser = subparsers.add_parser(
-        "playground", help="Start the web playground"
+    # 'server' command
+    server_parser = subparsers.add_parser(
+        "server", help="Start the web IDE"
     )
-    playground_parser.add_argument(
-        "--port", type=int, help="Port number for the web playground."
+    server_parser.add_argument(
+        "--port", type=int, help="Port number for the web IDE."
     )
-    playground_parser.add_argument(
-        "--host", type=str, help="Host for the web playground."
+    server_parser.add_argument(
+        "--host", type=str, help="Host for the web IDE."
     )
 
     # 'test' command
@@ -90,12 +90,12 @@ def main():
                 log_result=args.result,
                 log_tokens=args.tokenize,
             )
-        except Exception as e:  # pylint: disable=broad-except
+        except FileNotFoundError as e:
             print(
                 f"eryx: can't open file '{args.filepath}': [Errno {e.args[0]}] {e.args[1]}"
             )
-    elif args.command == "playground":
-        start_playground(args.host or "0.0.0.0", port=args.port or 80)
+    elif args.command == "server":
+        start_ide(args.host or "0.0.0.0", port=args.port or 80)
     elif args.command == "test":
         pytest.main(["-v", "tests/run_tests.py"])
     elif args.command is None:

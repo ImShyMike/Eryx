@@ -45,7 +45,7 @@ def get_color(class_instance):
     if isenum(class_instance):
         return COLOR_DICT["enum"]
     # Class colors
-    return COLOR_DICT.get(type(class_instance).__name__, Fore.WHITE)
+    return COLOR_DICT.get(type(class_instance).__name__, Fore.RESET)
 
 
 def handle_array(
@@ -103,7 +103,7 @@ def handle_array(
             elif isfunction(item):
                 # If function, add the function name
                 string += (
-                    get_color(item) + f"{val.__name__}" + Fore.WHITE
+                    get_color(item) + f"{val.__name__}" + Fore.RESET
                     if use_color
                     else "" + "()"
                 )
@@ -112,7 +112,7 @@ def handle_array(
                 string += (
                     (get_color(item) if use_color else "")
                     + str(item)
-                    + (Fore.WHITE if use_color else "")
+                    + (Fore.RESET if use_color else "")
                 )
     if use_newlines:
         string += f"\n{' '*(indent*(_tabs))}"
@@ -133,7 +133,7 @@ def handle_dict(val, use_color, use_newlines, indent, _tabs):
             string += COLOR_DICT["key"]
         string += f"{key}"
         if use_color:
-            string += Fore.WHITE
+            string += Fore.RESET
         string += ": "
 
         if use_color:
@@ -169,7 +169,7 @@ def handle_dict(val, use_color, use_newlines, indent, _tabs):
         elif isfunction(val):
             # If function, add the function name
             string += (
-                get_color(val) + f"{val.__name__}" + Fore.WHITE
+                get_color(val) + f"{val.__name__}" + Fore.RESET
                 if use_color
                 else "" + "()"
             )
@@ -178,11 +178,11 @@ def handle_dict(val, use_color, use_newlines, indent, _tabs):
             string += (
                 (get_color(value) if use_color else "")
                 + str(value)
-                + (Fore.WHITE if use_color else "")
+                + (Fore.RESET if use_color else "")
             )
 
         if use_color:
-            string += Fore.WHITE
+            string += Fore.RESET
 
         if i + 1 < len(val):
             string += ","
@@ -196,7 +196,7 @@ def handle_dict(val, use_color, use_newlines, indent, _tabs):
 def handle_str(val, use_color):
     """Helper function to handle strings."""
     if use_color:
-        return f'{get_color(val)}"{val}"{Fore.WHITE}'
+        return f'{get_color(val)}"{val}"{Fore.RESET}'
     return f'"{val}"'
 
 
@@ -226,7 +226,7 @@ def pprint(
 
     # Reset color and add an opening parenthesis
     if use_color:
-        string += Fore.WHITE
+        string += Fore.RESET
     string += "("
 
     # Loop through the properties
@@ -246,7 +246,7 @@ def pprint(
         string += f"{class_property}"
 
         if use_color:
-            string += Fore.WHITE
+            string += Fore.RESET
         string += ": "
 
         # Add color for the value
@@ -283,7 +283,7 @@ def pprint(
         elif isfunction(val):
             # If function, add the function name
             string += (
-                get_color(val) + f"{val.__name__}" + Fore.WHITE
+                get_color(val) + f"{val.__name__}" + Fore.RESET
                 if use_color
                 else "" + "()"
             )
@@ -292,12 +292,12 @@ def pprint(
             string += (
                 (get_color(val) if use_color else "")
                 + str(val)
-                + (Fore.WHITE if use_color else "")
+                + (Fore.RESET if use_color else "")
             )
 
         # Reset color
         if use_color:
-            string += Fore.WHITE
+            string += Fore.RESET
 
         # Add a comma if not the last property
         if n + 1 < len(properties):

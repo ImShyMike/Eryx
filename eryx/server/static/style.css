@@ -1,0 +1,186 @@
+body, html {
+    font-family: system-ui, sans-serif;
+    margin: 0;
+    padding: 0;
+    font-size: 1rem;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #24273a;
+    color: #cdd6f4;
+    overflow: hidden;
+}
+
+.header {
+    background-color: #1e2030;
+    position: relative;
+    color: #cdd6f4;
+    padding: 10px 20px;
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid #363a4f;
+}
+
+.actions {
+    display: flex;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.button {
+    background-color: #1e2030;
+    color: #181926 !important;
+    border: none;
+    padding: 8px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.icon-button:hover {
+    background-color: #91d7e3;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.settings-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: #1e2030;
+    border: 1px solid #494d64;
+    border-radius: 4px;
+    padding: 10px;
+    z-index: 1000;
+    width: 200px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.show {
+    display: block;
+}
+
+.settings-menu label,
+.settings-menu button {
+    display: block;
+    margin-bottom: 8px;
+    color: #cdd6f4;
+}
+
+.name {
+    font-size: 2rem;
+
+    background: linear-gradient(90deg, #c6a0f6  0%, #a8e6cf 100%);
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    background-clip: text;
+    color: transparent;
+}
+
+.CodeMirror {
+    border: 1px solid #363a4f;
+    height: calc(100% - 2px);
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.text {
+    font-size: 1rem;
+}
+
+.ide {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    height: 100%;
+}
+
+.editor, .repl {
+    flex: 1;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.editor {
+    border-right: 2px solid #494d64;
+    background-color: #24273a;
+    height: 100%;
+}
+
+.repl {
+    background-color: #1e2030;
+    overflow: auto;
+}
+
+.editor-header, .repl-header {
+    font-size: 1.2rem;
+    color: #cdd6f4;
+    padding: 5px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    background-color: #363a4f;
+    border-radius: 5px;
+}
+
+.output {
+    white-space: pre-wrap;
+    font-family: monospace;
+    color: #cdd6f4;
+}
+
+#clear-memory, #clear-console {
+    background-color: #8aadf4;
+    color: #1e2030;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.3s ease;
+}
+
+#clear-memory:hover, #clear-console:hover {
+    background-color: #7dc4e4;
+}
+
+@media (max-width: 768px) {
+    .ide {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 500px) {
+    .actions {
+        position: fixed;
+        top: calc(100% - 50px);
+        gap: 20px;
+    }
+
+    body, html {
+        font-size: 0.9rem;
+    }
+}
