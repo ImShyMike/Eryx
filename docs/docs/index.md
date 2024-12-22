@@ -24,7 +24,7 @@ Subcommands:
 
 - **repl**: Start the REPL
 - **run**: Run an Eryx file
-- **playground**: Start the web playground
+- **server**: Start the web IDE
 - **test**: Run the test suite
 
 ### Writing your first program
