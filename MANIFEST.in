@@ -1,5 +1,5 @@
-recursive-include playground/templates *
-recursive-include playground/static *
+recursive-include server/templates *
+recursive-include server/static *
 recursive-include tests *
 recursive-exclude tests __pycache__
 recursive-exclude tests *.pyc

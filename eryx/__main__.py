@@ -1,6 +1,7 @@
 """Eryx entry point and Command Line Interface (CLI) module."""
 
 import argparse
+import os
 
 import pytest
 from colorama import init
@@ -11,6 +12,7 @@ from eryx.runtime.runner import run_code
 from eryx.__init__ import CURRENT_VERSION
 
 init(autoreset=True)
+current_path = os.path.dirname(os.path.abspath(__file__))
 
 
 def main():
@@ -97,7 +99,7 @@ def main():
     elif args.command == "server":
         start_ide(args.host or "0.0.0.0", port=args.port or 80)
     elif args.command == "test":
-        pytest.main(["-v", "tests/run_tests.py"])
+        pytest.main(["-v", os.path.join(current_path, "tests", "run_tests.py")])
     elif args.command is None:
         arg_parser.print_help()
     else:

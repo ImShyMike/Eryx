@@ -7,7 +7,7 @@ import uuid
 from contextlib import redirect_stdout
 
 from colorama import Fore
-from flask import Flask, jsonify, render_template, abort, request
+from flask import Flask, abort, jsonify, render_template, request
 
 from eryx.__init__ import CURRENT_VERSION
 from eryx.frontend.lexer import tokenize
@@ -39,6 +39,7 @@ TEMPLATE = '<span style="color: {}">'
 
 def ansi_to_html(text):
     """Format ANSI color codes to HTML with reduced DOM lag."""
+
     def single_sub(match):
         argsdict = match.groupdict()
         if argsdict["arg_3"] is None:
@@ -57,7 +58,9 @@ def ansi_to_html(text):
 
     return COLOR_REGEX.sub(single_sub, text).replace("\u001b", "")
 
+
 # ========
+
 
 class TokenList:
     """List of tokens to use with the pretty printer."""
@@ -65,9 +68,11 @@ class TokenList:
     def __init__(self, tokens: list):
         self.tokens = tokens
 
+
 def refresh_env_uuid(env_uuid):
     """Refresh the expiry time of an environment."""
     environments[env_uuid]["expiry"] = time.time() + 600
+
 
 def get_unique_uuid(dictionary):
     """Get a unique UUID that does not exist in dictionary."""
@@ -97,18 +102,14 @@ def handle_actions(path):
         except RuntimeError as e:
             return jsonify({"error": ansi_to_html(Fore.RED + str(e))})
         return jsonify(
-            {
-                "result": ansi_to_html(pprint(TokenList(tokens), print_output=False))
-            }
+            {"result": ansi_to_html(pprint(TokenList(tokens), print_output=False))}
         )
 
     try:
         ast_nodes = parser.produce_ast(source_code)
         if path == "ast":
             return jsonify(
-                {
-                    "result": ansi_to_html(pprint(ast_nodes, print_output=False))
-                }
+                {"result": ansi_to_html(pprint(ast_nodes, print_output=False))}
             )
     except RuntimeError as e:
         return jsonify({"error": ansi_to_html(Fore.RED + str(e))})
@@ -123,9 +124,7 @@ def handle_actions(path):
             result = evaluate(ast_nodes, env)
             if path == "result":
                 return jsonify(
-                    {
-                        "result": ansi_to_html(pprint(result, print_output=False))
-                    }
+                    {"result": ansi_to_html(pprint(result, print_output=False))}
                 )
     except RuntimeError as e:
         return jsonify({"error": ansi_to_html(Fore.RED + str(e))})
@@ -141,7 +140,10 @@ def repl():
     if request.method == "POST":
         environment = Environment()
         env_uuid = get_unique_uuid(environments)
-        environments[env_uuid] = {"env": environment, "expiry": time.time() + 600} # 10 minutes
+        environments[env_uuid] = {
+            "env": environment,
+            "expiry": time.time() + 600,
+        }  # 10 minutes
         return jsonify({"env_uuid": env_uuid})
 
     # If method is DELETE
