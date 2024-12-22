@@ -25,4 +25,4 @@ The CLI can be used with the command:
 ```sh
 eryx
 ```
-The CLI is used to do everything within the language, as explained [here](/cli).
+The CLI is used to do everything within the language, as explained [here](cli.md).

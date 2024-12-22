@@ -29,8 +29,8 @@ Subcommands:
 
 ### Writing your first program
 
-Before writing your first program, you should head over to the [language features page](/language-features) to understand how to use the language and what it is capable of.
-You should also check out the [examples page](/examples) as it provides a wide range of examples that cover all the features of the language.
+Before writing your first program, you should head over to the [language features page](language-features.md) to understand how to use the language and what it is capable of.
+You should also check out the [examples page](examples.md) as it provides a wide range of examples that cover all the features of the language.
 
 Here is a simple factorial implementation in Eryx:
 ```C title="factorial.eryx" linenums="1"
