@@ -1,6 +1,6 @@
 """Abstract syntax tree (AST) for the frontend."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Union
 
 
@@ -122,7 +122,7 @@ class IfStatement(Statement):
 
     condition: Expression
     then: list[Statement]
-    else_: list[Union[Statement, None]] = [None]
+    else_: list[Union[Statement, None]] = field(default_factory=list)
 
 
 @dataclass()

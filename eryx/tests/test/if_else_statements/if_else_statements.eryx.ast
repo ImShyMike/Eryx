@@ -40,7 +40,8 @@ Program(
       condition: Identifier(
         symbol: "true"
       ),
-      else_: None,
+      else_: [        
+      ],
       then: [        
         CallExpression(
           arguments: [            
@@ -89,7 +90,8 @@ Program(
           ]
         )
       ),
-      else_: None,
+      else_: [        
+      ],
       then: [        
         CallExpression(
           arguments: [            
@@ -142,7 +144,8 @@ Program(
           ]
         )
       ),
-      else_: None,
+      else_: [        
+      ],
       then: [        
         CallExpression(
           arguments: [            
@@ -161,7 +164,8 @@ Program(
       condition: Identifier(
         symbol: "null"
       ),
-      else_: None,
+      else_: [        
+      ],
       then: [        
         CallExpression(
           arguments: [            
@@ -186,7 +190,8 @@ Program(
           symbol: "print"
         )
       ),
-      else_: None,
+      else_: [        
+      ],
       then: [        
         CallExpression(
           arguments: [            
@@ -232,7 +237,8 @@ Program(
           symbol: "add"
         )
       ),
-      else_: None,
+      else_: [        
+      ],
       then: [        
         CallExpression(
           arguments: [            
