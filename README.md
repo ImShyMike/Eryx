@@ -1,5 +1,6 @@
 # [![Eryx](https://github.com/ImShyMike/Eryx/blob/main/assets/eryx_small.png)][pypi_url]
-[![Build Status](https://github.com/ImShyMike/Eryx/actions/workflows/python-package.yml/badge.svg)](https://github.com/ImShyMike/Eryx/actions/workflows/python-package.yml)
+[![Package Build](https://img.shields.io/github/actions/workflow/status/ImShyMike/Eryx/python-package.yml?label=Package)](https://github.com/ImShyMike/Eryx/actions/workflows/python-package.yml)
+[![Documentation](https://img.shields.io/github/deployments/ImShyMike/Eryx/github-pages?label=Documentation)](https://github.com/ImShyMike/Eryx/deployments/github-pages)
 [![License](https://img.shields.io/pypi/l/Eryx)][license]
 [![PyPI](https://img.shields.io/pypi/v/Eryx)][pypi_url]
 [![Python Version](https://img.shields.io/pypi/pyversions/Eryx)][pypi_url]
