@@ -1,5 +1,8 @@
-recursive-include server/templates *
-recursive-include server/static *
-recursive-include tests *
-recursive-exclude tests __pycache__
-recursive-exclude tests *.pyc
+recursive-include eryx *.ast
+recursive-include eryx *.css
+recursive-include eryx *.eryx
+recursive-include eryx *.html
+recursive-include eryx *.ico
+recursive-include eryx *.info
+recursive-include eryx *.js
+recursive-include eryx *.output
