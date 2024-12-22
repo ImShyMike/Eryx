@@ -28,8 +28,7 @@ jobs:
         pylint --fail-under=9.5 --disable=R0401,E0611 $(git ls-files '*.py')
     - name: Test with pytest
       run: |
-        cd eryx
-        pytest -v tests/run_tests.py
+        python -m eryx test
     - name: Build package
       run: |
         python -m build
