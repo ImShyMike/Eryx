@@ -19,7 +19,7 @@ from eryx.runtime.values import (
 class Environment:
     """Environment class."""
 
-    def __init__(self, parent_env: "Environment" = None):
+    def __init__(self, parent_env: "Environment | None" = None):
         self.is_global = parent_env is None
         self.parent = parent_env
         self.constants = []
@@ -93,7 +93,7 @@ class Environment:
         self.declare_variable("max", NativeFunctionValue(_max), True)
 
 
-def get_value(value: RuntimeValue, inside_array: bool = False) -> object:
+def get_value(value: RuntimeValue, inside_array: bool = False) -> str:
     """Get the value of a RuntimeValue."""
     result = ""
 
@@ -150,11 +150,18 @@ def _time(_: list[RuntimeValue], __: Environment) -> RuntimeValue:
 
 
 def _input(args: list[RuntimeValue], __: Environment) -> RuntimeValue:
-    result = input() if not args else input(args[0].value)
+    if args and isinstance(args[0], StringValue):
+        result = input(args[0].value)
+    else:
+        result = input()
     return StringValue(result)
 
 
 def _readfile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing filename argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Filename must be a string")
     with open(args[0].value, "r", encoding="utf8") as file:
         return StringValue(file.read())
 
@@ -173,8 +180,8 @@ def _len(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
 
 
 def _exit(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
-    if args:
-        sys.exit(args[0].value)
+    if args and isinstance(args[0], NumberValue):
+        sys.exit(int(args[0].value))
     sys.exit(0)
 
 
@@ -217,7 +224,7 @@ def _sum(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
         return NumberValue(0)
     if isinstance(args[0], ArrayValue):
         if all(isinstance(i, NumberValue) for i in args[0].elements):
-            return NumberValue(sum(i.value for i in args[0].elements))
+            return NumberValue(sum(i.value for i in args[0].elements)) # type: ignore
     raise RuntimeError(f"Cannot sum {args[0]}")
 
 
@@ -226,7 +233,7 @@ def _min(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
         return NumberValue(0)
     if isinstance(args[0], ArrayValue):
         if all(isinstance(i, NumberValue) for i in args[0].elements):
-            return NumberValue(min(i.value for i in args[0].elements))
+            return NumberValue(min(i.value for i in args[0].elements)) # type: ignore
     raise RuntimeError(f"Cannot get min for {args[0]}")
 
 
@@ -235,5 +242,5 @@ def _max(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
         return NumberValue(0)
     if isinstance(args[0], ArrayValue):
         if all(isinstance(i, NumberValue) for i in args[0].elements):
-            return NumberValue(max(i.value for i in args[0].elements))
+            return NumberValue(max(i.value for i in args[0].elements)) # type: ignore
     raise RuntimeError(f"Cannot get max for {args[0]}")

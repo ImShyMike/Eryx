@@ -66,14 +66,14 @@ def handle_array(
             if use_newlines:
                 string += f"\n{' '*(indent*(_tabs+1))}"
 
-            string += pprint(
+            string += str(pprint(
                 item,
                 print_output=False,
                 use_color=use_color,
                 use_newlines=use_newlines,
                 indent=indent,
                 _tabs=_tabs + 1,
-            )
+            ))
         else:
             if i > 0:
                 string += ","
@@ -141,14 +141,14 @@ def handle_dict(val, use_color, use_newlines, indent, _tabs):
 
         if isclass(value):
             # If class, recursively call pprint
-            string += pprint(
+            string += str(pprint(
                 value,
                 print_output=False,
                 use_color=use_color,
                 use_newlines=use_newlines,
                 indent=indent,
                 _tabs=_tabs + 1,
-            )
+            ))
         elif isinstance(value, (list, tuple, set)):
             # If list, set or tuple, call handle_array
             string += handle_array(
@@ -207,7 +207,7 @@ def pprint(
     use_newlines: bool = True,
     indent: int = 2,
     _tabs=0,
-):
+) -> str | None:
     """
     Pretty print a class instance.
     """
@@ -255,14 +255,14 @@ def pprint(
 
         if isclass(val):
             # If class, recursively call pprint
-            string += pprint(
+            string += str(pprint(
                 val,
                 print_output=False,
                 use_color=use_color,
                 use_newlines=use_newlines,
                 indent=indent,
                 _tabs=_tabs + 1,
-            )
+            ))
         elif isinstance(val, (list, tuple, set)):
             # If list, set or tuple, call handle_array
             string += handle_array(

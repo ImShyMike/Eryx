@@ -88,15 +88,15 @@ def index():
     return render_template("index.html", version=CURRENT_VERSION)
 
 
-@app.route("/<path>", methods=["POST"])
-def handle_actions(path):
+@app.route("/<action>", methods=["POST"])
+def handle_actions(action):
     """Handle all IDE actions."""
-    if path not in ["tokenize", "ast", "run", "result"]:
+    if action not in ["tokenize", "ast", "run", "result"]:
         abort(404)
 
     request_json = request.get_json()
     source_code = request_json["source_code"]
-    if path == "tokenize":
+    if action == "tokenize":
         try:
             tokens = tokenize(source_code)
         except RuntimeError as e:
@@ -107,7 +107,7 @@ def handle_actions(path):
 
     try:
         ast_nodes = parser.produce_ast(source_code)
-        if path == "ast":
+        if action == "ast":
             return jsonify(
                 {"result": ansi_to_html(pprint(ast_nodes, print_output=False))}
             )
@@ -122,16 +122,18 @@ def handle_actions(path):
         output_buffer = io.StringIO()
         with redirect_stdout(output_buffer):
             result = evaluate(ast_nodes, env)
-            if path == "result":
+            if action == "result":
                 return jsonify(
                     {"result": ansi_to_html(pprint(result, print_output=False))}
                 )
     except RuntimeError as e:
         return jsonify({"error": ansi_to_html(Fore.RED + str(e))})
 
-    if path == "run":
+    if action == "run":
         captured_output = output_buffer.getvalue()
         return jsonify({"result": ansi_to_html(captured_output)})
+
+    return jsonify({})
 
 
 @app.route("/repl", methods=["POST", "DELETE"])

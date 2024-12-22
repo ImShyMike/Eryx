@@ -201,6 +201,7 @@ class Parser:
                 return expression
             case _:
                 syntax_error(self.source_code, token.position, "Unexpected token.")
+                return Expression() # This will never be reached
 
     def parse_assignment_expression(self) -> Expression:
         """Parse an assignment expression."""
@@ -332,13 +333,14 @@ class Parser:
 
         parameters = []
         for argument in arguments:
-            if not isinstance(argument, Identifier):
+            if isinstance(argument, Identifier):
+                parameters.append(argument.symbol)
+            else:
                 syntax_error(
                     self.source_code,
                     self.at().position,
                     "Function arguments must be identifiers.",
                 )
-            parameters.append(argument.symbol)
 
         self.assert_next(TokenType.OPEN_BRACE, "Expected an opening brace.")
 

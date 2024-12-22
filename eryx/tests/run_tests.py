@@ -42,7 +42,7 @@ def read_info(file_path: str) -> dict:
         if os.path.isdir(os.path.join(current_path, "test", f))
     ],
 )
-def test_eryx_code(test_folder: str, capfd: pytest.fixture):
+def test_eryx_code(test_folder: str, capfd: pytest.CaptureFixture):
     """Test Eryx code by parsing, producing the AST, evaluating it, and checking output."""
 
     environment = Environment()

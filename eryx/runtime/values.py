@@ -1,7 +1,7 @@
 """Values and their types in the runtime environment."""
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Dict, List
+from typing import TYPE_CHECKING, Dict, List, Callable
 
 if TYPE_CHECKING:
     from frontend.ast import Statement
@@ -53,7 +53,7 @@ class FunctionCall:
 class NativeFunctionValue(RuntimeValue):
     """Native function value class."""
 
-    call: FunctionCall
+    call: Callable
 
 
 @dataclass()

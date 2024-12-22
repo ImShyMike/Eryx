@@ -58,7 +58,7 @@ class VariableDeclaration(Statement):
 class NumericLiteral(Expression):
     """Numeric literal class."""
 
-    value: int
+    value: float
 
 
 @dataclass()
@@ -113,7 +113,7 @@ class FunctionDeclaration(Statement):
 
     name: str
     arguments: List[str]
-    body: Statement
+    body: list[Statement]
 
 
 @dataclass()
@@ -121,8 +121,8 @@ class IfStatement(Statement):
     """If statement class."""
 
     condition: Expression
-    then: Statement
-    else_: Union[Statement, None] = None
+    then: list[Statement]
+    else_: list[Union[Statement, None]] = [None]
 
 
 @dataclass()

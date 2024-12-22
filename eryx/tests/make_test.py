@@ -53,7 +53,7 @@ def create_test_files(code, description, test_name):
         os.path.join(test_folder, f"{test_name}.eryx.ast"), "w", encoding="utf8"
     ) as f:
         try:
-            f.write(pprint(test_ast, print_output=False, use_color=False))
+            f.write(str(pprint(test_ast, print_output=False, use_color=False)))
         except RuntimeError as e:
             print(f"Parser Error: {e}")
             return

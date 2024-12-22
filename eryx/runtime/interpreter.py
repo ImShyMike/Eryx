@@ -83,17 +83,19 @@ def eval_if_statement(
 ) -> RuntimeValue:
     """Evaluate an if statement."""
     condition = evaluate(if_statement.condition, environment)
-    result = []
+    result = NullValue()
 
-    if condition.value:
-        for statement in if_statement.then:
-            result = evaluate(statement, environment)
-        return result
+    if isinstance(condition, (BooleanValue, NumberValue, StringValue, NullValue)):
+        if condition.value:
+            for statement in if_statement.then:
+                result = evaluate(statement, environment)
+            return result
 
-    if if_statement.else_:
-        for statement in if_statement.else_:
-            result = evaluate(statement, environment)
-        return result
+        if if_statement.else_:
+            for statement in if_statement.else_:
+                if statement: # Type check stuff
+                    result = evaluate(statement, environment)
+            return result
 
     return NullValue()
 
@@ -207,8 +209,8 @@ def eval_member_expression(
 
 
 def eval_numeric_binary_expression(
-    left: RuntimeValue, right: RuntimeValue, operator: str
-) -> NumberValue:
+    left: NumberValue, right: NumberValue, operator: str
+) -> NumberValue | NullValue:
     """Evaluate a binary expression with two parsed numeric operands (always numbers)."""
     match operator:
         case "+":
@@ -314,8 +316,11 @@ def eval_call_expression(
 
 
 # MAIN
-def evaluate(ast_node: Statement, environment: Environment) -> RuntimeValue:
+def evaluate(ast_node: Statement | None, environment: Environment) -> RuntimeValue:
     """Evaluate an AST node."""
+    if not ast_node:
+        return NullValue()
+
     match ast_node:
         case NumericLiteral():
             return NumberValue(ast_node.value)

@@ -164,3 +164,6 @@ upload.py
 
 # Generated documentation website
 docs/site
+
+# VS Code
+.vscode/
