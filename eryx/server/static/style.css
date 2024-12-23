@@ -167,6 +167,15 @@ body, html {
     background-color: #7dc4e4;
 }
 
+#redirect {
+    text-decoration: none;
+}
+
+::selection {
+    background-color: #8aadf4;
+    color: #1e2030;
+}
+
 @media (max-width: 768px) {
     .ide {
         flex-direction: column;

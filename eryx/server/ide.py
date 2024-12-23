@@ -17,19 +17,19 @@ from eryx.runtime.interpreter import evaluate
 from eryx.utils.pretty_print import pprint
 
 app = Flask(__name__)
-app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
+app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 600
 parser = Parser()
 environments = {}
 
 # https://stackoverflow.com/questions/19212665/python-converting-ansi-color-codes-to-html
 COLOR_DICT = {
-    "31": ["hotpink", "mediumvioletred"],
-    "32": ["limegreen", "darkgreen"],
-    "33": ["gold", "darkgoldenrod"],
-    "34": ["cyan", "teal"],
-    "35": ["hotpink", "mediumvioletred"],
-    "36": ["cyan", "teal"],
-    "37": ["white", "silver"],
+    "31": ["hotpink"],
+    "32": ["limegreen"],
+    "33": ["gold"],
+    "34": ["cyan"],
+    "35": ["hotpink"],
+    "36": ["cyan"],
+    "37": ["white"],
 }
 
 COLOR_REGEX = re.compile(r"\[(?P<arg_1>\d+)(;(?P<arg_2>\d+)(;(?P<arg_3>\d+))?)?m")
