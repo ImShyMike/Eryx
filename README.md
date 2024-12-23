@@ -35,7 +35,7 @@ python -m eryx
 The list of subcommands is:
 * **repl**: Start the [REPL](https://wikipedia.org/wiki/REPL)
 * **run**: Run an Eryx file
-* **playground**: Start the web playground
+* **server**: Start the web IDE
 * **test**: Run the test suite
 
 ## Documentation
