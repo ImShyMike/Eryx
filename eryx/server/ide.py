@@ -97,22 +97,30 @@ def handle_actions(action):
     request_json = request.get_json()
     source_code = request_json["source_code"]
     if action == "tokenize":
-        try:
-            tokens = tokenize(source_code)
-        except (RuntimeError, SystemExit) as e:
-            return jsonify({"error": ansi_to_html(Fore.RED + str(e))})
-        return jsonify(
-            {"result": ansi_to_html(pprint(TokenList(tokens), print_output=False))}
-        )
-
-    try:
-        ast_nodes = parser.produce_ast(source_code)
-        if action == "ast":
+        output_buffer = io.StringIO()
+        with redirect_stdout(output_buffer):
+            try:
+                tokens = tokenize(source_code)
+            except (RuntimeError, SystemExit) as e:
+                if isinstance(e, SystemExit):
+                    return jsonify({"error": ansi_to_html(Fore.RED + output_buffer.getvalue())})
+                return jsonify({"error": ansi_to_html(Fore.RED + str(e))})
             return jsonify(
-                {"result": ansi_to_html(pprint(ast_nodes, print_output=False))}
+                {"result": ansi_to_html(pprint(TokenList(tokens), print_output=False))}
             )
-    except (RuntimeError, SystemExit) as e:
-        return jsonify({"error": ansi_to_html(Fore.RED + str(e))})
+
+    output_buffer = io.StringIO()
+    with redirect_stdout(output_buffer):
+        try:
+            ast_nodes = parser.produce_ast(source_code)
+            if action == "ast":
+                return jsonify(
+                    {"result": ansi_to_html(pprint(ast_nodes, print_output=False))}
+                )
+        except (RuntimeError, SystemExit) as e:
+            if isinstance(e, SystemExit):
+                return jsonify({"error": ansi_to_html(Fore.RED + output_buffer.getvalue())})
+            return jsonify({"error": ansi_to_html(Fore.RED + str(e))})
     try:
         env = None
         if "env_uuid" in request_json:
@@ -126,12 +134,11 @@ def handle_actions(action):
                 return jsonify(
                     {"result": ansi_to_html(pprint(result, print_output=False))}
                 )
-    except (RuntimeError, SystemExit) as e:
+    except RuntimeError as e:
         return jsonify({"error": ansi_to_html(Fore.RED + str(e))})
 
     if action == "run":
-        captured_output = output_buffer.getvalue()
-        return jsonify({"result": ansi_to_html(captured_output)})
+        return jsonify({"result": ansi_to_html(output_buffer.getvalue())})
 
     return jsonify({})
 
