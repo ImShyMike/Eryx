@@ -99,7 +99,7 @@ def handle_actions(action):
     if action == "tokenize":
         try:
             tokens = tokenize(source_code)
-        except RuntimeError as e:
+        except (RuntimeError, SystemExit) as e:
             return jsonify({"error": ansi_to_html(Fore.RED + str(e))})
         return jsonify(
             {"result": ansi_to_html(pprint(TokenList(tokens), print_output=False))}
@@ -111,7 +111,7 @@ def handle_actions(action):
             return jsonify(
                 {"result": ansi_to_html(pprint(ast_nodes, print_output=False))}
             )
-    except RuntimeError as e:
+    except (RuntimeError, SystemExit) as e:
         return jsonify({"error": ansi_to_html(Fore.RED + str(e))})
     try:
         env = None
@@ -126,7 +126,7 @@ def handle_actions(action):
                 return jsonify(
                     {"result": ansi_to_html(pprint(result, print_output=False))}
                 )
-    except RuntimeError as e:
+    except (RuntimeError, SystemExit) as e:
         return jsonify({"error": ansi_to_html(Fore.RED + str(e))})
 
     if action == "run":
