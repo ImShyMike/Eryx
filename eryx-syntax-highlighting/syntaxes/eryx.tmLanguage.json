@@ -1,0 +1,75 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Eryx",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#numbers"
+		},
+		{
+			"include": "#operators"
+		},
+		{
+			"include": "#functions"
+		},
+		{
+			"include": "#variables"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [{
+				"name": "keyword.control.eryx",
+				"match": "\\b(if|else|return|func|let|const|true|false|null)\\b"
+			}]
+		},
+		"strings": {
+			"name": "string.quoted.double.eryx",
+			"begin": "\"",
+			"end": "\""
+		},
+		"comments": {
+		"patterns": [{
+				"name": "comment.line.number-sign.eryx",
+				"match": "#.*?($|;)"
+			}]
+		},
+		"numbers": {
+			"name": "constant.numeric.eryx",
+			"match": "-?\\b([0-9]+(\\.([0-9]+)?)?|\\.([0-9]+))\\b"
+		},
+		"operators": {
+			"name": "keyword.operator.eryx",
+			"match": "(\\+|-|\\*|\\/|%|=|!|<|>)"
+		},
+		"functions": {
+			"patterns": [
+				{
+					"name": "entity.name.function.eryx",
+					"match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\("
+				},
+				{
+					"name": "entity.name.function.builtin.eryx",
+					"match": "\\b(print|time|input|read|len|exit|str|int|bool|array|type|sum|min|max)\\b"
+				}
+			]
+		},
+		"variables": {
+			"patterns": [
+				{
+					"name": "variable.other.eryx",
+					"match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+				}
+			]
+		}
+	},
+	"scopeName": "source.eryx"
+}

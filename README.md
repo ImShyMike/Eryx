@@ -12,6 +12,13 @@
 ## What is Eryx?
  Eryx is a decently fast simple dynamically typed programming language similar to javascript/python.
 
+
+> Why the name "Eryx"?
+> The language was made using python which is [a family of snake](https://en.wikipedia.org/wiki/Pythonidae) and the name eryx is [a snake genus](https://en.wikipedia.org/wiki/Eryx_(snake)).
+
+## Documentation
+Full documentation is available [here](https://ImShyMike.github.io/Eryx).
+
 ## Installation
  To install the latest stable release, just install it from PyPI using:
 ```sh
@@ -23,23 +30,16 @@ pip install Eryx-(version)-py3-none-any.whl
 ```
 
 ## Usage
-The CLI can be executed by running one of the following commands after installing:
+The CLI can be accessed with the following command:
 ```sh
 eryx
 ```
-or
-```sh
-python -m eryx
-```
 
-The list of subcommands is:
+Subcommands:
 * **repl**: Start the [REPL](https://wikipedia.org/wiki/REPL)
 * **run**: Run an Eryx file
 * **server**: Start the web IDE
 * **test**: Run the test suite
-
-## Documentation
-Full documentation is available [here](https://ImShyMike.github.io/Eryx).
 
 ## Thanks
 A huge thanks to [tylerlaceby](https://www.youtube.com/@tylerlaceby) for his ["Build a Custom Scripting Language In Typescript"](https://www.youtube.com/playlist?list=PL_2VhOvlMk4UHGqYCLWc6GO8FaPl8fQTh) playlist.

@@ -80,7 +80,7 @@ class Environment:
         self.declare_variable("print", NativeFunctionValue(_print), True)
         self.declare_variable("time", NativeFunctionValue(_time), True)
         self.declare_variable("input", NativeFunctionValue(_input), True)
-        self.declare_variable("read", NativeFunctionValue(_readfile), True)
+        self.declare_variable("readfile", NativeFunctionValue(_readfile), True)
         self.declare_variable("len", NativeFunctionValue(_len), True)
         self.declare_variable("exit", NativeFunctionValue(_exit), True)
         self.declare_variable("str", NativeFunctionValue(_str), True)
@@ -104,7 +104,11 @@ def get_value(value: RuntimeValue, inside_array: bool = False) -> str:
         result = str(value.value).lower()
 
     elif isinstance(value, NumberValue):
-        result = str(value.value) if int(value.value) != value.value else str(int(value.value))
+        result = (
+            str(value.value)
+            if int(value.value) != value.value
+            else str(int(value.value))
+        )
 
     elif isinstance(value, StringValue):
         if inside_array:
@@ -162,8 +166,11 @@ def _readfile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
         raise RuntimeError("Missing filename argument")
     if not isinstance(args[0], StringValue):
         raise RuntimeError("Filename must be a string")
-    with open(args[0].value, "r", encoding="utf8") as file:
-        return StringValue(file.read())
+    try:
+        with open(args[0].value, "r", encoding="utf8") as file:
+            return StringValue(file.read())
+    except FileNotFoundError as e:
+        raise RuntimeError(f"File '{args[0].value}' not found") from e
 
 
 def _len(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
@@ -224,7 +231,7 @@ def _sum(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
         return NumberValue(0)
     if isinstance(args[0], ArrayValue):
         if all(isinstance(i, NumberValue) for i in args[0].elements):
-            return NumberValue(sum(i.value for i in args[0].elements)) # type: ignore
+            return NumberValue(sum(i.value for i in args[0].elements))  # type: ignore
     raise RuntimeError(f"Cannot sum {args[0]}")
 
 
@@ -233,7 +240,7 @@ def _min(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
         return NumberValue(0)
     if isinstance(args[0], ArrayValue):
         if all(isinstance(i, NumberValue) for i in args[0].elements):
-            return NumberValue(min(i.value for i in args[0].elements)) # type: ignore
+            return NumberValue(min(i.value for i in args[0].elements))  # type: ignore
     raise RuntimeError(f"Cannot get min for {args[0]}")
 
 
@@ -242,5 +249,5 @@ def _max(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
         return NumberValue(0)
     if isinstance(args[0], ArrayValue):
         if all(isinstance(i, NumberValue) for i in args[0].elements):
-            return NumberValue(max(i.value for i in args[0].elements)) # type: ignore
+            return NumberValue(max(i.value for i in args[0].elements))  # type: ignore
     raise RuntimeError(f"Cannot get max for {args[0]}")

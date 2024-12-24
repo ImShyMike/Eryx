@@ -133,7 +133,7 @@ body, html {
     overflow: auto;
 }
 
-.editor-header, .repl-header {
+.editor-container, .repl-header {
     font-size: 1.2rem;
     color: #cdd6f4;
     padding: 5px;
@@ -169,6 +169,20 @@ body, html {
 
 #redirect {
     text-decoration: none;
+}
+
+#name-edit {
+    margin-right: 8px;
+    margin-left: 4px;
+}
+
+.editor-container {
+    display: flex;
+    align-items: center;
+}
+
+#editor-header {
+    width: 100%;
 }
 
 ::selection {

@@ -167,3 +167,6 @@ docs/site
 
 # VS Code
 .vscode/
+
+# Node modules
+node_modules/
