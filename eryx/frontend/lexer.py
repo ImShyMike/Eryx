@@ -107,6 +107,7 @@ def tokenize(source_code: str) -> list[Token]:
             "*": TokenType.BINARY_OPERATOR,
             "/": TokenType.BINARY_OPERATOR,
             "%": TokenType.BINARY_OPERATOR,
+            "^": TokenType.BINARY_OPERATOR,
             ";": TokenType.SEMICOLON,
             ",": TokenType.COMMA,
             ":": TokenType.COLON,
@@ -130,6 +131,36 @@ def tokenize(source_code: str) -> list[Token]:
         if src[0] == "#":
             comment = True
             src.pop(0)
+            continue
+
+        if src[0] == '>' and len(src) > 1 and src[1] == '>':
+            src.pop(0)
+            src.pop(0)
+            tokens.append(Token(">>", TokenType.BINARY_OPERATOR, current_pos))
+            continue
+
+        if src[0] == '<' and len(src) > 1 and src[1] == '<':
+            src.pop(0)
+            src.pop(0)
+            tokens.append(Token("<<", TokenType.BINARY_OPERATOR, current_pos))
+            continue
+
+        if src[0] == '&':
+            src.pop(0)
+            if len(src) > 1 and src[1] == '&':
+                src.pop(0)
+                tokens.append(Token("&&", TokenType.BINARY_OPERATOR, current_pos))
+            else:
+                tokens.append(Token("&", TokenType.BINARY_OPERATOR, current_pos))
+            continue
+
+        if src[0] == '|':
+            src.pop(0)
+            if len(src) > 1 and src[1] == '|':
+                src.pop(0)
+                tokens.append(Token("||", TokenType.BINARY_OPERATOR, current_pos))
+            else:
+                tokens.append(Token("|", TokenType.BINARY_OPERATOR, current_pos))
             continue
 
         # If its not a single character token, check for negative numbers

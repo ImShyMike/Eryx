@@ -1,7 +1,8 @@
 """Module for lexer based syntax highlighting code."""
 
 from colorama import Fore, init
-from lexer import TokenType, tokenize  # pylint: disable=import-error
+
+from eryx.frontend.lexer import TokenType, tokenize
 
 init(autoreset=True)
 

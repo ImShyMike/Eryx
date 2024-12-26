@@ -205,7 +205,7 @@ class Parser:
 
     def parse_assignment_expression(self) -> Expression:
         """Parse an assignment expression."""
-        left = self.parse_object_expression()
+        left = self.parse_comparison_expression()
 
         if self.at().type == TokenType.EQUALS and self.look_ahead(1).type != TokenType.EQUALS:
             self.next()  # Skip the equals sign
@@ -221,8 +221,8 @@ class Parser:
 
     def parse_object_expression(self) -> Expression:
         """Parse an object expression."""
-        if self.at().type != TokenType.OPEN_BRACE:
-            return self.parse_comparison_expression()
+
+
 
         self.next()  # Skip the open brace
 
@@ -259,11 +259,33 @@ class Parser:
 
     def parse_comparison_expression(self) -> Expression:
         """Parse a comparison expression."""
-        left = self.parse_additive_expression()
+        left = self.parse_logical_expression()
 
         while self.at().value in ("==", "!=", ">", ">=", "<", "<="):
             operator = self.next().value
+            right = self.parse_logical_expression()
+            left = BinaryExpression(left, operator, right)
+
+        return left
+
+    def parse_bitwise_expression(self) -> Expression:
+        """Parse a bitwise expression."""
+        left = self.parse_additive_expression()
+
+        while self.at().value in ("&", "|", "^", "<<", ">>"):
+            operator = self.next().value
             right = self.parse_additive_expression()
+            left = BinaryExpression(left, operator, right)
+
+        return left
+
+    def parse_logical_expression(self) -> Expression:
+        """Parse a logical expression."""
+        left = self.parse_bitwise_expression()
+
+        while self.at().value in ("&&", "||"):
+            operator = self.next().value
+            right = self.parse_bitwise_expression()
             left = BinaryExpression(left, operator, right)
 
         return left
@@ -276,7 +298,7 @@ class Parser:
             "Expected an opening parenthesis for the if condition.",
         )
 
-        condition = self.parse_comparison_expression()
+        condition = self.parse_logical_expression()
 
         self.assert_next(
             TokenType.CLOSE_PAREN,

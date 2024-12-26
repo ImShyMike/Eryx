@@ -30,7 +30,11 @@ def start_repl(
             source_code = input("> ")
 
             # Run the code
-            run_code(source_code, log_ast, log_result, log_tokens, environment, parser)
+            result = run_code(source_code, log_ast, log_result, log_tokens, environment, parser)
+
+            # Print the result
+            if result:
+                print(result)
 
         except KeyboardInterrupt:
             print()

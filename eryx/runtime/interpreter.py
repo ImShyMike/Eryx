@@ -93,7 +93,7 @@ def eval_if_statement(
 
         if if_statement.else_:
             for statement in if_statement.else_:
-                if statement: # Type check stuff
+                if statement:  # Type check stuff
                     result = evaluate(statement, environment)
             return result
 
@@ -120,7 +120,22 @@ def eval_binary_expression(
         if binop.operator == "**":
             return NumberValue(left.value**right.value)
 
+        if binop.operator in ["^", "&", "|", "<<", ">>"]:
+            return eval_numeric_bitwise_expression(left, right, binop.operator)
+
+        if binop.operator in ["&&", "||"]:
+            return eval_logical_expression(left, right, binop.operator)
+
         raise RuntimeError(f"Unknown binary operator {binop.operator}.")
+
+    if binop.operator in ["&&", "||"]:
+        if isinstance(left, (BooleanValue, StringValue)) and isinstance(
+            right, (BooleanValue, StringValue)
+        ):
+            return eval_logical_expression(left, right, binop.operator)
+        raise RuntimeError(
+            "Expected boolean, string or number values for logical operators."
+        )
 
     if binop.operator == "+":
         if isinstance(left, StringValue) and isinstance(right, StringValue):
@@ -248,6 +263,40 @@ def eval_numeric_comparison_expression(
             return left.value >= right.value
 
     return False
+
+
+def eval_logical_expression(
+    left: BooleanValue | StringValue | NumberValue,
+    right: BooleanValue | StringValue | NumberValue,
+    operator: str,
+) -> BooleanValue | NullValue:
+    """Evaluate a logical expression."""
+    match operator:
+        case "&&":
+            return BooleanValue(bool(left.value) and bool(right.value))
+        case "||":
+            return BooleanValue(bool(left.value) or bool(right.value))
+
+    return NullValue()
+
+
+def eval_numeric_bitwise_expression(
+    left: NumberValue, right: NumberValue, operator: str
+) -> NumberValue | NullValue:
+    """Evaluate a numeric binary expression."""
+    match operator:
+        case "^":
+            return NumberValue(int(left.value) ^ int(right.value))
+        case "&":
+            return NumberValue(int(left.value) & int(right.value))
+        case "|":
+            return NumberValue(int(left.value) | int(right.value))
+        case "<<":
+            return NumberValue(int(left.value) << int(right.value))
+        case ">>":
+            return NumberValue(int(left.value) >> int(right.value))
+
+    return NullValue()
 
 
 def eval_object_expression(

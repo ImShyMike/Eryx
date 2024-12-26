@@ -4,8 +4,9 @@ from colorama import Fore
 
 from eryx.frontend.lexer import tokenize
 from eryx.frontend.parser import Parser
-from eryx.runtime.environment import Environment
+from eryx.runtime.environment import Environment, get_value
 from eryx.runtime.interpreter import evaluate
+from eryx.runtime.values import NullValue
 from eryx.utils.pretty_print import pprint
 
 
@@ -23,7 +24,7 @@ def run_code(
     log_tokens: bool = False,
     environment: Environment | None = None,
     parser: Parser | None = None,
-) -> None:
+) -> str | None:
     """Run an Eryx file."""
 
     environment = environment or Environment()
@@ -55,4 +56,6 @@ def run_code(
     except RuntimeError as e:
         print(f"{Fore.RED}Runtime Error: {e}{Fore.WHITE}")
 
-    return
+    if result is not None and not isinstance(result, NullValue):
+        return get_value(result)
+    return None
