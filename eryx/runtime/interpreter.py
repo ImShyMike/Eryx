@@ -266,8 +266,8 @@ def eval_numeric_comparison_expression(
 
 
 def eval_logical_expression(
-    left: BooleanValue | StringValue | NumberValue,
-    right: BooleanValue | StringValue | NumberValue,
+    left: BooleanValue | StringValue | NumberValue | NullValue,
+    right: BooleanValue | StringValue | NumberValue | NullValue,
     operator: str,
 ) -> BooleanValue | NullValue:
     """Evaluate a logical expression."""

@@ -20,8 +20,19 @@ from eryx.frontend.ast import (
     VariableDeclaration,
 )
 from eryx.frontend.lexer import Token, TokenType, tokenize
-
 from eryx.utils.errors import syntax_error
+
+# Precedence:
+# 1. Member expression: obj.prop, obj[expr]
+# 2. Call expression: func(), obj.method()
+# 3. Exponentiation: **
+# 4. Multiplication, division, modulo: *, /, %
+# 5. Addition, subtraction: +, -
+# 6. Bitwise operations: <<, >>, &, |, ^
+# 7. Logical AND and OR: &&, ||
+# 8. Comparison: ==, !=, >, >=, <, <=
+# 9. Assignment: =
+
 
 class Parser:
     """Parser class."""
@@ -55,11 +66,11 @@ class Parser:
 
     def parse_additive_expression(self) -> Expression:
         """Parse an additive expression."""
-        left = self.parse_exponentiation_expression()
+        left = self.parse_multiplicative_expression()
 
         while self.at().value in ("+", "-"):
             operator = self.next().value
-            right = self.parse_exponentiation_expression()
+            right = self.parse_multiplicative_expression()
             left = BinaryExpression(left, operator, right)
 
         return left
@@ -135,22 +146,22 @@ class Parser:
 
     def parse_multiplicative_expression(self) -> Expression:
         """Parse a multiplicative expression."""
-        left = self.parse_call_member_expression()
+        left = self.parse_exponentiation_expression()
 
         while self.at().value in ("/", "*", "%"):
             operator = self.next().value
-            right = self.parse_call_member_expression()
+            right = self.parse_exponentiation_expression()
             left = BinaryExpression(left, operator, right)
 
         return left
 
     def parse_exponentiation_expression(self) -> Expression:
         """Parse an exponentiation expression."""
-        left = self.parse_multiplicative_expression()
+        left = self.parse_call_member_expression()
 
         while self.at().value == "**":
             operator = self.next().value
-            right = self.parse_multiplicative_expression()
+            right = self.parse_call_member_expression()
             left = BinaryExpression(left, operator, right)
 
         return left
@@ -201,13 +212,16 @@ class Parser:
                 return expression
             case _:
                 syntax_error(self.source_code, token.position, "Unexpected token.")
-                return Expression() # This will never be reached
+                return Expression()  # This will never be reached
 
     def parse_assignment_expression(self) -> Expression:
         """Parse an assignment expression."""
         left = self.parse_comparison_expression()
 
-        if self.at().type == TokenType.EQUALS and self.look_ahead(1).type != TokenType.EQUALS:
+        if (
+            self.at().type == TokenType.EQUALS
+            and self.look_ahead(1).type != TokenType.EQUALS
+        ):
             self.next()  # Skip the equals sign
 
             value = self.parse_assignment_expression()
@@ -221,8 +235,6 @@ class Parser:
 
     def parse_object_expression(self) -> Expression:
         """Parse an object expression."""
-
-
 
         self.next()  # Skip the open brace
 

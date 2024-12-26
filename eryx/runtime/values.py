@@ -1,7 +1,7 @@
 """Values and their types in the runtime environment."""
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Dict, List, Callable
+from typing import TYPE_CHECKING, Callable, Dict, List
 
 if TYPE_CHECKING:
     from frontend.ast import Statement

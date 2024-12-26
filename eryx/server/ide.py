@@ -21,6 +21,13 @@ app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 600
 parser = Parser()
 environments = {}
 
+class Config:
+    """Web IDE configuration class."""
+    def __init__(self):
+        self.disable_file_io = False
+
+config = Config()
+
 # https://stackoverflow.com/questions/19212665/python-converting-ansi-color-codes-to-html
 COLOR_DICT = {
     "31": ["hotpink"],
@@ -103,7 +110,9 @@ def handle_actions(action):
                 tokens = tokenize(source_code)
             except (RuntimeError, SystemExit) as e:
                 if isinstance(e, SystemExit):
-                    return jsonify({"error": ansi_to_html(Fore.RED + output_buffer.getvalue())})
+                    return jsonify(
+                        {"error": ansi_to_html(Fore.RED + output_buffer.getvalue())}
+                    )
                 return jsonify({"error": ansi_to_html(Fore.RED + str(e))})
             return jsonify(
                 {"result": ansi_to_html(pprint(TokenList(tokens), print_output=False))}
@@ -119,14 +128,16 @@ def handle_actions(action):
                 )
         except (RuntimeError, SystemExit) as e:
             if isinstance(e, SystemExit):
-                return jsonify({"error": ansi_to_html(Fore.RED + output_buffer.getvalue())})
+                return jsonify(
+                    {"error": ansi_to_html(Fore.RED + output_buffer.getvalue())}
+                )
             return jsonify({"error": ansi_to_html(Fore.RED + str(e))})
     try:
         env = None
         if "env_uuid" in request_json:
             env_uuid = request_json["env_uuid"]
             env = environments.get(env_uuid)
-        env = env["env"] if env else Environment()
+        env = env["env"] if env else Environment(disable_file_io=config.disable_file_io)
         output_buffer = io.StringIO()
         with redirect_stdout(output_buffer):
             result = evaluate(ast_nodes, env)
@@ -147,7 +158,7 @@ def handle_actions(action):
 def repl():
     """REPL route."""
     if request.method == "POST":
-        environment = Environment()
+        environment = Environment(disable_file_io=config.disable_file_io)
         env_uuid = get_unique_uuid(environments)
         environments[env_uuid] = {
             "env": environment,
@@ -176,8 +187,9 @@ def favicon():
     return app.send_static_file("eryx.ico")
 
 
-def start_ide(host="0.0.0.0", port=80):
+def start_ide(host: str = "0.0.0.0", port: int = 80, disable_file_io: bool = False):
     """Start the web IDE."""
+    config.disable_file_io = disable_file_io
     app.run(host=host, port=port, debug=False, use_reloader=False)
 
 

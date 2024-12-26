@@ -6,10 +6,10 @@ import os
 import pytest
 from colorama import init
 
-from eryx.server.ide import start_ide
+from eryx.__init__ import CURRENT_VERSION
 from eryx.runtime.repl import start_repl
 from eryx.runtime.runner import run_code
-from eryx.__init__ import CURRENT_VERSION
+from eryx.server.ide import start_ide
 
 init(autoreset=True)
 current_path = os.path.dirname(os.path.abspath(__file__))
@@ -64,15 +64,9 @@ def main():
     )
 
     # 'server' command
-    server_parser = subparsers.add_parser(
-        "server", help="Start the web IDE"
-    )
-    server_parser.add_argument(
-        "--port", type=int, help="Port number for the web IDE."
-    )
-    server_parser.add_argument(
-        "--host", type=str, help="Host for the web IDE."
-    )
+    server_parser = subparsers.add_parser("server", help="Start the web IDE")
+    server_parser.add_argument("--port", type=int, help="Port number for the web IDE.")
+    server_parser.add_argument("--host", type=str, help="Host for the web IDE.")
 
     # 'test' command
     subparsers.add_parser("test", help="Run the test suite")

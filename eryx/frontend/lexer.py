@@ -119,7 +119,7 @@ def tokenize(source_code: str) -> list[Token]:
             token = src.pop(0)
 
             # Power operator
-            if token == '*' and len(src) > 0 and src[0] == '*':
+            if token == "*" and len(src) > 0 and src[0] == "*":
                 src.pop(0)
                 tokens.append(Token("**", TokenType.BINARY_OPERATOR, current_pos))
                 continue
@@ -133,30 +133,30 @@ def tokenize(source_code: str) -> list[Token]:
             src.pop(0)
             continue
 
-        if src[0] == '>' and len(src) > 1 and src[1] == '>':
+        if src[0] == ">" and len(src) > 1 and src[1] == ">":
             src.pop(0)
             src.pop(0)
             tokens.append(Token(">>", TokenType.BINARY_OPERATOR, current_pos))
             continue
 
-        if src[0] == '<' and len(src) > 1 and src[1] == '<':
+        if src[0] == "<" and len(src) > 1 and src[1] == "<":
             src.pop(0)
             src.pop(0)
             tokens.append(Token("<<", TokenType.BINARY_OPERATOR, current_pos))
             continue
 
-        if src[0] == '&':
+        if src[0] == "&":
             src.pop(0)
-            if len(src) > 1 and src[1] == '&':
+            if len(src) > 1 and src[1] == "&":
                 src.pop(0)
                 tokens.append(Token("&&", TokenType.BINARY_OPERATOR, current_pos))
             else:
                 tokens.append(Token("&", TokenType.BINARY_OPERATOR, current_pos))
             continue
 
-        if src[0] == '|':
+        if src[0] == "|":
             src.pop(0)
-            if len(src) > 1 and src[1] == '|':
+            if len(src) > 1 and src[1] == "|":
                 src.pop(0)
                 tokens.append(Token("||", TokenType.BINARY_OPERATOR, current_pos))
             else:
@@ -282,7 +282,7 @@ def tokenize(source_code: str) -> list[Token]:
             syntax_error(
                 source_code,
                 current_pos,
-                f"Unknown character found in source '{Fore.MAGENTA}{src.pop(0)}{Fore.WHITE}'",
+                f"Unknown character found in source '{Fore.MAGENTA}{src.pop(0)}{Fore.RESET}'",
             )
 
     tokens.append(Token("EOF", TokenType.EOF, source_size - len(src)))

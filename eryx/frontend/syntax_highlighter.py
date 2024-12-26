@@ -21,15 +21,30 @@ COLOR_TABLE = {
     TokenType.DOT: Fore.YELLOW,
     TokenType.NUMBER: Fore.GREEN,
     TokenType.STRING: Fore.GREEN,
-    TokenType.IDENTIFIER: Fore.WHITE,
+    TokenType.IDENTIFIER: Fore.RESET,
     TokenType.LET: Fore.RED,
     TokenType.CONST: Fore.RED,
     TokenType.FUNC: Fore.RED,
     TokenType.DOUBLE_QUOTE: Fore.GREEN,
-    TokenType.EOF: Fore.WHITE,
+    TokenType.EOF: Fore.RESET,
 }
 
-NATIVE_FUNCTIONS = ["print", "time"]
+NATIVE_FUNCTIONS = [
+    "print",
+    "time",
+    "input",
+    "readfile",
+    "len",
+    "exit",
+    "str",
+    "int",
+    "bool",
+    "array",
+    "type",
+    "sum",
+    "min",
+    "max",
+]
 
 
 def highlight(source_code: str) -> str:
@@ -42,14 +57,14 @@ def highlight(source_code: str) -> str:
         if token.value in NATIVE_FUNCTIONS:
             color = Fore.CYAN
         else:
-            color = COLOR_TABLE.get(token.type, Fore.WHITE)
+            color = COLOR_TABLE.get(token.type, Fore.RESET)
 
         if isinstance(token.position, int):
             highlighted_code.insert(token.position + offset, color)
-            highlighted_code.insert(token.position + offset + 2, Fore.WHITE)
+            highlighted_code.insert(token.position + offset + 2, Fore.RESET)
         else:
             highlighted_code.insert(token.position[0] + offset, color)
-            highlighted_code.insert(token.position[1] + offset + 2, Fore.WHITE)
+            highlighted_code.insert(token.position[1] + offset + 2, Fore.RESET)
         offset += 2
 
     return "".join(highlighted_code)

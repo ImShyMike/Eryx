@@ -19,11 +19,12 @@ from eryx.runtime.values import (
 class Environment:
     """Environment class."""
 
-    def __init__(self, parent_env: "Environment | None" = None):
+    def __init__(self, parent_env: "Environment | None" = None, disable_file_io: bool = False):
         self.is_global = parent_env is None
         self.parent = parent_env
         self.constants = []
         self.variables = {}
+        self.disable_file_io = disable_file_io if not parent_env else parent_env.disable_file_io
 
         if self.is_global:
             self.setup_scope()
@@ -77,10 +78,11 @@ class Environment:
         self.declare_variable("null", NullValue(), True)
 
         # Declare native methods
+        if not self.disable_file_io:
+            self.declare_variable("readfile", NativeFunctionValue(_readfile), True)
         self.declare_variable("print", NativeFunctionValue(_print), True)
         self.declare_variable("time", NativeFunctionValue(_time), True)
         self.declare_variable("input", NativeFunctionValue(_input), True)
-        self.declare_variable("readfile", NativeFunctionValue(_readfile), True)
         self.declare_variable("len", NativeFunctionValue(_len), True)
         self.declare_variable("exit", NativeFunctionValue(_exit), True)
         self.declare_variable("str", NativeFunctionValue(_str), True)
@@ -219,6 +221,11 @@ def _bool(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
 
 
 def _array(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) == 1:
+        if isinstance(args[0], StringValue):
+            return ArrayValue([StringValue(char) for char in args[0].value])
+        if isinstance(args[0], ObjectValue):
+            return ArrayValue(list(args[0].properties.values()))
     return ArrayValue(args)
 
 
