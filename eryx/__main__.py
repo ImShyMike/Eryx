@@ -7,7 +7,6 @@ import pytest
 from colorama import init
 
 from eryx.__init__ import CURRENT_VERSION
-from eryx.runtime import repl
 from eryx.runtime.repl import start_repl
 from eryx.runtime.runner import run_code
 from eryx.server.ide import start_ide
