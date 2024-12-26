@@ -310,7 +310,7 @@ class Parser:
             "Expected an opening parenthesis for the if condition.",
         )
 
-        condition = self.parse_logical_expression()
+        condition = self.parse_expression()
 
         self.assert_next(
             TokenType.CLOSE_PAREN,
