@@ -7,6 +7,7 @@ import pytest
 from colorama import init
 
 from eryx.__init__ import CURRENT_VERSION
+from eryx.runtime import repl
 from eryx.runtime.repl import start_repl
 from eryx.runtime.runner import run_code
 from eryx.server.ide import start_ide
@@ -67,10 +68,14 @@ def main():
     server_parser = subparsers.add_parser("server", help="Start the web IDE")
     server_parser.add_argument("--port", type=int, help="Port number for the web IDE.")
     server_parser.add_argument("--host", type=str, help="Host for the web IDE.")
+    server_parser.add_argument(
+        "--no-file-io", action="store_true", help="Disable file I/O"
+    )
 
     # 'test' command
     subparsers.add_parser("test", help="Run the test suite")
 
+    # Parse the arguments
     args = arg_parser.parse_args()
 
     # Handling each command
@@ -91,7 +96,11 @@ def main():
                 f"eryx: can't open file '{args.filepath}': [Errno {e.args[0]}] {e.args[1]}"
             )
     elif args.command == "server":
-        start_ide(args.host or "0.0.0.0", port=args.port or 80)
+        start_ide(
+            args.host or "0.0.0.0",
+            port=args.port or 80,
+            disable_file_io=args.no_file_io,
+        )
     elif args.command == "test":
         pytest.main(["-v", os.path.join(current_path, "tests", "run_tests.py")])
     elif args.command is None:
