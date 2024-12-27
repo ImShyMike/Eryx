@@ -12,7 +12,7 @@ from flask import Flask, abort, jsonify, render_template, request
 from eryx.__init__ import CURRENT_VERSION
 from eryx.frontend.lexer import tokenize
 from eryx.frontend.parser import Parser
-from eryx.runtime.environment import Environment
+from eryx.runtime.environment import Environment, get_value
 from eryx.runtime.interpreter import evaluate
 from eryx.utils.pretty_print import pprint
 
@@ -134,9 +134,11 @@ def handle_actions(action):
             return jsonify({"error": ansi_to_html(Fore.RED + str(e))})
     try:
         env = None
+        is_repl = False
         if "env_uuid" in request_json:
             env_uuid = request_json["env_uuid"]
             env = environments.get(env_uuid)
+            is_repl = True
         env = env["env"] if env else Environment(disable_file_io=config.disable_file_io)
         output_buffer = io.StringIO()
         with redirect_stdout(output_buffer):
@@ -145,11 +147,13 @@ def handle_actions(action):
                 return jsonify(
                     {"result": ansi_to_html(pprint(result, print_output=False))}
                 )
+        if action == "run":
+            output = output_buffer.getvalue()
+            if is_repl and not output:
+                return jsonify({"result": ansi_to_html(get_value(result))})
+            return jsonify({"result": ansi_to_html(output)})
     except RuntimeError as e:
         return jsonify({"error": ansi_to_html(Fore.RED + str(e))})
-
-    if action == "run":
-        return jsonify({"result": ansi_to_html(output_buffer.getvalue())})
 
     return jsonify({})
 

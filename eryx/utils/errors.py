@@ -24,7 +24,7 @@ def get_line_strings(source_code: str, line: int) -> str:
     """Get the line string from the source code."""
     lines = source_code.split("\n")
 
-    return lines[line - 2]
+    return lines[line - 1]
 
 
 # TODO: fix this, its VERY broken
