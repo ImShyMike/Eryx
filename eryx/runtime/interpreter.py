@@ -209,18 +209,21 @@ def eval_member_expression(
 
         return object_value.properties.get(property_value, NullValue())
 
-    elif isinstance(object_value, ArrayValue):
+    if isinstance(object_value, ArrayValue):
         if member.computed:
             property_value = evaluate(member.property, environment)
             if not isinstance(property_value, NumberValue):
                 raise RuntimeError("Expected a number as an index.")
 
-            return object_value.elements[int(property_value.value)]
+            return (
+                object_value.elements[int(property_value.value)]
+                if len(object_value.elements) > int(property_value.value)
+                else NullValue()
+            )
 
         raise RuntimeError("Expected a computed property for an array (number).")
 
-    else:
-        raise RuntimeError("Expected an object or array.")
+    raise RuntimeError("Expected an object or array.")
 
 
 def eval_numeric_binary_expression(
@@ -348,9 +351,12 @@ def eval_call_expression(
         function_environment = Environment(func.environment)
 
         for i, function_argument in enumerate(func.arguments):
-            function_environment.declare_variable(
-                function_argument, arguments[i], False
-            )
+            if i >= len(arguments): # Allow less arguments than expected
+                function_environment.declare_variable(function_argument, NullValue(), False)
+            else:
+                function_environment.declare_variable(
+                    function_argument, arguments[i], False
+                )
 
         # Evaluate the function body statement by statement
         try:
