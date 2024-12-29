@@ -2,6 +2,7 @@
 
 import sys
 import time
+from urllib.request import Request, urlopen
 
 from eryx.runtime.values import (
     ArrayValue,
@@ -16,15 +17,20 @@ from eryx.runtime.values import (
 )
 
 
+# pylint: disable=invalid-name
 class Environment:
     """Environment class."""
 
-    def __init__(self, parent_env: "Environment | None" = None, disable_file_io: bool = False):
+    def __init__(
+        self, parent_env: "Environment | None" = None, disable_file_io: bool = False
+    ):
         self.is_global = parent_env is None
         self.parent = parent_env
         self.constants = []
         self.variables = {}
-        self.disable_file_io = disable_file_io if not parent_env else parent_env.disable_file_io
+        self.disable_file_io = (
+            disable_file_io if not parent_env else parent_env.disable_file_io
+        )
 
         if self.is_global:
             self.setup_scope()
@@ -79,7 +85,11 @@ class Environment:
 
         # Declare native methods
         if not self.disable_file_io:
-            self.declare_variable("readfile", NativeFunctionValue(_readfile), True)
+            self.declare_variable("readFile", NativeFunctionValue(_readFile), True)
+            self.declare_variable("writeFile", NativeFunctionValue(_writeFile), True)
+            self.declare_variable("appendFile", NativeFunctionValue(_appendFile), True)
+        self.declare_variable("getRequest", NativeFunctionValue(_getRequest), True)
+        self.declare_variable("postRequest", NativeFunctionValue(_postRequest), True)
         self.declare_variable("print", NativeFunctionValue(_print), True)
         self.declare_variable("time", NativeFunctionValue(_time), True)
         self.declare_variable("input", NativeFunctionValue(_input), True)
@@ -89,6 +99,7 @@ class Environment:
         self.declare_variable("int", NativeFunctionValue(_int), True)
         self.declare_variable("bool", NativeFunctionValue(_bool), True)
         self.declare_variable("array", NativeFunctionValue(_array), True)
+        self.declare_variable("round", NativeFunctionValue(_round), True)
         self.declare_variable("type", NativeFunctionValue(_type), True)
         self.declare_variable("sum", NativeFunctionValue(_sum), True)
         self.declare_variable("min", NativeFunctionValue(_min), True)
@@ -163,7 +174,46 @@ def _input(args: list[RuntimeValue], __: Environment) -> RuntimeValue:
     return StringValue(result)
 
 
-def _readfile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _getRequest(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing URL argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("URL must be a string")
+    try:
+        request = Request(args[0].value, method="GET")
+        with urlopen(request) as response:
+            return ObjectValue(
+                {
+                    "data": StringValue(response.read().decode("utf-8")),
+                    "status": NumberValue(response.status),
+                }
+            )
+    except Exception as e:
+        raise RuntimeError(f"Error fetching URL '{args[0].value}'") from e
+
+
+def _postRequest(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) < 2:
+        raise RuntimeError("Missing URL or data argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("URL must be a string")
+    if not isinstance(args[1], StringValue):
+        raise RuntimeError("Data must be a string")
+    try:
+        request = Request(args[0].value, method="POST")
+        request.add_header("Content-Type", "application/json")
+        with urlopen(request, data=args[1].value.encode("utf-8")) as response:
+            return ObjectValue(
+                {
+                    "data": StringValue(response.read().decode("utf-8")),
+                    "status": NumberValue(response.status),
+                }
+            )
+    except Exception as e:
+        raise RuntimeError(f"Error fetching URL '{args[0].value}'") from e
+
+
+def _readFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing filename argument")
     if not isinstance(args[0], StringValue):
@@ -173,6 +223,48 @@ def _readfile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
             return StringValue(file.read())
     except FileNotFoundError as e:
         raise RuntimeError(f"File '{args[0].value}' not found") from e
+
+
+def _writeFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) < 2:
+        raise RuntimeError("Missing filename or content argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Filename must be a string")
+    if not isinstance(args[1], StringValue):
+        raise RuntimeError("Content must be a string")
+    try:
+        with open(args[0].value, "w", encoding="utf8") as file:
+            file.write(args[1].value)
+    except FileNotFoundError as e:
+        raise RuntimeError(f"File '{args[0].value}' not found") from e
+    return NullValue()
+
+
+def _appendFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) < 2:
+        raise RuntimeError("Missing filename or content argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Filename must be a string")
+    if not isinstance(args[1], StringValue):
+        raise RuntimeError("Content must be a string")
+    try:
+        with open(args[0].value, "a", encoding="utf8") as file:
+            file.write(args[1].value)
+    except FileNotFoundError as e:
+        raise RuntimeError(f"File '{args[0].value}' not found") from e
+    return NullValue()
+
+
+def _round(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) == 0:
+        return NumberValue(0)
+    if len(args) == 1:
+        if isinstance(args[0], NumberValue):
+            return NumberValue(round(args[0].value))
+    elif len(args) == 2:
+        if isinstance(args[0], NumberValue) and isinstance(args[1], NumberValue):
+            return NumberValue(round(args[0].value, int(args[1].value)))
+    raise RuntimeError(f"Cannot round {args[0]}")
 
 
 def _len(args: list[RuntimeValue], _: Environment) -> RuntimeValue:

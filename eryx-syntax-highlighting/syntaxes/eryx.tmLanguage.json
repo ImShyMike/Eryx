@@ -58,7 +58,7 @@
 				},
 				{
 					"name": "entity.name.function.builtin.eryx",
-					"match": "\\b(print|time|input|read|len|exit|str|int|bool|array|type|sum|min|max)\\b"
+					"match": "\\b(print|time|input|readFile|writeFile|appendFile|getRequest|postRequest|round|len|exit|str|int|bool|array|type|sum|min|max)\\b"
 				}
 			]
 		},

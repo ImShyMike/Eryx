@@ -35,6 +35,9 @@ class TokenType(Enum):
     ELSE = auto()
     RETURN = auto()
 
+    IMPORT = auto()
+    FROM = auto()
+
     EQUALS = auto()
 
     COMMA = auto()
@@ -66,6 +69,8 @@ KEYWORDS = {
     "if": TokenType.IF,
     "else": TokenType.ELSE,
     "return": TokenType.RETURN,
+    "import": TokenType.IMPORT,
+    "from": TokenType.FROM,
 }
 
 

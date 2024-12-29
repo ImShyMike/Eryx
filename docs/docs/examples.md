@@ -39,6 +39,31 @@ null
 ```
 </details>
 
+### Importing
+```C title="functions.eryx" linenums="1"
+### math.eryx
+func add(x, y) {
+    return x + y;
+}
+
+const one = 1;
+const pi = 22 / 7;
+
+
+### test.eryx
+import "math"
+from "math" import ["add", "pi"]
+
+print(add(5, 10), pi)
+print(math.one)
+```
+<details><summary>Output</summary>
+```C linenums="1"
+15 3.142857142857143
+1
+```
+</details>
+
 ### Functions
 ```C title="functions.eryx" linenums="1"
 func add(x, y) {

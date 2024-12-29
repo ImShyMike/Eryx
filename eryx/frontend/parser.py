@@ -1,5 +1,7 @@
 """Parser module for the frontend of the compiler."""
 
+import os
+
 from eryx.frontend.ast import (
     ArrayLiteral,
     AssignmentExpression,
@@ -9,6 +11,7 @@ from eryx.frontend.ast import (
     FunctionDeclaration,
     Identifier,
     IfStatement,
+    ImportStatement,
     MemberExpression,
     NumericLiteral,
     ObjectLiteral,
@@ -58,7 +61,7 @@ class Parser:
         return self.tokens[n]
 
     def assert_next(self, token_type: TokenType, error: str) -> Token:
-        """Assert that the next token is of a certain type and return it."""
+        """Return the current token and assert that the next token is of a certain type."""
         token = self.next()
         if token.type != token_type:
             syntax_error(self.source_code, token.position, error)
@@ -421,6 +424,80 @@ class Parser:
 
         return declaration
 
+    def parse_import_statement(self) -> Statement:
+        """Parse an import statement."""
+        self.next()  # Skip the import keyword
+
+        value = self.assert_next(
+            TokenType.STRING, "Expected a string after the import keyword."
+        )
+
+        if not os.path.exists(value.value + ".eryx"):
+            syntax_error(
+                self.source_code,
+                value.position,
+                f"Import file '{value.value}.eryx' does not exist.",
+            )
+
+        return ImportStatement(value.value, None)
+
+    def parse_from_statement(self) -> Statement:
+        """Parse a from statement."""
+        self.next()  # Skip the from keyword
+
+        from_value = self.assert_next(
+            TokenType.STRING, "Expected a string after the from keyword."
+        )
+
+        if not self.at().type == TokenType.IMPORT:
+            syntax_error(
+                self.source_code,
+                self.at().position,
+                "Expected an import keyword after the from keyword.",
+            )
+
+        self.next()  # Skip the import keyword
+
+        import_value = self.parse_array_expression()
+
+        if not isinstance(import_value, ArrayLiteral):
+            syntax_error(
+                self.source_code,
+                self.at().position,
+                "Import properties must be an array.",
+            )
+            return ImportStatement(
+                from_value.value, None
+            )  # Type checker stuff, will never happen
+
+        if not import_value.elements:
+            syntax_error(
+                self.source_code,
+                self.at().position,
+                "Import properties must not be empty.",
+            )
+
+        if not all(isinstance(item, StringLiteral) for item in import_value.elements):
+            syntax_error(
+                self.source_code,
+                self.at().position,
+                "Import properties must be strings.",
+            )
+
+        if not os.path.exists(from_value.value + ".eryx"):
+            syntax_error(
+                self.source_code,
+                from_value.position,
+                f"Import file '{from_value.value}.eryx' does not exist.",
+            )
+
+        return ImportStatement(
+            from_value.value,
+            [
+                item.value for item in import_value.elements if isinstance(item, StringLiteral)
+            ],
+        )
+
     def parse_statement(self) -> Statement:
         """Parse a statement."""
         match self.at().type:
@@ -434,6 +511,10 @@ class Parser:
                 return self.parse_if_statement()
             case TokenType.RETURN:
                 return self.parse_return_statement()
+            case TokenType.IMPORT:
+                return self.parse_import_statement()
+            case TokenType.FROM:
+                return self.parse_from_statement()
             case _:
                 return self.parse_expression()
 

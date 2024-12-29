@@ -1,5 +1,7 @@
 """Interpreter for the runtime."""
 
+import os
+
 from eryx.frontend.ast import (
     ArrayLiteral,
     AssignmentExpression,
@@ -8,6 +10,7 @@ from eryx.frontend.ast import (
     FunctionDeclaration,
     Identifier,
     IfStatement,
+    ImportStatement,
     MemberExpression,
     NumericLiteral,
     ObjectLiteral,
@@ -17,6 +20,7 @@ from eryx.frontend.ast import (
     StringLiteral,
     VariableDeclaration,
 )
+from eryx.frontend.parser import Parser
 from eryx.runtime.environment import Environment
 from eryx.runtime.values import (
     ArrayValue,
@@ -96,6 +100,45 @@ def eval_if_statement(
                 if statement:  # Type check stuff
                     result = evaluate(statement, environment)
             return result
+
+    return NullValue()
+
+
+def eval_import_statement(
+    import_statement: ImportStatement, environment: Environment
+) -> RuntimeValue:
+    """Evaluate an import statement."""
+    if environment.disable_file_io:
+        raise RuntimeError("File I/O is disabled, unable to use imports.")
+
+    if not os.path.exists(import_statement.module + ".eryx"):
+        raise RuntimeError(f"File '{import_statement.module}.eryx' does not exist.")
+
+    # Import the file
+    file_path = import_statement.module
+    with open(file_path + ".eryx", "r", encoding="utf8") as file:
+        source_code = file.read()
+
+    # Run the code
+    new_environment = Environment(parent_env=environment)
+    parser = Parser()
+    evaluate(parser.produce_ast(source_code), new_environment)
+
+    if not import_statement.names:
+        # Declare the imported object in the current environment
+        import_obj = ObjectValue(new_environment.variables)
+        environment.declare_variable(import_statement.module, import_obj, True)
+    else:
+        # Import only the specified variables/functions
+        for name in import_statement.names:
+            if name in new_environment.variables:
+                environment.declare_variable(
+                    name, new_environment.variables[name], False
+                )
+            else:
+                raise RuntimeError(
+                    f"Variable/function '{name}' not found in module '{import_statement.module}'."
+                )
 
     return NullValue()
 
@@ -351,8 +394,10 @@ def eval_call_expression(
         function_environment = Environment(func.environment)
 
         for i, function_argument in enumerate(func.arguments):
-            if i >= len(arguments): # Allow less arguments than expected
-                function_environment.declare_variable(function_argument, NullValue(), False)
+            if i >= len(arguments):  # Allow less arguments than expected
+                function_environment.declare_variable(
+                    function_argument, NullValue(), False
+                )
             else:
                 function_environment.declare_variable(
                     function_argument, arguments[i], False
@@ -409,6 +454,8 @@ def evaluate(ast_node: Statement | None, environment: Environment) -> RuntimeVal
             # Directly evaluate and raise ReturnException if it's a return statement
             value = evaluate(ast_node.value, environment)
             raise ReturnException(value)
+        case ImportStatement():
+            return eval_import_statement(ast_node, environment)
         case _:
             print("=== AST node ERROR ===")
             pprint(ast_node)

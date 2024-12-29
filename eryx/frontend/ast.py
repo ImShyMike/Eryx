@@ -130,3 +130,10 @@ class ReturnStatement(Statement):
     """Return statement class."""
 
     value: Union[Expression, None] = None
+
+@dataclass()
+class ImportStatement(Statement):
+    """Import statement class."""
+
+    module: str
+    names: List[str] | None = None
