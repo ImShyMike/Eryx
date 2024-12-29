@@ -69,25 +69,25 @@ print(add(1, 2)) # Output: 3
 
 There are also many reserved builtin functions:
 
-* **print(...)**: Print all values passed to it
+* **print(** ... **)**: Print all values passed to it
 * **time()**: Get the current time in seconds since the Epoch
-* **getRequest(url)**: Send a get request to a url
-* **postRequest(url, data)**: Send a post request with json data as a string to a url
-* **input(text?)**: Get user input as a string, optionally prompt with a message
-* **readFile(filename)**: Read the contents of a file as a string
-* **writeFile(filename, text)**: Write to a file
-* **appendFile(filename, text)**: Append to the contents of a file
-* **len(item)**: Get the length of a string, array, or object
-* **exit(code?)**: Exit the program, optionally with a status code
-* **str(value?)**: Convert a value to its string representation
-* **int(value?)**: Convert a value to an integer
-* **bool(value?)**: Convert a value to a boolean
-* **array(... or string)**: Create a new array from the given values or turn a string into an array
-* **round(number, n?)**: Round a number to the n'th decimal place (default 0)
-* **type(value)**: Get the type of the given value
-* **sum(array)**: Get the sum of an array of numbers
-* **min(array)**: Get the minimum value from an array of numbers
-* **max(array)**: Get the maximum value from an array of numbers
+* **getRequest(** url **)**: Send a get request to a url
+* **postRequest(** url, data **)**: Send a post request with json data as a string to a url
+* **input(** text?) **: Get user input as a string, optionally prompt with a message
+* **readFile(** filename **)**: Read the contents of a file as a string
+* **writeFile(** filename, text **)**: Write to a file
+* **appendFile(** filename, text **)**: Append to the contents of a file
+* **len(** item **)**: Get the length of a string, array, or object
+* **exit(** code? **)**: Exit the program, optionally with a status code
+* **str(** value? **)**: Convert a value to its string representation
+* **int(** value? **)**: Convert a value to an integer
+* **bool(** value? **)**: Convert a value to a boolean
+* **array(** ... or string **)**: Create a new array from the given values or turn a string into an array
+* **round(** number, n?**)**: Round a number to the n'th decimal place (default 0)
+* **type(** value **)**: Get the type of the given value
+* **sum(** array **)**: Get the sum of an array of numbers
+* **min(** array **)**: Get the minimum value from an array of numbers
+* **max(** array **)**: Get the maximum value from an array of numbers
 
 !!! note "Values"
     Values containing '?' are optional and '...' reffers to any amount of arguments.
