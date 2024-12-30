@@ -138,7 +138,7 @@ def handle_actions(action):
                 return jsonify(
                     {"result": ansi_to_html(pprint(ast_nodes, print_output=False))}
                 )
-        except (RuntimeError, SystemExit) as e:
+        except (SyntaxError, RuntimeError, SystemExit) as e:
             if isinstance(e, SystemExit):
                 return jsonify(
                     {"error": ansi_to_html(Fore.RED + output_buffer.getvalue())}

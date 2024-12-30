@@ -207,8 +207,8 @@ class Parser:
                 expression = self.parse_expression()
                 self.assert_next(
                     TokenType.CLOSE_PAREN,
-                    "Unexpected token found inside parenthesised expression."
-                    "Expected closing parenthesis.",
+                    "Unexpected token found inside parenthesised expression, " \
+                        "expected closing parenthesis.",
                 )  # Skip the close parenthesis
                 return expression
             case _:
@@ -351,6 +351,11 @@ class Parser:
     def parse_return_statement(self) -> Statement:
         """Parse a return statement."""
         self.next()  # Skip the return keyword
+
+        if self.at().type == TokenType.SEMICOLON:
+            self.next()
+            return ReturnStatement()
+
         value = self.parse_expression()
 
         self.assert_next(TokenType.SEMICOLON, "Expected a semicolon after the return.")
