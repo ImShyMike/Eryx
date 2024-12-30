@@ -165,3 +165,25 @@ editorHeader.addEventListener("keydown", (event) => {
         editorHeader.blur();
     }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const topBar = document.getElementById("topBar");
+
+    setTimeout(() => {
+        if (!window.localStorage.getItem("hasSeenHelp")) {
+            topBar.style.display = "flex";
+        }
+    }, 500);
+});
+  
+function closeTopBar() {
+    const topBar = document.getElementById("topBar");
+
+    topBar.style.opacity = 0;
+
+    setTimeout(() => {
+        topBar.style.display = "none";
+    }, 500);
+
+    window.localStorage.setItem("hasSeenHelp", true);
+}

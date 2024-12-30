@@ -21,10 +21,13 @@ app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 600
 parser = Parser()
 environments = {}
 
+
 class Config:
     """Web IDE configuration class."""
+
     def __init__(self):
         self.disable_file_io = False
+
 
 config = Config()
 
@@ -45,7 +48,9 @@ TEMPLATE = '<span style="color: {}">'
 
 
 def ansi_to_html(text):
-    """Format ANSI color codes to HTML with reduced DOM lag."""
+    """Format ANSI text with color codes to HTML while also escaping it."""
+
+    text = escape_html(text)
 
     def single_sub(match):
         argsdict = match.groupdict()
@@ -74,6 +79,13 @@ class TokenList:
 
     def __init__(self, tokens: list):
         self.tokens = tokens
+
+
+def escape_html(text):
+    """Escape a string"""
+    escape_dict = {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;"}
+
+    return "".join(escape_dict.get(c, c) for c in text)
 
 
 def refresh_env_uuid(env_uuid):

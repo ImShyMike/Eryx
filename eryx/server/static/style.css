@@ -185,6 +185,58 @@ body, html {
     width: 100%;
 }
 
+.top-bar {
+    position: fixed;
+    bottom: -100px;
+    left: 0;
+    width: 100%;
+    background-color: #b7bdf8;
+    color: #1e2030;
+    padding: 10px 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    animation: slideDown 0.5s forwards;
+    max-height: 100px;
+    align-items: center;
+    text-align: center;
+    transition: opacity 0.5s;
+}
+
+@keyframes slideDown {
+    from {
+        bottom: -100px;
+        top: auto;
+    }
+    to {
+        bottom: 0;
+        top: auto;
+    }
+}
+
+@keyframes slideDownMobile {
+    from {
+        bottom: auto;
+        top: -100px;
+    }
+    to {
+        bottom: auto;
+        top: 0;
+    }
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #181926;
+    cursor: pointer;
+    margin-right: 40px;
+    margin-left: 5px;
+    flex-shrink: 0;
+}
+
 ::selection {
     background-color: #8aadf4;
     color: #1e2030;
@@ -205,5 +257,11 @@ body, html {
 
     body, html {
         font-size: 0.9rem;
+    }
+
+    .top-bar {
+        top: -100px;
+        bottom: auto;
+        animation: slideDownMobile 0.5s forwards !important;
     }
 }

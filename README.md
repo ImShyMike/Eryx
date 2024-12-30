@@ -42,7 +42,7 @@ Subcommands:
 * **test**: Run the test suite
 
 ## Thanks
-A huge thanks to [tylerlaceby](https://www.youtube.com/@tylerlaceby) for his ["Build a Custom Scripting Language In Typescript"](https://www.youtube.com/playlist?list=PL_2VhOvlMk4UHGqYCLWc6GO8FaPl8fQTh) playlist.
+A huge thanks to [tylerlaceby](https://www.youtube.com/@tylerlaceby) for his ["Build a Custom Scripting Language In Typescript"](https://www.youtube.com/playlist?list=PL_2VhOvlMk4UHGqYCLWc6GO8FaPl8fQTh) series.
 
 ## License
 This project is licensed under the [MIT License][license].

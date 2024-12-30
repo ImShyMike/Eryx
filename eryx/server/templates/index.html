@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eryx IDE</title>
+    <base target="_blank" rel="noopener noreferrer">
     <meta name="description" content="Online IDE for the Eryx programming language">
     <meta property="og:title" content="Eryx IDE">
     <meta property="og:site_name" content="Eryx Online IDE">
@@ -16,6 +17,10 @@
     <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
+    <div id="topBar" class="top-bar" style="display:none">
+        <span id="helpText">Welcome to the web IDE, to get started with Eryx I recommend you check out the <a href="https://ImShyMike.github.io/Eryx" target="_blank">documentation</a> and maybe even star the <a href="https://github.com/ImShyMike/Eryx" target="_blank">github repo</a> :D</span>
+        <button class="close-button" onclick="closeTopBar()">✖</button>
+    </div>
     <div class="container">
         <div class="header">
             <span><a title="Github" id="redirect" href="https://github.com/ImShyMike/Eryx"><strong class="name">Eryx</strong></a> v{{ version }}</span>
