@@ -77,7 +77,7 @@ There are also many builtin functions:
     Values containing '?' are optional and '...' reffers to any amount of arguments.
 
 * **print(** ... **)**: Print all values passed to it
-* **input(** text?) **: Get user input as a string, optionally prompt with a message
+* **input(** text? **)**: Get user input as a string, optionally prompt with a message
 * **len(** item **)**: Get the length of a string, array, or object
 * **exit(** code? **)**: Exit the program, optionally with a status code
 * **str(** value? **)**: Convert a value to its string representation
@@ -89,22 +89,22 @@ There are also many builtin functions:
 
 There are also many builtin modules:
 
-* **time**:
-  * **time()**: Get the current time in seconds since the Epoch
-* **math**:
-  * **sum(** array **)**: Get the sum of an array of numbers
-  * **round(** number, n? **)**: Round a number to the n'th decimal place (default 0)
-  * **min(** array **)**: Get the minimum value from an array of numbers
-  * **max(** array **)**: Get the maximum value from an array of numbers
-  * **random()**: Get a random number between 0 and 1
-  * **pi**: The value for pi
-* **file**:
-  * **read(** filename **)**: Read the contents of a file as a string
-  * **write(** filename, text **)**: Write to a file
-  * **append(** filename, text **)**: Append to the contents of a file
-* **http**: (WIP)
-  * **get(** url **)**: Send a get request to a url
-  * **post(** url, data **)**: Send a post request with json data as a string to a url
+- **time**:
+  - **time()**: Get the current time in seconds since the Epoch
+- **math**:
+  - **sum(** array **)**: Get the sum of an array of numbers
+  - **round(** number, n? **)**: Round a number to the n'th decimal place (default 0)
+  - **min(** array **)**: Get the minimum value from an array of numbers
+  - **max(** array **)**: Get the maximum value from an array of numbers
+  - **random()**: Get a random number between 0 and 1
+  - **pi**: The value for pi
+- **file**:
+  - **read(** filename **)**: Read the contents of a file as a string
+  - **write(** filename, text **)**: Write to a file
+  - **append(** filename, text **)**: Append to the contents of a file
+- **http**: (WIP)
+  - **get(** url **)**: Send a get request to a url
+  - **post(** url, data **)**: Send a post request with json data as a string to a url
 
 ## Operators
 Currently, all supported operators are:
