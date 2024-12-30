@@ -66,7 +66,7 @@ Functions can be declared using the `func` keyword.
 
 ```C linenums="1"
 func add(x, y) {
-    return x + y; # Return statements must end in a semicolon
+    return x + y; # Return statements must end in a semicolon and can be empty
 }
 print(add(1, 2)) # Output: 3
 ```
@@ -90,21 +90,21 @@ There are also many builtin functions:
 There are also many builtin modules:
 
 - **time**:
-  - **time()**: Get the current time in seconds since the Epoch
+    - **time()**: Get the current time in seconds since the Epoch
 - **math**:
-  - **sum(** array **)**: Get the sum of an array of numbers
-  - **round(** number, n? **)**: Round a number to the n'th decimal place (default 0)
-  - **min(** array **)**: Get the minimum value from an array of numbers
-  - **max(** array **)**: Get the maximum value from an array of numbers
-  - **random()**: Get a random number between 0 and 1
-  - **pi**: The value for pi
+    - **sum(** array **)**: Get the sum of an array of numbers
+    - **round(** number, n? **)**: Round a number to the n'th decimal place (default 0)
+    - **min(** array **)**: Get the minimum value from an array of numbers
+    - **max(** array **)**: Get the maximum value from an array of numbers
+    - **random()**: Get a random number between 0 and 1
+    - **pi**: The value for pi
 - **file**:
-  - **read(** filename **)**: Read the contents of a file as a string
-  - **write(** filename, text **)**: Write to a file
-  - **append(** filename, text **)**: Append to the contents of a file
+    - **read(** filename **)**: Read the contents of a file as a string
+    - **write(** filename, text **)**: Write to a file
+    - **append(** filename, text **)**: Append to the contents of a file
 - **http**: (WIP)
-  - **get(** url **)**: Send a get request to a url
-  - **post(** url, data **)**: Send a post request with json data as a string to a url
+    - **get(** url **)**: Send a get request to a URL
+    - **post(** url, data **)**: Send a post request with JSON data as a string to a URL
 
 ## Operators
 Currently, all supported operators are:
@@ -117,6 +117,19 @@ Currently, all supported operators are:
 * **/** Divide
 * **%** Modulo
 * **\*\*** Power
+
+### Bitwise
+
+* **^** XOR
+* **&** AND
+* **|** OR
+* **<<** Left shift
+* **>>** Right shift
+
+### Logical
+
+* **&&** And
+* **||** Or
 
 ### Comparison
 
@@ -132,6 +145,8 @@ Currently, all supported operators are:
 
 ## Control structures
 For now, the only supported control structures are:
+
+### If/Else statements
 
 ```C linenums="1"
 if (1 == 1) {
