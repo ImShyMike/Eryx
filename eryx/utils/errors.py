@@ -35,7 +35,11 @@ def syntax_error(
         source_code, pos if isinstance(pos, int) else pos[0]
     )
     line = get_line_strings(source_code, current_line)
-    raise SyntaxError(f"{Fore.CYAN}{str(current_line).rjust(3)}:{Fore.RESET} {line}\n" \
-        f"{Fore.YELLOW}" \
-        f"{("^" * (length + 1)).rjust(current_col + len(str(current_line).rjust(3)) + 3)}" \
-        f"{Fore.RESET}\n{Fore.RED}SyntaxError{Fore.RESET}: {error_message}")
+    error_line = f"{Fore.CYAN}{str(current_line).rjust(3)}:{Fore.RESET} {line}"
+    marker = "^" * (length + 1)
+    line_number_size = len(str(current_line).rjust(3))
+    positioned_marker = marker.rjust(current_col + line_number_size + 1 + len(marker))
+    formatted_marker = f"{Fore.YELLOW}{positioned_marker}{Fore.RESET}"
+    error_msg = f"{Fore.RED}SyntaxError{Fore.RESET}: {error_message}"
+    # pylint pls dont crash this time
+    raise SyntaxError(f"{error_line}\n{formatted_marker}\n{error_msg}")
