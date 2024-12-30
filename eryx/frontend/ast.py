@@ -137,3 +137,4 @@ class ImportStatement(Statement):
 
     module: str
     names: List[str] | None = None
+    alias: str | None = None

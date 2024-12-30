@@ -27,25 +27,31 @@ def run_code(
 ) -> str | None:
     """Run an Eryx file."""
 
+    result = None
+
     environment = environment or Environment()
     parser = parser or Parser()
 
-    if log_tokens:
-        try:
-            tokenized = tokenize(source_code)
-            print("Tokenized:")
-            pprint(TokenList(tokenized))
-        except RuntimeError as e:
-            print(f"{Fore.RED}Tokenizer Error: {e}{Fore.RESET}")
-            return
-
     try:
-        ast = parser.produce_ast(source_code)
-        if log_ast:
-            print("AST:")
-            pprint(ast)
-    except RuntimeError as e:
-        print(f"{Fore.RED}Parser Error: {e}{Fore.RESET}")
+        if log_tokens:
+            try:
+                tokenized = tokenize(source_code)
+                print("Tokenized:")
+                pprint(TokenList(tokenized))
+            except RuntimeError as e:
+                print(f"{Fore.RED}Tokenizer Error: {e}{Fore.RESET}")
+                return
+
+        try:
+            ast = parser.produce_ast(source_code)
+            if log_ast:
+                print("AST:")
+                pprint(ast)
+        except RuntimeError as e:
+            print(f"{Fore.RED}Parser Error: {e}{Fore.RESET}")
+            return
+    except SyntaxError as e:
+        print(e)
         return
 
     try:

@@ -1,5 +1,7 @@
 """Environment class for storing variables (also called scope)."""
 
+import math
+import random
 import sys
 import time
 from urllib.request import Request, urlopen
@@ -15,6 +17,8 @@ from eryx.runtime.values import (
     RuntimeValue,
     StringValue,
 )
+
+BUILTINS = {}
 
 
 # pylint: disable=invalid-name
@@ -36,12 +40,17 @@ class Environment:
             self.setup_scope()
 
     def declare_variable(
-        self, variable_name: str, value: RuntimeValue, constant: bool = False
+        self,
+        variable_name: str,
+        value: RuntimeValue,
+        constant: bool = False,
+        overwrite: bool = False,
     ) -> RuntimeValue:
         """Declare a variable in the current scope."""
         # Raise an exception if the variable is already declared
         if variable_name in self.variables:
-            raise RuntimeError(f'Variable "{variable_name}" already declared')
+            if not overwrite:
+                raise RuntimeError(f'Variable "{variable_name}" already declared')
 
         self.variables[variable_name] = value
 
@@ -84,14 +93,7 @@ class Environment:
         self.declare_variable("null", NullValue(), True)
 
         # Declare native methods
-        if not self.disable_file_io:
-            self.declare_variable("readFile", NativeFunctionValue(_readFile), True)
-            self.declare_variable("writeFile", NativeFunctionValue(_writeFile), True)
-            self.declare_variable("appendFile", NativeFunctionValue(_appendFile), True)
-        self.declare_variable("getRequest", NativeFunctionValue(_getRequest), True)
-        self.declare_variable("postRequest", NativeFunctionValue(_postRequest), True)
         self.declare_variable("print", NativeFunctionValue(_print), True)
-        self.declare_variable("time", NativeFunctionValue(_time), True)
         self.declare_variable("input", NativeFunctionValue(_input), True)
         self.declare_variable("len", NativeFunctionValue(_len), True)
         self.declare_variable("exit", NativeFunctionValue(_exit), True)
@@ -99,11 +101,7 @@ class Environment:
         self.declare_variable("int", NativeFunctionValue(_int), True)
         self.declare_variable("bool", NativeFunctionValue(_bool), True)
         self.declare_variable("array", NativeFunctionValue(_array), True)
-        self.declare_variable("round", NativeFunctionValue(_round), True)
         self.declare_variable("type", NativeFunctionValue(_type), True)
-        self.declare_variable("sum", NativeFunctionValue(_sum), True)
-        self.declare_variable("min", NativeFunctionValue(_min), True)
-        self.declare_variable("max", NativeFunctionValue(_max), True)
 
 
 def get_value(value: RuntimeValue, inside_array: bool = False) -> str:
@@ -160,6 +158,18 @@ def _print(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
         values.append(get_value(arg))
     print(*values)
     return NullValue()
+
+
+def _sqrt(args: list[RuntimeValue], _: Environment):
+    if not args:
+        raise RuntimeError("Missing number value")
+    if not isinstance(args[0], NumberValue):
+        raise RuntimeError("Input type must be a number")
+    return NumberValue(args[0].value ** 0.5)
+
+
+def _random(_: list[RuntimeValue], __: Environment):
+    return NumberValue(random.random())
 
 
 def _time(_: list[RuntimeValue], __: Environment) -> RuntimeValue:
@@ -350,3 +360,37 @@ def _max(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
         if all(isinstance(i, NumberValue) for i in args[0].elements):
             return NumberValue(max(i.value for i in args[0].elements))  # type: ignore
     raise RuntimeError(f"Cannot get max for {args[0]}")
+
+
+# Declare builtin modules
+BUILTINS["file"] = ObjectValue(
+    {
+        "read": NativeFunctionValue(_readFile),
+        "write": NativeFunctionValue(_writeFile),
+        "append": NativeFunctionValue(_appendFile),
+    },
+    immutable=True,
+)
+
+BUILTINS["http"] = ObjectValue(
+    {
+        "get": NativeFunctionValue(_getRequest),
+        "post": NativeFunctionValue(_postRequest),
+    },
+    immutable=True,
+)
+
+BUILTINS["math"] = ObjectValue(
+    {
+        "sum": NativeFunctionValue(_sum),
+        "min": NativeFunctionValue(_min),
+        "max": NativeFunctionValue(_max),
+        "round": NativeFunctionValue(_round),
+        "pi": NumberValue(math.pi),
+        "sqrt": NativeFunctionValue(_sqrt),
+        "random": NativeFunctionValue(_random),
+    },
+    immutable=True,
+)
+
+BUILTINS["time"] = ObjectValue({"time": NativeFunctionValue(_time)}, immutable=True)

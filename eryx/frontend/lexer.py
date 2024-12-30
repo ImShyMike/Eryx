@@ -37,6 +37,7 @@ class TokenType(Enum):
 
     IMPORT = auto()
     FROM = auto()
+    AS = auto()
 
     EQUALS = auto()
 
@@ -71,6 +72,7 @@ KEYWORDS = {
     "return": TokenType.RETURN,
     "import": TokenType.IMPORT,
     "from": TokenType.FROM,
+    "as": TokenType.AS
 }
 
 

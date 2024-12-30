@@ -1,7 +1,5 @@
 """Parser module for the frontend of the compiler."""
 
-import os
-
 from eryx.frontend.ast import (
     ArrayLiteral,
     AssignmentExpression,
@@ -432,14 +430,14 @@ class Parser:
             TokenType.STRING, "Expected a string after the import keyword."
         )
 
-        if not os.path.exists(value.value + ".eryx"):
-            syntax_error(
-                self.source_code,
-                value.position,
-                f"Import file '{value.value}.eryx' does not exist.",
-            )
+        if self.at().type == TokenType.AS:
+            self.next() # Skip the as keyword
 
-        return ImportStatement(value.value, None)
+            alias = self.assert_next(TokenType.STRING, "Expected a string for the import alias.")
+
+            return ImportStatement(value.value, alias=alias.value)
+
+        return ImportStatement(value.value)
 
     def parse_from_statement(self) -> Statement:
         """Parse a from statement."""
@@ -484,17 +482,12 @@ class Parser:
                 "Import properties must be strings.",
             )
 
-        if not os.path.exists(from_value.value + ".eryx"):
-            syntax_error(
-                self.source_code,
-                from_value.position,
-                f"Import file '{from_value.value}.eryx' does not exist.",
-            )
-
         return ImportStatement(
             from_value.value,
             [
-                item.value for item in import_value.elements if isinstance(item, StringLiteral)
+                item.value
+                for item in import_value.elements
+                if isinstance(item, StringLiteral)
             ],
         )
 

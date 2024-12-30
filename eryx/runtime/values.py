@@ -39,6 +39,7 @@ class ObjectValue(RuntimeValue):
     """Object value class."""
 
     properties: Dict[str, RuntimeValue]
+    immutable: bool = False # TODO: Actually implement this
 
 
 @dataclass()

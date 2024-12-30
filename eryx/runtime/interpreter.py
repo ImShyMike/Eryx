@@ -21,7 +21,7 @@ from eryx.frontend.ast import (
     VariableDeclaration,
 )
 from eryx.frontend.parser import Parser
-from eryx.runtime.environment import Environment
+from eryx.runtime.environment import Environment, BUILTINS
 from eryx.runtime.values import (
     ArrayValue,
     BooleanValue,
@@ -36,7 +36,7 @@ from eryx.runtime.values import (
 from eryx.utils.pretty_print import pprint
 
 
-# Custom exception to manage returns with
+# Custom exception to manage returns
 class ReturnException(Exception):
     """Dummy exception to manage return statements."""
 
@@ -76,8 +76,11 @@ def eval_program(program: Program, environment: Environment) -> RuntimeValue:
     """Evaluate a program."""
     last_evaluated = NullValue()
 
-    for statement in program.body:
-        last_evaluated = evaluate(statement, environment)
+    try:
+        for statement in program.body:
+            last_evaluated = evaluate(statement, environment)
+    except ReturnException as e:
+        raise RuntimeError("Return statement found outside of a function.") from e
 
     return last_evaluated
 
@@ -108,37 +111,59 @@ def eval_import_statement(
     import_statement: ImportStatement, environment: Environment
 ) -> RuntimeValue:
     """Evaluate an import statement."""
-    if environment.disable_file_io:
-        raise RuntimeError("File I/O is disabled, unable to use imports.")
+    module_name = import_statement.module
 
-    if not os.path.exists(import_statement.module + ".eryx"):
-        raise RuntimeError(f"File '{import_statement.module}.eryx' does not exist.")
+    if module_name in BUILTINS:
+        if module_name in ("file") and environment.disable_file_io:
+            raise RuntimeError("File I/O is disabled, unable to import 'file'.")
 
-    # Import the file
-    file_path = import_statement.module
-    with open(file_path + ".eryx", "r", encoding="utf8") as file:
-        source_code = file.read()
-
-    # Run the code
-    new_environment = Environment(parent_env=environment)
-    parser = Parser()
-    evaluate(parser.produce_ast(source_code), new_environment)
-
-    if not import_statement.names:
-        # Declare the imported object in the current environment
-        import_obj = ObjectValue(new_environment.variables)
-        environment.declare_variable(import_statement.module, import_obj, True)
-    else:
-        # Import only the specified variables/functions
-        for name in import_statement.names:
-            if name in new_environment.variables:
-                environment.declare_variable(
-                    name, new_environment.variables[name], False
-                )
+        module = BUILTINS.get(module_name)
+        if module:
+            if import_statement.names:
+                for name in import_statement.names:
+                    if name in module.properties:
+                        environment.declare_variable(
+                            name, module.properties[name], True, overwrite=True
+                        )
+                    else:
+                        raise RuntimeError(
+                            f"Variable/function '{name}' not found in module '{module_name}'."
+                        )
             else:
-                raise RuntimeError(
-                    f"Variable/function '{name}' not found in module '{import_statement.module}'."
-                )
+                name = import_statement.alias or module_name
+                environment.declare_variable(name, module, True)
+        else:
+            raise RuntimeError(f"Error importing builtin '{module_name}'")
+    else:
+        if not os.path.exists(module_name):
+            raise RuntimeError(f"File '{module_name}.eryx' does not exist.")
+
+        # Import the file
+        file_path = module_name
+        with open(file_path + ".eryx", "r", encoding="utf8") as file:
+            source_code = file.read()
+
+        # Run the code
+        new_environment = Environment(parent_env=environment)
+        parser = Parser()
+        evaluate(parser.produce_ast(source_code), new_environment)
+
+        if not import_statement.names:
+            # Declare the imported object in the current environment
+            import_obj = ObjectValue(new_environment.variables)
+            name = import_statement.alias or module_name
+            environment.declare_variable(name, import_obj, True)
+        else:
+            # Import only the specified variables/functions
+            for name in import_statement.names:
+                if name in new_environment.variables:
+                    environment.declare_variable(
+                        name, new_environment.variables[name], True, overwrite=True
+                    )
+                else:
+                    raise RuntimeError(
+                        f"Variable/function '{name}' not found in module '{module_name}'."
+                    )
 
     return NullValue()
 

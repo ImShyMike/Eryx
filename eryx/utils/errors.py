@@ -1,7 +1,5 @@
 """Stuff for handling errors."""
 
-import sys
-
 from colorama import Fore
 
 
@@ -37,12 +35,7 @@ def syntax_error(
         source_code, pos if isinstance(pos, int) else pos[0]
     )
     line = get_line_strings(source_code, current_line)
-    print()
-    print(f"{Fore.CYAN}{str(current_line).rjust(3)}:{Fore.RESET} {line}")
-    print(
-        Fore.YELLOW
-        + ("^" * length).rjust(current_col + len(str(current_line).rjust(3)) + 2)
-        + Fore.RESET
-    )
-    print(f"{Fore.RED}SyntaxError{Fore.RESET}: {error_message}")
-    sys.exit(1)
+    raise SyntaxError(f"{Fore.CYAN}{str(current_line).rjust(3)}:{Fore.RESET} {line}\n" \
+        f"{Fore.YELLOW}" \
+        f"{("^" * (length + 1)).rjust(current_col + len(str(current_line).rjust(3)) + 3)}" \
+        f"{Fore.RESET}\n{Fore.RED}SyntaxError{Fore.RESET}: {error_message}")

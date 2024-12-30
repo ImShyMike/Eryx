@@ -53,9 +53,13 @@ let null_val = null; # This is a null
 Importing is done with the `import` keyword.
 
 ```C linenums="1"
-import "math" # Imports a file name 'math.eryx'
-from "math" import ["add", "pi"] # Imports the function 'add' and variable 'pi' from 'math.eryx'
+import "test.erx" # Imports a file name 'test.eryx'
+from "test.eryx" import ["add", "pi"] # Imports the function 'add' and variable 'pi' from 'test.eryx'
+import "math" as "meth" # Imports the builtin 'math' module as 'meth'
 ```
+
+!!! note "Builtins"
+    Builtin modules are imported without the ".eryx" (example: "math")
 
 ## Functions
 Functions can be declared using the `func` keyword.
@@ -67,30 +71,40 @@ func add(x, y) {
 print(add(1, 2)) # Output: 3
 ```
 
-There are also many reserved builtin functions:
+There are also many builtin functions:
+
+!!! note "Values"
+    Values containing '?' are optional and '...' reffers to any amount of arguments.
 
 * **print(** ... **)**: Print all values passed to it
-* **time()**: Get the current time in seconds since the Epoch
-* **getRequest(** url **)**: Send a get request to a url
-* **postRequest(** url, data **)**: Send a post request with json data as a string to a url
 * **input(** text?) **: Get user input as a string, optionally prompt with a message
-* **readFile(** filename **)**: Read the contents of a file as a string
-* **writeFile(** filename, text **)**: Write to a file
-* **appendFile(** filename, text **)**: Append to the contents of a file
 * **len(** item **)**: Get the length of a string, array, or object
 * **exit(** code? **)**: Exit the program, optionally with a status code
 * **str(** value? **)**: Convert a value to its string representation
 * **int(** value? **)**: Convert a value to an integer
 * **bool(** value? **)**: Convert a value to a boolean
 * **array(** ... or string **)**: Create a new array from the given values or turn a string into an array
-* **round(** number, n?**)**: Round a number to the n'th decimal place (default 0)
 * **type(** value **)**: Get the type of the given value
-* **sum(** array **)**: Get the sum of an array of numbers
-* **min(** array **)**: Get the minimum value from an array of numbers
-* **max(** array **)**: Get the maximum value from an array of numbers
 
-!!! note "Values"
-    Values containing '?' are optional and '...' reffers to any amount of arguments.
+
+There are also many builtin modules:
+
+* **time**:
+  * **time()**: Get the current time in seconds since the Epoch
+* **math**:
+  * **sum(** array **)**: Get the sum of an array of numbers
+  * **round(** number, n? **)**: Round a number to the n'th decimal place (default 0)
+  * **min(** array **)**: Get the minimum value from an array of numbers
+  * **max(** array **)**: Get the maximum value from an array of numbers
+  * **random()**: Get a random number between 0 and 1
+  * **pi**: The value for pi
+* **file**:
+  * **read(** filename **)**: Read the contents of a file as a string
+  * **write(** filename, text **)**: Write to a file
+  * **append(** filename, text **)**: Append to the contents of a file
+* **http**: (WIP)
+  * **get(** url **)**: Send a get request to a url
+  * **post(** url, data **)**: Send a post request with json data as a string to a url
 
 ## Operators
 Currently, all supported operators are:
