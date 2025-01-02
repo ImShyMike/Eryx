@@ -170,3 +170,6 @@ docs/site
 
 # Node modules
 node_modules/
+
+# Certificate files 
+*.pem

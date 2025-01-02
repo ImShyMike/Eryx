@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Python Package Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Eryx Package Manager</h1>
+        <h2>Dashboard</h2>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="user-info">
+            <h3>Welcome, {{ user.login }}</h3>
+            <img src="{{ user.avatar_url }}" alt="{{ user.login }}'s avatar" width="100">
+        </section>
+
+        <section id="user-packages">
+            <h3>Your Packages</h3>
+            <ul>
+                {% for package in user_packages %}
+                    <li>
+                        <h4><a href="{{ url_for('package_detail', package_name=package.name) }}">{{ package.name }} v{{ package.latest_release.version }}</a></h4>
+                        <h5>{{ package.description }}</h5>
+                        <p>{{ package.download_count }} downloads</p>
+                        <p>Created on: {{ package.creation_date.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <section id="api-key">
+            <h2>API Key</h2>
+            <p>Your API Key: <span id="api-key-value">{{ api_key }}</span></p>
+            <button id="copy-key">Copy</button>
+            <button id="refresh-key">Refresh</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 ImShyMike</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+</body>
+</html>

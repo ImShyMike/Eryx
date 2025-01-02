@@ -1,0 +1,9 @@
+Flask
+Flask-Caching
+Flask-Dance
+Flask-Limiter
+Flask-SQLAlchemy
+Flask-Talisman
+minio
+packaging
+python-dotenv
