@@ -1,5 +1,6 @@
 """Interpreter for the runtime."""
 
+import json
 import os
 
 from eryx.frontend.ast import (
@@ -21,7 +22,8 @@ from eryx.frontend.ast import (
     VariableDeclaration,
 )
 from eryx.frontend.parser import Parser
-from eryx.runtime.environment import Environment, BUILTINS
+from eryx.packages.packages import CFG_FILE, INSTALLED_PACKAGES_LOC, packages_dir
+from eryx.runtime.environment import BUILTINS, Environment
 from eryx.runtime.values import (
     ArrayValue,
     BooleanValue,
@@ -135,13 +137,41 @@ def eval_import_statement(
         else:
             raise RuntimeError(f"Error importing builtin '{module_name}'")
     else:
-        if not os.path.exists(module_name):
-            raise RuntimeError(f"File '{module_name}.eryx' does not exist.")
+        if module_name.endswith(".eryx"):
+            if not os.path.exists(module_name):
+                raise RuntimeError(f"File '{module_name}.eryx' does not exist.")
 
-        # Import the file
-        file_path = module_name
-        with open(file_path + ".eryx", "r", encoding="utf8") as file:
-            source_code = file.read()
+            # Import the file
+            file_path = module_name
+            with open(file_path + ".eryx", "r", encoding="utf8") as file:
+                source_code = file.read()
+        else:
+            try:
+                cfg_file_path = os.path.join(packages_dir, CFG_FILE)
+                with open(cfg_file_path, "r", encoding="utf8") as file:
+                    cfg = json.load(file)
+            except (FileNotFoundError, json.JSONDecodeError) as e:
+                raise RuntimeError(f"Package '{module_name}' not found.") from e
+
+            installed_packages = cfg.get("installed_packages", {})
+            if not installed_packages or module_name not in installed_packages:
+                raise RuntimeError(f"Package '{module_name}' not found.")
+
+            package_path = os.path.join(
+                packages_dir, INSTALLED_PACKAGES_LOC, module_name
+            )
+            if not os.path.exists(package_path):
+                raise RuntimeError(f"Installed package '{module_name}' not found.")
+
+            entrypoint = os.path.join(package_path, "main.eryx")
+            if not os.path.exists(entrypoint):
+                raise RuntimeError(
+                    "Entrypoint 'main.eryx' not found in "
+                    f"installed package '{module_name}'."
+                )
+
+            with open(entrypoint, "r", encoding="utf8") as file:
+                source_code = file.read()
 
         # Run the code
         new_environment = Environment(parent_env=environment)

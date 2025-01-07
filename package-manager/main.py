@@ -16,21 +16,38 @@ from flask import (
     session,
     url_for,
 )
-from flask_caching import Cache
 from flask_dance.contrib.github import github, make_github_blueprint
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_sqlalchemy import SQLAlchemy
 from flask_talisman import Talisman
 from minio import Minio
+from minio.deleteobjects import DeleteObject
 from minio.error import S3Error
 from packaging.version import InvalidVersion, Version
+# from flask_caching import Cache
 
 load_dotenv()
 
+WIPE_DATABASE = False  # THIS WILL WIPE THE DATABASE AND BUCKET ON STARTUP
+
 PACKAGES_BUCKET = "eryx-packages"
 
+
+class ForceHTTPS:  # Needed on nest because of flask dance being dumb
+    """Fix for Flask Dance OAuth issues with HTTPS."""
+
+    def __init__(self, app): # pylint: disable=redefined-outer-name
+        self.app = app
+
+    def __call__(self, environ, start_response):
+        # Force the URL scheme to HTTPS
+        environ["wsgi.url_scheme"] = "https"
+        return self.app(environ, start_response)
+
+
 app = Flask(__name__)
+app.wsgi_app = ForceHTTPS(app.wsgi_app)
 app.secret_key = os.getenv("SECRET_KEY")
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=7)
 
@@ -58,7 +75,15 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 }
 
 # Create cache
-cache = Cache(app, config={"CACHE_TYPE": "simple"})
+# cache = Cache(app, config={"CACHE_TYPE": "simple"})
+
+csp = {
+    'default-src': ["'self'"],
+    'img-src': ["'self'", "https://avatars.githubusercontent.com"]
+}
+
+# Enable HTTPS
+Talisman(app, force_https=False, content_security_policy=csp)
 
 # Initialize SQLAlchemy
 db = SQLAlchemy(app)
@@ -69,10 +94,6 @@ github_blueprint = make_github_blueprint(
     client_secret=os.getenv("GITHUB_CLIENT_SECRET"),
 )
 app.register_blueprint(github_blueprint, url_prefix="/login")
-
-# Enable HTTPS
-Talisman(app, content_security_policy=None)
-
 
 class User(db.Model):
     """User db table"""
@@ -99,6 +120,7 @@ class Package(db.Model):
 
     @property
     def latest_release(self):
+        """Latest release for a package."""
         return self.releases.order_by(Release.release_date.desc()).first()  # type: ignore
 
 
@@ -115,10 +137,12 @@ class Release(db.Model):
     file_path = db.Column(db.String(256), nullable=False)
 
     def update_parent_version(self):
+        """Update the parent package's latest version."""
         self.package.latest_version = self.version  # type: ignore
         db.session.commit()
 
     def increment_download_count(self):
+        """Increment the download count for a release."""
         self.download_count += 1
         self.package.download_count += 1  # type: ignore
         db.session.commit()
@@ -176,11 +200,11 @@ def api_upload_package():
 
     file = request.files.get("package_file")
 
-    file_stream = file.stream  # type: ignore
-    file.seek(0)  # type: ignore
-
     if not file or not file.filename:
         return jsonify({"error": "Missing package file"}), 400
+
+    file_stream = file.stream  # type: ignore
+    file.seek(0)  # type: ignore
 
     files = read_files_from_zip(file, ["package.toml", "README.md", "main.eryx"])
     package_toml, readme, entrypoint = (
@@ -221,13 +245,14 @@ def api_upload_package():
         if not existing_package.author_id == user.id:
             return jsonify({"error": "You are not the owner of this package"}), 403
 
-        if Version(existing_package.version) <= version:
-            return jsonify({"error": "Invalid package version, version too low"}), 409
+        if Version(existing_package.latest_version) >= version:
+            return jsonify({"error": f"Can not update package, uploaded version <= current " \
+                f"version ({version} <= {existing_package.latest_version})"}), 409
 
     name = str(name).lower()
 
-    if not name.isalpha():
-        return jsonify({"error": "Package name must be alphabetic"}), 400
+    if not name.isalnum():
+        return jsonify({"error": "Package name must be alphanumeric"}), 400
 
     if (request.content_length or 1e10) > 1024 * 1024:  # 1 MB
         return jsonify({"error": "Request size must be less than 1MB"}), 400
@@ -291,6 +316,59 @@ def api_upload_package():
     return jsonify({"message": "Package uploaded successfully"}), 201
 
 
+@app.route("/api/versions/<package_name>")
+def package_versions(package_name):
+    """Package versions endpoint."""
+    package = Package.query.filter_by(name=package_name).first()
+    if package:
+        releases = package.releases.all()
+        return jsonify({"versions": [r.version for r in releases]})
+    return render_template("notfound.html"), 404
+
+
+@app.route("/api/delete", methods=["POST"])
+@limiter.limit("10 per hour")
+def delete_package():
+    """Endpoint to delete a package (and all its releases)."""
+    json_data = request.json
+
+    if not json_data:
+        return jsonify({"error": "Missing JSON data"}), 400
+
+    package = json_data.get("package")
+    api_key = request.headers.get("X-API-Key")
+
+    if not api_key:
+        return jsonify({"error": "Invalid API key"}), 401
+
+    user = User.query.filter_by(api_key=api_key).first()
+    if not user:
+        return jsonify({"error": "Invalid API key"}), 401
+
+    if not package:
+        return jsonify({"error": "Missing package name"}), 400
+
+    package = Package.query.filter_by(name=package).first()
+    if not package:
+        return jsonify({"error": "Package not found"}), 404
+
+    if not package.author_id == user.id:
+        return jsonify({"error": "You are not the owner of this package"}), 403
+
+    for release in package.releases.all():
+        db.session.delete(release)
+        try:
+            client.remove_object(PACKAGES_BUCKET, release.file_path)
+        except S3Error as e:
+            print("Failed to delete file", e)
+            return jsonify({"error": "Failed to delete package"}), 500
+
+    db.session.delete(package)
+    db.session.commit()
+
+    return jsonify({"message": "Package deleted successfully"}), 200
+
+
 @app.route("/api/refresh-key", methods=["POST"])
 @limiter.limit("10 per hour")
 def refresh_api_key():
@@ -308,7 +386,6 @@ def refresh_api_key():
 
 
 @app.route("/package/<package_name>")
-@cache.cached(timeout=30)
 def package_detail(package_name):
     """Package details endpoint."""
     package = Package.query.filter_by(name=package_name).first()
@@ -341,9 +418,9 @@ def download_package(package_name):
 
         Release.increment_download_count(release)
 
-        return client.presigned_get_object(
+        return redirect(client.presigned_get_object(
             PACKAGES_BUCKET, release.file_path, expires=timedelta(minutes=1)
-        )
+        ))
     return "Package not found", 404
 
 
@@ -358,14 +435,13 @@ def download_package_version(package_name, version):
 
         Release.increment_download_count(release)
 
-        return client.presigned_get_object(
+        return redirect(client.presigned_get_object(
             PACKAGES_BUCKET, release.file_path, expires=timedelta(minutes=1)
-        )
+        ))
     return "Package not found", 404
 
 
 @app.route("/")
-@cache.cached(timeout=30)
 @limiter.limit("30 per minute")
 def home():
     """Homepage endpoint."""
@@ -431,15 +507,49 @@ def staticfiles(filename):
     return app.send_static_file(filename)
 
 
+@app.route("/ping", methods=["GET"])
+def ping():
+    """Health check endpoint."""
+    return "Server is running", 200
+
+
 @app.context_processor
 def inject_github():
-    """Inject github object into all templates"""
+    """Inject github object into all templates."""
     return {"github": github}
 
 
+def clear_bucket_batch(bucket_name):
+    """Clear all objects in a bucket in a batch."""
+    try:
+        objects = client.list_objects(bucket_name)
+        delete_objects = [
+            DeleteObject(obj.object_name) for obj in objects if obj.object_name
+        ]
+
+        # Remove objects in batch
+        if delete_objects:
+            client.remove_objects(bucket_name, delete_objects)
+            print(f"All objects in bucket '{bucket_name}' have been deleted.")
+        else:
+            print("No objects found in the bucket.")
+    except S3Error as e:
+        print(f"Error occurred: {e}")
+
+
 if __name__ == "__main__":
+    if WIPE_DATABASE:
+        clear_bucket_batch(PACKAGES_BUCKET)
+        with app.app_context():
+            db.drop_all()
     with app.app_context():
         db.create_all()
-    if not client.bucket_exists(PACKAGES_BUCKET):
-        client.make_bucket(PACKAGES_BUCKET)
-    app.run(host="localhost", port=5000, ssl_context=("cert.pem", "key.pem"))
+    # if not client.bucket_exists(PACKAGES_BUCKET):
+    #    client.make_bucket(PACKAGES_BUCKET)
+    app.run(
+        host="127.0.0.1",
+        port=5000,
+        ssl_context=("cert.pem", "key.pem"), # Local certs for testing
+        debug=False,
+        use_reloader=False,
+    )
