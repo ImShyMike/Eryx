@@ -3,28 +3,45 @@
 import os
 import uuid
 import zipfile
-from datetime import timedelta
+from datetime import datetime, timedelta
 
+import bleach
+import markdown
 import toml
 from dotenv import load_dotenv
 from flask import (
     Flask,
+    flash,
     jsonify,
     redirect,
     render_template,
     request,
-    session,
     url_for,
 )
+from flask_dance.consumer import oauth_authorized
+from flask_dance.consumer.storage.sqla import OAuthConsumerMixin, SQLAlchemyStorage
 from flask_dance.contrib.github import github, make_github_blueprint
+from flask_humanize import Humanize
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_login import (
+    LoginManager,
+    UserMixin,
+    current_user,
+    login_required,
+    login_user,
+    logout_user,
+)
 from flask_sqlalchemy import SQLAlchemy
 from flask_talisman import Talisman
+from markupsafe import Markup
 from minio import Minio
 from minio.deleteobjects import DeleteObject
 from minio.error import S3Error
 from packaging.version import InvalidVersion, Version
+from sqlalchemy import func
+from werkzeug.middleware.proxy_fix import ProxyFix
+
 # from flask_caching import Cache
 
 load_dotenv()
@@ -33,11 +50,47 @@ WIPE_DATABASE = False  # THIS WILL WIPE THE DATABASE AND BUCKET ON STARTUP
 
 PACKAGES_BUCKET = "eryx-packages"
 
+ALLOWED_TAGS = [
+    "p",
+    "b",
+    "i",
+    "strong",
+    "em",
+    "ul",
+    "ol",
+    "li",
+    "a",
+    "code",
+    "pre",
+    "blockquote",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+]
+ALLOWED_ATTRIBUTES = {
+    "a": ["href", "title"],
+    "img": ["src", "alt", "title"],
+}
+
+
+def process_readme(raw_readme):
+    """Turn a raw readme into sanitized HTML."""
+    # Convert Markdown to HTML
+    html_content = markdown.markdown(raw_readme)
+    # Sanitize HTML
+    sanitized_html = bleach.clean(
+        html_content, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRIBUTES
+    )
+    return Markup(sanitized_html)
+
 
 class ForceHTTPS:  # Needed on nest because of flask dance being dumb
     """Fix for Flask Dance OAuth issues with HTTPS."""
 
-    def __init__(self, app): # pylint: disable=redefined-outer-name
+    def __init__(self, app):  # pylint: disable=redefined-outer-name
         self.app = app
 
     def __call__(self, environ, start_response):
@@ -47,6 +100,10 @@ class ForceHTTPS:  # Needed on nest because of flask dance being dumb
 
 
 app = Flask(__name__)
+humanize = Humanize(app)
+app.wsgi_app = ProxyFix(
+    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1
+)
 app.wsgi_app = ForceHTTPS(app.wsgi_app)
 app.secret_key = os.getenv("SECRET_KEY")
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=7)
@@ -78,8 +135,10 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 # cache = Cache(app, config={"CACHE_TYPE": "simple"})
 
 csp = {
-    'default-src': ["'self'"],
-    'img-src': ["'self'", "https://avatars.githubusercontent.com"]
+    "default-src": ["'self'"],
+    "img-src": ["'self'", "https://avatars.githubusercontent.com"],
+    "script-src-elem": ["'unsafe-inline'"],
+    "script-src": ["'self'"],
 }
 
 # Enable HTTPS
@@ -88,6 +147,11 @@ Talisman(app, force_https=False, content_security_policy=csp)
 # Initialize SQLAlchemy
 db = SQLAlchemy(app)
 
+# Initialize the login manager
+login_manager = LoginManager(app)
+login_manager.login_view = "github.login"  # type: ignore
+login_manager.init_app(app)
+
 # Set up the GitHub OAuth Blueprint
 github_blueprint = make_github_blueprint(
     client_id=os.getenv("GITHUB_CLIENT_ID"),
@@ -95,14 +159,27 @@ github_blueprint = make_github_blueprint(
 )
 app.register_blueprint(github_blueprint, url_prefix="/login")
 
-class User(db.Model):
+
+class User(UserMixin, db.Model):
     """User db table"""
 
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
+    is_banned = db.Column(db.Boolean, default=False)
+    is_admin = db.Column(db.Boolean, default=False)
     github_id = db.Column(db.Integer, unique=True, nullable=False, index=True)
-    username = db.Column(db.String(39), nullable=False)
+    username = db.Column(db.String(39), unique=True, nullable=False)
     api_key = db.Column(db.String(36), unique=True, nullable=True)
+
+
+class OAuth(OAuthConsumerMixin, db.Model):
+    """OAuth db table."""
+
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
+    user = db.relationship(User, backref="oauth_tokens")
+
+
+github_blueprint.storage = SQLAlchemyStorage(OAuth, db.session, user=current_user)
 
 
 class Package(db.Model):
@@ -189,6 +266,13 @@ def read_files_from_zip(
     return file_contents
 
 
+def get_package_stats():
+    """Get the stats of packages on the server"""
+    total_downloads = db.session.query(func.sum(Package.download_count)).scalar() or 0
+    total_packages = db.session.query(func.count(Package.id)).scalar() or 0  # pylint: disable=E1102
+    return {"total_downloads": total_downloads, "total_packages": total_packages}
+
+
 @app.route("/api/upload", methods=["POST"])
 @limiter.limit("5 per hour")
 def api_upload_package():
@@ -197,6 +281,9 @@ def api_upload_package():
     user = User.query.filter_by(api_key=api_key).first()
     if not user:
         return jsonify({"error": "Invalid API key"}), 401
+
+    if user.is_banned:
+        return jsonify({"error": "Your account is banned"}), 423
 
     file = request.files.get("package_file")
 
@@ -246,13 +333,19 @@ def api_upload_package():
             return jsonify({"error": "You are not the owner of this package"}), 403
 
         if Version(existing_package.latest_version) >= version:
-            return jsonify({"error": f"Can not update package, uploaded version <= current " \
-                f"version ({version} <= {existing_package.latest_version})"}), 409
+            return jsonify(
+                {
+                    "error": f"Can not update package, uploaded version <= current "
+                    f"version ({version} <= {existing_package.latest_version})"
+                }
+            ), 409
 
     name = str(name).lower()
 
-    if not name.isalnum():
-        return jsonify({"error": "Package name must be alphanumeric"}), 400
+    if not name.isidentifier():
+        return jsonify(
+            {"error": "Package name can only contain letters, numbers and underscores"}
+        ), 400
 
     if (request.content_length or 1e10) > 1024 * 1024:  # 1 MB
         return jsonify({"error": "Request size must be less than 1MB"}), 400
@@ -345,6 +438,9 @@ def delete_package():
     if not user:
         return jsonify({"error": "Invalid API key"}), 401
 
+    if user.is_banned:
+        return jsonify({"error": "Your account is banned"}), 423
+
     if not package:
         return jsonify({"error": "Missing package name"}), 400
 
@@ -352,7 +448,7 @@ def delete_package():
     if not package:
         return jsonify({"error": "Package not found"}), 404
 
-    if not package.author_id == user.id:
+    if (not package.author_id == user.id) and (not user.is_admin):
         return jsonify({"error": "You are not the owner of this package"}), 403
 
     for release in package.releases.all():
@@ -378,6 +474,9 @@ def refresh_api_key():
     if not user:
         return jsonify({"error": "Invalid API key"}), 401
 
+    if user.is_banned:
+        return jsonify({"error": "Your account is banned"}), 423
+
     user.api_key = str(uuid.uuid4())
     db.session.add(user)
     db.session.commit()
@@ -393,17 +492,19 @@ def package_detail(package_name):
         latest_release = package.latest_release  # pylint: disable=no-member
         if not latest_release:
             return render_template("notfound.html"), 404
-        author = User.query.filter_by(id=package.author_id).first()
-        if author:
-            return render_template(
-                "package.html",
-                package=package,
-                author_name=author.username,
-                latest_release=latest_release,
-            )
+
+        user = User.query.filter_by(id=package.author_id).first()
+        if user:
+            user = user.username
+
         return render_template(
-            "package.html", package=package, latest_release=latest_release
+            "package.html",
+            package=package,
+            latest_release=latest_release,
+            readme=process_readme(latest_release.readme),
+            author=user,
         )
+
     return render_template("notfound.html"), 404
 
 
@@ -418,9 +519,11 @@ def download_package(package_name):
 
         Release.increment_download_count(release)
 
-        return redirect(client.presigned_get_object(
-            PACKAGES_BUCKET, release.file_path, expires=timedelta(minutes=1)
-        ))
+        return redirect(
+            client.presigned_get_object(
+                PACKAGES_BUCKET, release.file_path, expires=timedelta(minutes=1)
+            )
+        )
     return "Package not found", 404
 
 
@@ -435,9 +538,11 @@ def download_package_version(package_name, version):
 
         Release.increment_download_count(release)
 
-        return redirect(client.presigned_get_object(
-            PACKAGES_BUCKET, release.file_path, expires=timedelta(minutes=1)
-        ))
+        return redirect(
+            client.presigned_get_object(
+                PACKAGES_BUCKET, release.file_path, expires=timedelta(minutes=1)
+            )
+        )
     return "Package not found", 404
 
 
@@ -452,52 +557,54 @@ def home():
             Package.latest_version,
             Package.download_count,
             Package.description,
+            User.username.label("author_username"),
             Package.download_count.label("total_downloads"),
         )
+        .join(User, User.id == Package.author_id)
         .order_by(db.desc(Package.download_count))
-        .limit(10)
+        .limit(12)
         .all()
     )
-    return render_template("index.html", top_packages=top_packages)
+    return render_template(
+        "index.html", top_packages=top_packages, stats=get_package_stats()
+    )
 
 
 @app.route("/dashboard")
 @limiter.limit("30 per minute")
+@login_required
 def dashboard():
     """User dashboard endpoint for authenticated users."""
-    if not github.authorized:
+    if current_user and current_user.is_banned:
+        return jsonify({"error": "Your account is banned"}), 423
+
+    if github.authorized:  # Check if the user is authenticated with GitHub
+        response = github.get("/user")
+        if response.ok:
+            github_user = response.json()
+        else:
+            return "Failed to fetch GitHub user information", 500
+    else:
         return redirect(url_for("github.login"))
 
-    account_info = github.get("/user")
-    if account_info.ok:
-        account_data = account_info.json()
-        user = User.query.filter_by(github_id=account_data["id"]).first()
-        if not user:
-            user = User(
-                github_id=account_data["id"],  # type: ignore
-                username=account_data["login"],  # type: ignore
-                api_key=str(uuid.uuid4()),  # type: ignore
-            )
-            db.session.add(user)
-            db.session.commit()
-        elif not user.api_key:
-            user.api_key = str(uuid.uuid4())
-            db.session.commit()
+    if not current_user.api_key:
+        current_user.api_key = str(uuid.uuid4())
+        db.session.commit()
 
-        user_packages = Package.query.filter_by(author_id=user.id).all()
-        return render_template(
-            "dashboard.html",
-            user=account_data,
-            user_packages=user_packages,
-            api_key=user.api_key,
-        )
-    return "Failed to fetch user info.", 500
+    user_packages = Package.query.filter_by(author_id=current_user.id).all()
+    return render_template(
+        "dashboard.html",
+        user=github_user,
+        user_packages=user_packages,
+        api_key=current_user.api_key,
+    )
 
 
 @app.route("/logout")
+@login_required
 def logout():
     """Logout user."""
-    session.clear()
+    logout_user()
     return redirect(url_for("home"))
 
 
@@ -513,10 +620,78 @@ def ping():
     return "Server is running", 200
 
 
+@oauth_authorized.connect_via(github_blueprint)
+def github_login(blueprint, token):
+    """Handle github logins."""
+    if not github.authorized:
+        return redirect(url_for("github.login"))
+
+    try:
+        account_info = github.get("/user")
+        if account_info.ok:
+            github_info = account_info.json()
+            username = github_info["login"]
+            # Check if user already exists in the database
+            user = User.query.filter_by(username=username).first()
+            if not user:
+                user = User(
+                    github_id=github_info["id"],  # type: ignore
+                    username=username,  # type: ignore
+                    api_key=str(uuid.uuid4()),  # type: ignore
+                )
+                db.session.add(user)
+                db.session.commit()
+
+            oauth = None
+            existing_oauth = OAuth.query.filter_by(user_id=user.id).first()
+            if existing_oauth:
+                if existing_oauth.created_at > (
+                    datetime.utcnow() - timedelta(hours=8)
+                ):  # not expired
+                    oauth = existing_oauth
+                else:
+                    db.session.delete(existing_oauth)
+                    db.session.commit()
+
+            if not oauth:
+                oauth = OAuth(
+                    user=user,  # type: ignore
+                    user_id=user.id,  # type: ignore
+                    token=token,  # type: ignore
+                    provider=blueprint.name,  # type: ignore
+                )
+
+                db.session.add(oauth)
+                db.session.commit()
+
+            # Log the user in
+            login_user(user, duration=timedelta(days=7))
+            return redirect(url_for("home"))
+
+        flash("Could not fetch your GitHub account info.", "error")
+        return redirect(url_for("home"))
+    except ValueError:
+        flash("An error occurred during GitHub authentication.", "error")
+        return redirect(url_for("home"))
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    """Load a user."""
+    return User.query.filter_by(id=int(user_id)).first()
+
+
 @app.context_processor
 def inject_github():
     """Inject github object into all templates."""
-    return {"github": github}
+    github_authorized = False
+    if current_user.is_authenticated:
+        try:
+            github_authorized = github.authorized
+        except ValueError:
+            # Handle the case where there's no OAuth token
+            github_authorized = False
+    return {"github": github, "github_authorized": github_authorized}
 
 
 def clear_bucket_batch(bucket_name):
@@ -549,7 +724,7 @@ if __name__ == "__main__":
     app.run(
         host="127.0.0.1",
         port=5000,
-        ssl_context=("cert.pem", "key.pem"), # Local certs for testing
+        ssl_context=("cert.pem", "key.pem"),  # Local certs for testing
         debug=False,
         use_reloader=False,
     )

@@ -3,7 +3,12 @@ Flask-Dance
 Flask-Limiter
 Flask-SQLAlchemy
 Flask-Talisman
+Flask-Login
 minio
 packaging
 python-dotenv
 toml
+markdown
+bleach
+markupsafe
+humanize

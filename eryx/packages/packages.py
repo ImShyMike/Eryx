@@ -259,7 +259,7 @@ def list_packages() -> None:
 
     print("Installed packages:")
     for package in CONFIG["installed_packages"]:
-        print(f"  {package[0]}@{package[1]}")
+        print(f"  {package}@{CONFIG["installed_packages"][package]}")
 
 
 def upload_package(package_folder: str, server: str) -> None:
@@ -316,8 +316,8 @@ def upload_package(package_folder: str, server: str) -> None:
         print("Missing 'name' field in 'package.toml'")
         return
 
-    if not package_name.isalnum():
-        print("Invalid package name, must be alphanumeric")
+    if not package_name.isidentifier():
+        print("Invalid package name, can only contain letters, numbers and underscores")
         return
 
     package_version = str(package_data.get("version"))
