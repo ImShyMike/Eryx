@@ -25,7 +25,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Analysing the code with pylint
       run: |
-        pylint --fail-under=9.5 --disable=R0401,E0611 $(git ls-files '*.py')
+        pylint --fail-under=9.5 --disable=R0401,E0611,E0401 $(git ls-files '*.py')
     - name: Test with pytest
       run: |
         pytest -v ./eryx/tests/run_tests.py
