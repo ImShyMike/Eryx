@@ -46,6 +46,8 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 load_dotenv()
 
+# ----------- CONFIGS -----------
+
 WIPE_DATABASE = False  # THIS WILL WIPE THE DATABASE AND BUCKET ON STARTUP
 
 PACKAGES_BUCKET = "eryx-packages"
@@ -76,17 +78,7 @@ ALLOWED_ATTRIBUTES = {
 }
 
 
-def process_readme(raw_readme):
-    """Turn a raw readme into sanitized HTML."""
-    # Convert Markdown to HTML
-    html_content = markdown.markdown(raw_readme)
-    # Sanitize HTML
-    sanitized_html = bleach.clean(
-        html_content, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRIBUTES
-    )
-    return Markup(sanitized_html)
-
-
+# ----------- SETUP FLASK APP -----------
 class ForceHTTPS:  # Needed on nest because of flask dance being dumb
     """Fix for Flask Dance OAuth issues with HTTPS."""
 
@@ -107,13 +99,6 @@ app.wsgi_app = ProxyFix(
 app.wsgi_app = ForceHTTPS(app.wsgi_app)
 app.secret_key = os.getenv("SECRET_KEY")
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=7)
-
-client = Minio(
-    os.getenv("MINIO_URL", "localhost:9000"),
-    access_key=os.getenv("MINIO_ACCESS_KEY"),
-    secret_key=os.getenv("MINIO_SECRET_KEY"),
-    secure=True,
-)
 
 # Configure flask limiter
 limiter = Limiter(
@@ -136,8 +121,8 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 
 csp = {
     "default-src": ["'self'"],
-    "img-src": ["'self'", "https://avatars.githubusercontent.com"],
-    "script-src-elem": ["'unsafe-inline'"],
+    "img-src": ["'self'", "https://*.githubusercontent.com", "https://github.com"],
+    "script-src-elem": ["'self'", "'unsafe-inline'"],
     "script-src": ["'self'"],
 }
 
@@ -158,6 +143,19 @@ github_blueprint = make_github_blueprint(
     client_secret=os.getenv("GITHUB_CLIENT_SECRET"),
 )
 app.register_blueprint(github_blueprint, url_prefix="/login")
+
+
+# ----------- SETUP MINIO CLIENT -----------
+
+client = Minio(
+    os.getenv("MINIO_URL", "localhost:9000"),
+    access_key=os.getenv("MINIO_ACCESS_KEY"),
+    secret_key=os.getenv("MINIO_SECRET_KEY"),
+    secure=True,
+)
+
+
+# ----------- SETUP DATABASE MODELS -----------
 
 
 class User(UserMixin, db.Model):
@@ -225,9 +223,30 @@ class Release(db.Model):
         db.session.commit()
 
 
+# ----------- HELPER FUNCTIONS -----------
+
+
 def get_release_by_version(package_id: int, version: str) -> Release | None:
     """Get a release by package id and version."""
     return Release.query.filter_by(package_id=package_id, version=version).first()
+
+
+def clear_bucket_batch(bucket_name):
+    """Clear all objects in a bucket in a batch."""
+    try:
+        objects = client.list_objects(bucket_name)
+        delete_objects = [
+            DeleteObject(obj.object_name) for obj in objects if obj.object_name
+        ]
+
+        # Remove objects in batch
+        if delete_objects:
+            client.remove_objects(bucket_name, delete_objects)
+            print(f"All objects in bucket '{bucket_name}' have been deleted.")
+        else:
+            print("No objects found in the bucket.")
+    except S3Error as e:
+        print(f"Error occurred: {e}")
 
 
 def parse_toml_file(toml_content):
@@ -266,11 +285,25 @@ def read_files_from_zip(
     return file_contents
 
 
+def process_readme(raw_readme):
+    """Turn a raw readme into sanitized HTML."""
+    # Convert Markdown to HTML
+    html_content = markdown.markdown(raw_readme)
+    # Sanitize HTML
+    sanitized_html = bleach.clean(
+        html_content, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRIBUTES
+    )
+    return Markup(sanitized_html)
+
+
 def get_package_stats():
     """Get the stats of packages on the server"""
     total_downloads = db.session.query(func.sum(Package.download_count)).scalar() or 0
     total_packages = db.session.query(func.count(Package.id)).scalar() or 0  # pylint: disable=E1102
     return {"total_downloads": total_downloads, "total_packages": total_packages}
+
+
+# ----------- FLASK ROUTES -----------
 
 
 @app.route("/api/upload", methods=["POST"])
@@ -694,22 +727,7 @@ def inject_github():
     return {"github": github, "github_authorized": github_authorized}
 
 
-def clear_bucket_batch(bucket_name):
-    """Clear all objects in a bucket in a batch."""
-    try:
-        objects = client.list_objects(bucket_name)
-        delete_objects = [
-            DeleteObject(obj.object_name) for obj in objects if obj.object_name
-        ]
-
-        # Remove objects in batch
-        if delete_objects:
-            client.remove_objects(bucket_name, delete_objects)
-            print(f"All objects in bucket '{bucket_name}' have been deleted.")
-        else:
-            print("No objects found in the bucket.")
-    except S3Error as e:
-        print(f"Error occurred: {e}")
+# ----------- RUN LOGIC -----------
 
 
 if __name__ == "__main__":

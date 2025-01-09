@@ -27,7 +27,7 @@
                 <div class="package-header">
                     <div class="name-version">
                         <h1>{{ package.name }}</h1>
-                        <h4>v{{ package.latest_version }}</h4>
+                        <h4 id="version">v{{ package.latest_version }}</h4>
                     </div>
                     <p class="description">{{ package.description }}</p>
                 </div>
@@ -41,7 +41,7 @@
                         <p><strong>Downloads:</strong> {{ package.download_count }}</p>
                         <p><strong>Last Updated:</strong> {{ package.latest_release.release_date|humanize }}</p>
                         <p><strong>Created:</strong> {{ package.creation_date|humanize }}</p>
-                        <p><strong>Author:</strong> <a href="https://github.com/{{ author }}">{{ author }}</a></p>
+                        <p><strong>Author:</strong> <a class="author-name" href="https://github.com/{{ author }}">{{ author }}</a></p>
                     </div>
                 </div>
     

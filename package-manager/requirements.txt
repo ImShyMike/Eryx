@@ -3,6 +3,7 @@ Flask-Dance
 Flask-Limiter
 Flask-SQLAlchemy
 Flask-Talisman
+Flask-Humanize
 Flask-Login
 minio
 packaging

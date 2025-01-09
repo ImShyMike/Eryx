@@ -89,4 +89,12 @@
 
     <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
 </body>
+<script>
+document.addEventListener("click", function (event) {
+    const container = event.target.closest(".package-container");
+    if (container) {
+        window.location.href = container.dataset.url;
+    }
+});
+</script>
 </html>

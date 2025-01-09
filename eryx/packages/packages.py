@@ -259,7 +259,7 @@ def list_packages() -> None:
 
     print("Installed packages:")
     for package in CONFIG["installed_packages"]:
-        print(f"  {package}@{CONFIG["installed_packages"][package]}")
+        print(f"  {package}@{CONFIG['installed_packages'][package]}")
 
 
 def upload_package(package_folder: str, server: str) -> None:
