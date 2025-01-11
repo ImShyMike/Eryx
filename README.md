@@ -17,7 +17,15 @@
 > The language was made using python which is [a family of snake](https://en.wikipedia.org/wiki/Pythonidae) and the name eryx is [a snake genus](https://en.wikipedia.org/wiki/Eryx_(snake)).
 
 ## Documentation
-Full documentation is available [here](https://ImShyMike.github.io/Eryx).
+Full documentation is available at [https://ImShyMike.github.io/Eryx](https://ImShyMike.github.io/Eryx).
+
+## Online IDE
+
+An online IDE is hosted at [https://eryx.shymike.tech](https://eryx.shymike.tech). It utilizes the `eryx server` command but has file I/O and importing disabled (using `--no-file-io`).
+
+## Package Index
+
+The default package index is available at [https://eryx-packages.shymike.tech](https://eryx-packages.shymike.tech), it displays the top packages, allows users to upload packages and view other's packages.
 
 ## Installation
  To install the latest stable release, just install it from PyPI using:
@@ -32,14 +40,15 @@ pip install Eryx-(version)-py3-none-any.whl
 ## Usage
 The CLI can be accessed with the following command:
 ```sh
-eryx
-```
+eryx [--version]
 
-Subcommands:
-* **repl**: Start the [REPL](https://wikipedia.org/wiki/REPL)
-* **run**: Run an Eryx file
-* **server**: Start the web IDE
-* **test**: Run the test suite
+Available commands:
+    repl                Start the REPL
+    run                 Run an Eryx file
+    server              Start the web IDE
+    test                Run the test suite
+    package             Manage Eryx packages
+```
 
 ## Thanks
 A huge thanks to [tylerlaceby](https://www.youtube.com/@tylerlaceby) for his ["Build a Custom Scripting Language In Typescript"](https://www.youtube.com/playlist?list=PL_2VhOvlMk4UHGqYCLWc6GO8FaPl8fQTh) series.
