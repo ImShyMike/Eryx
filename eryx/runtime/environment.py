@@ -176,7 +176,9 @@ def _time(_: list[RuntimeValue], __: Environment) -> RuntimeValue:
     return NumberValue(time.time())
 
 
-def _input(args: list[RuntimeValue], __: Environment) -> RuntimeValue:
+def _input(args: list[RuntimeValue], env: Environment) -> RuntimeValue:
+    if env.disable_file_io:
+        raise RuntimeError("Input function is disabled")
     if args and isinstance(args[0], StringValue):
         result = input(args[0].value)
     else:
@@ -290,7 +292,9 @@ def _len(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot get length of {args[0]}")
 
 
-def _exit(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _exit(args: list[RuntimeValue], env: Environment) -> RuntimeValue:
+    if env.disable_file_io:
+        raise RuntimeError("Exit function is disabled")
     if args and isinstance(args[0], NumberValue):
         sys.exit(int(args[0].value))
     sys.exit(0)

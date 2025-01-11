@@ -174,7 +174,9 @@ def eval_import_statement(
                 source_code = file.read()
 
         # Run the code
-        new_environment = Environment(parent_env=environment)
+        new_environment = Environment(
+            parent_env=environment, disable_file_io=environment.disable_file_io
+        )
         parser = Parser()
         evaluate(parser.produce_ast(source_code), new_environment)
 
@@ -446,7 +448,9 @@ def eval_call_expression(
         return result
 
     if isinstance(func, FunctionValue):
-        function_environment = Environment(func.environment)
+        function_environment = Environment(
+            func.environment, disable_file_io=environment.disable_file_io
+        )
 
         for i, function_argument in enumerate(func.arguments):
             if i >= len(arguments):  # Allow less arguments than expected

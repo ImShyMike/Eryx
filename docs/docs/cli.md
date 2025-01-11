@@ -1,5 +1,5 @@
 # Using the CLI
-The CLI is where all the eryx functionality is. With it you can [run programs](#running-a-program), [start the REPL](#starting-the-repl), [start the web IDE](#starting-the-web-ide) and [run the all of the current version's tests](#running-the-tests).
+The CLI is where all the eryx functionality is. With it you can [run programs](#running-a-program), [start the REPL](#starting-the-repl), [start the web IDE](#starting-the-web-ide), [run the all of the current version's tests](#running-the-tests) and [manage packages](#using-the-package-manager).
 
 ```sh
 eryx [--version]

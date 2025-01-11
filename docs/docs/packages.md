@@ -1,6 +1,6 @@
 # Packages
 
-Eryx has its own package index, the [Eryx Package Index](https://github.com/ImShyMike/Eryx/tree/main/package-manager) (EPI, pronounced [eepy](https://i.pinimg.com/originals/73/17/27/7317270d3efcb24fdfc5a964ec5798c7.png)) and a package manager built into its CLI, accessible with:
+Eryx has its own package index, the [Eryx Package Index](https://github.com/ImShyMike/Eryx/tree/main/package-index) (EPI, pronounced [eepy](https://i.pinimg.com/originals/73/17/27/7317270d3efcb24fdfc5a964ec5798c7.png)) and a package manager built into its CLI, accessible with:
 
 ```sh
 eryx package <subcommand>

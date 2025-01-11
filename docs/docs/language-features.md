@@ -18,9 +18,18 @@ print("World!") # This is also a comment ; print("This will be printed")
     This will be printed
     ```
 
+## Current Semicolon Usage
+Semicolon usage is a bit inconsistent, I am working on a fix but until then this is how they work:
+```sh linenums="1"
+let var = 1; # on variable declarations
+var = 10 # NOT on variable assigning
+return val; # on return statements
+print("test") # NOT on function calls
+```
+
 ## Variable declarations
 Mutable variables and constants are supported.
-```C linenums="1"
+```sh linenums="1"
 let var = 1; # This is a mutable variable
 const constant = true; # This is a constant
 var = 100 # Redefining a variable's value does not need a semicolon
@@ -38,7 +47,7 @@ All currently suppoted value types are:
 * Dictionaries/Objects
 * Nulls
 
-```C linenums="1"
+```sh linenums="1"
 let num = 1; # This is a number
 let neg_num = -1; # This is a negative number
 let float_num = 3.14; # This is a float
@@ -52,7 +61,7 @@ let null_val = null; # This is a null
 ## Importing
 Importing is done with the `import` keyword.
 
-```C linenums="1"
+```sh linenums="1"
 import "test.erx" # Imports a file name 'test.eryx'
 from "test.eryx" import ["add", "pi"] # Imports the function 'add' and variable 'pi' from 'test.eryx'
 import "math" as "meth" # Imports the builtin 'math' module as 'meth'

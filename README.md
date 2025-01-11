@@ -21,7 +21,7 @@ Full documentation is available at [https://ImShyMike.github.io/Eryx](https://Im
 
 ## Online IDE
 
-An online IDE is hosted at [https://eryx.shymike.tech](https://eryx.shymike.tech). It utilizes the `eryx server` command but has file I/O and importing disabled (using `--no-file-io`).
+An online IDE is hosted at [https://eryx.shymike.tech](https://eryx.shymike.tech). It utilizes the `eryx server` command but has file I/O, input(), exit() and importing disabled (using `--no-file-io`).
 
 ## Package Index
 
