@@ -21,7 +21,8 @@ pip install eryx && eryx --version
 ```
 
 ## Interacting with the CLI
-The CLI can be used with the command:
+
+The CLI can accessed via the following command:
 ```sh
 eryx
 ```

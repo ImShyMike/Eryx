@@ -11,6 +11,7 @@ nav:
   - Getting Started: getting-started.md
   - Language Features: language-features.md
   - CLI: cli.md
+  - Packages: packages.md
   - Examples: examples.md
 
 theme:
@@ -61,6 +62,9 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 extra:
   generator: false

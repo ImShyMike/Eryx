@@ -4,28 +4,38 @@ Eryx is simple and easy to use programming language based on python/javascript t
 !!! note "Dynamic Typing in Eryx"
     Eryx is a **dynamically typed language**. This means variables can change their type during runtime.
 
+## Useful links
+
+- [:material-github:](https://github.com/ImShyMike/Eryx) GitHub Repository
+- [:fontawesome-solid-box-archive:](https://eryx-packages.shymike.tech) Package Index
+- [:material-console:](https://eryx.shymike.tech) Online IDE
+- [:fontawesome-brands-python:](https://pypi.org/project/Eryx) PyPI Package
+
+
 ## Quick start
 
-Install the latest version of Eryx with pip:
+Install the latest version of Eryx with [pip](https://pypi.org/project/pip):
 
 ```sh
 pip install eryx
 ```
 
-### Running Eryx
+### Using Eryx
 
 After installing Eryx, you can use it with the following command:
 
-```sh
+```
 eryx
+
+Available commands:
+    repl                Start the REPL
+    run                 Run an Eryx file
+    server              Start the web IDE
+    test                Run the test suite
+    package             Manage Eryx packages
 ```
 
-Subcommands:
-
-- **repl**: Start the REPL
-- **run**: Run an Eryx file
-- **server**: Start the web IDE
-- **test**: Run the test suite
+Head over to the [CLI page](cli.md) for more details on how to use each command.
 
 ### Writing your first program
 

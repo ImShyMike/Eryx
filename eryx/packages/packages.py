@@ -135,7 +135,7 @@ def install(package: str, server: str, upgrade: bool) -> None:
 
             package_file = response.content
         except requests.RequestException as e:
-            if response:
+            if response is not None:
                 if response.status_code == 404:
                     print(f"Package '{package}' not found")
                 else:
@@ -178,7 +178,7 @@ def install(package: str, server: str, upgrade: bool) -> None:
             response.raise_for_status()
             package_file = response.content
         except requests.RequestException as e:
-            if response:
+            if response is not None:
                 if response.status_code == 404:
                     try:
                         versions_response = requests.get(
@@ -351,7 +351,7 @@ def upload_package(package_folder: str, server: str) -> None:
             response.raise_for_status()
             print(f"Package '{package_name}@{package_version}' uploaded successfully")
         except requests.RequestException:
-            if response:
+            if response is not None:
                 if response.status_code in (400, 401, 403):
                     CONFIG["api_key"] = None
                     print("Invalid API key")
@@ -400,7 +400,7 @@ def delete_package(package: str, server: str) -> None:
         response.raise_for_status()
         print(f"Package '{package}' deleted successfully")
     except requests.RequestException:
-        if response:
+        if response is not None:
             if response.status_code == 401:
                 CONFIG["api_key"] = None
             try:

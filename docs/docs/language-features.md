@@ -6,14 +6,14 @@ Bellow are of all features currently supported by Eryx.
 ## Comments
 Single line comments are supported with the `#` character and can be stopped early with the `;` character.
 ```sh linenums="1"
-print("Hello,") # This is a comment print("This will not be printed")
+print("Hello, ") # This is a comment print("This will not be printed")
 print("World!") # This is also a comment ; print("This will be printed")
 ```
 !!! note "Stopping line comments"
     The `;` above makes it so the code after it is also executed, making the output:
 
     ```C linenums="1"
-    Hello,
+    Hello, 
     World!
     This will be printed
     ```
@@ -59,7 +59,7 @@ import "math" as "meth" # Imports the builtin 'math' module as 'meth'
 ```
 
 !!! note "Builtins"
-    Builtin modules are imported without the ".eryx" (example: "math")
+    Builtin modules and installed packages are imported without the ".eryx" (example: "math")
 
 ## Functions
 Functions can be declared using the `func` keyword.
