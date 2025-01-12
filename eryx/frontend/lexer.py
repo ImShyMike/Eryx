@@ -91,11 +91,11 @@ def tokenize(source_code: str) -> list[Token]:
     tokens = []
     source_size = len(source_code)
     src = list(source_code)
-    comment = False
+    comment = False # Comment flag
 
     while len(src) > 0:
-        negative_num = False
-        current_pos = source_size - len(src)
+        negative_num = False # Negative number flag
+        current_pos = source_size - len(src) # Current position in the source code
 
         if comment:
             if src[0] in ("\n", "\r", ";"):
@@ -131,6 +131,7 @@ def tokenize(source_code: str) -> list[Token]:
                 tokens.append(Token("**", TokenType.BINARY_OPERATOR, current_pos))
                 continue
 
+            # Single character token
             tokens.append(Token(token, single_char_tokens[token], current_pos))
             continue
 
@@ -140,6 +141,7 @@ def tokenize(source_code: str) -> list[Token]:
             src.pop(0)
             continue
 
+        # Bitwise operators
         if src[0] == ">" and len(src) > 1 and src[1] == ">":
             src.pop(0)
             src.pop(0)
@@ -172,9 +174,10 @@ def tokenize(source_code: str) -> list[Token]:
 
         # If its not a single character token, check for negative numbers
         if src[0] == "-":
-            if len(src) > 0 and src[1].isdigit():
-                negative_num = True
+            if len(src) > 0 and (src[1].isdigit() or src[1].isalpha() or src[1] == "_"):
+                negative_num = True # Set negative number flag
             else:
+                # If its not a negative number, its a "-" operator
                 tokens.append(Token(src.pop(0), TokenType.BINARY_OPERATOR, current_pos))
                 continue
 
@@ -188,13 +191,13 @@ def tokenize(source_code: str) -> list[Token]:
             end_pos = start_pos + (1 if negative_num else 0)
             number = src.pop(0)
             if negative_num:
-                number = "-" + number
+                number = "-" + number # Add negative sign to the number
             dots = 0
             while len(src) > 0 and (src[0].isdigit() or src[0] == "."):
                 if src[0] == ".":
                     dots += 1
                     if dots > 1:
-                        break
+                        break # Only one dot is allowed in a number
                 end_pos += 1
                 number += src.pop(0)
             tokens.append(Token(number, TokenType.NUMBER, (start_pos, end_pos)))
@@ -214,9 +217,25 @@ def tokenize(source_code: str) -> list[Token]:
                     Token(identifier, KEYWORDS[identifier], (start_pos, end_pos))
                 )
             else:
+                if negative_num: # Fake a unary minus operator
+                    tokens.append(
+                        Token("(", TokenType.OPEN_PAREN, (start_pos, end_pos))
+                    )
+                    tokens.append(
+                        Token("0", TokenType.NUMBER, (start_pos, end_pos))
+                    )
+                    tokens.append(
+                        Token("-", TokenType.BINARY_OPERATOR, (start_pos, end_pos))
+                    )
+
                 tokens.append(
                     Token(identifier, TokenType.IDENTIFIER, (start_pos, end_pos))
                 )
+
+                if negative_num: # Finish the unary minus operator
+                    tokens.append(
+                        Token(")", TokenType.CLOSE_PAREN, (start_pos, end_pos))
+                    )
 
         elif is_skipable(src[0]):  # Skip spaces, newlines, tabs, and carriage returns
             src.pop(0)

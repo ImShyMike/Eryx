@@ -86,10 +86,13 @@ def main():
     # 'test' command
     subparsers.add_parser("test", help="Run the test suite")
 
+    # 'package' command
     package_parser = subparsers.add_parser("package", help="Manage Eryx packages")
     package_subparsers = package_parser.add_subparsers(
         dest="package_command", help="Available package commands"
     )
+
+    # 'package install' subcommand
     install_parser = package_subparsers.add_parser("install", help="Install a package")
     install_parser.add_argument("package", type=str, help="Package to install")
     install_parser.add_argument(
@@ -102,11 +105,14 @@ def main():
         default=DEFAULT_SERVER,
     )
 
+    # 'package uninstall' subcommand
     uninstall_parser = package_subparsers.add_parser("uninstall", help="Uninstall a package")
     uninstall_parser.add_argument("package", type=str, help="Package to uninstall")
 
+    # 'package list' subcommand
     package_subparsers.add_parser("list", help="List all installed packages")
 
+    # 'package upload' subcommand
     upload_parser = package_subparsers.add_parser("upload", help="Upload a package")
     upload_parser.add_argument("package_folder", type=str, help="Package folder to upload")
     upload_parser.add_argument(
@@ -116,6 +122,7 @@ def main():
         default=DEFAULT_SERVER,
     )
 
+    # 'package delete' subcommand
     delete_parser = package_subparsers.add_parser("delete", help="Delete a package")
     delete_parser.add_argument("package", type=str, help="Package to delete")
     delete_parser.add_argument(
@@ -130,8 +137,10 @@ def main():
 
     # Handling each command
     if args.command == "repl":
+        # Start the REPL
         start_repl(log_ast=args.ast, log_result=args.result, log_tokens=args.tokenize)
     elif args.command == "run":
+        # Run an Eryx file
         try:
             with open(args.filepath, "r", encoding="utf8") as file:
                 source_code = file.read()
@@ -146,14 +155,17 @@ def main():
                 f"eryx: can't open file '{args.filepath}': [Errno {e.args[0]}] {e.args[1]}"
             )
     elif args.command == "server":
+        # Start the web IDE
         start_ide(
             args.host,
             port=args.port,
             disable_file_io=args.no_file_io,
         )
     elif args.command == "test":
+        # Run the test suite
         pytest.main(["-v", os.path.join(current_path, "tests", "run_tests.py")])
     elif args.command == "package":
+        # Handling package subcommands
         try:
             if args.package_command == "install":
                 install(args.package, args.server, args.upgrade)
