@@ -17,7 +17,7 @@ pip --version
 Installing and verifying the installation is as simple as:
 ```sh
 pip install eryx && eryx --version
-# Eryx, version 0.1.3
+# Eryx, version 0.3.6
 ```
 
 ## Interacting with the CLI

@@ -15,15 +15,15 @@ let g = null;
 let h = [1, 2, 3];
 let i = {key: "value", num: 10};
 
-print(a)
-print(b)
-print(c)
-print(d)
-print(e)
-print(f)
-print(g)
-print(h)
-print(i)
+print(a);
+print(b);
+print(c);
+print(d);
+print(e);
+print(f);
+print(g);
+print(h);
+print(i);
 ```
 <details><summary>Output</summary>
 ```C linenums="1"
@@ -51,11 +51,11 @@ const pi = 22 / 7;
 
 
 ### test.eryx
-import "math"
-from "math" import ["add", "pi"]
+import "math";
+from "math" import ["add", "pi"];
 
-print(add(5, 10), pi)
-print(math.one)
+print(add(5, 10), pi);
+print(math.one);
 ```
 <details><summary>Output</summary>
 ```C linenums="1"
@@ -70,7 +70,7 @@ func add(x, y) {
     return x + y;
 }
 
-print(add(1, 2))
+print(add(1, 2));
 ```
 <details><summary>Output</summary>
 ```C linenums="1"
@@ -84,9 +84,9 @@ let x = 10;
 let y = 5;
 
 if (x == y) {
-    print("x is equal y")
+    print("x is equal y");
 } else {
-    print("x is not equal y")
+    print("x is not equal y");
 }
 
 ```
@@ -101,12 +101,12 @@ x is not equal y
 let x = 10;
 let y = 5;
 
-print(x + y)
-print(x - y)
-print(x * y)
-print(x / y)
-print(x % y)
-print(x + y * 2 + x * (y + 2) - 5)
+print(x + y);
+print(x - y);
+print(x * y);
+print(x / y);
+print(x % y);
+print(x + y * 2 + x * (y + 2) - 5);
 ```
 <details><summary>Output</summary>
 ```C linenums="1"
@@ -124,12 +124,12 @@ print(x + y * 2 + x * (y + 2) - 5)
 let x = 10;
 let y = 5;
 
-print(x == y)
-print(x != y)
-print(x < y)
-print(x > y)
-print(x <= y)
-print(x >= y)
+print(x == y);
+print(x != y);
+print(x < y);
+print(x > y);
+print(x <= y);
+print(x >= y);
 ```
 <details><summary>Output</summary>
 ```C linenums="1"
@@ -154,7 +154,7 @@ func factorial(n) {
     return n * factorial(n - 1);
 }
 
-print(factorial(5))
+print(factorial(5));
 ```
 <details><summary>Output</summary>
 ```C linenums="1"
@@ -175,7 +175,7 @@ func fibonacci(n) {
     return fibonacci(n - 1) + fibonacci(n - 2);
 }
 
-print(fibonacci(10))
+print(fibonacci(10));
 ```
 <details> <summary>Output</summary>
 ```C linenums="1"
@@ -193,7 +193,7 @@ func gcd(a, b) {
     return gcd(b, a % b);
 }
 
-print(gcd(48, 18))
+print(gcd(48, 18));
 ```
 <details> <summary>Output</summary>
 ```C linenums="1"
@@ -218,7 +218,7 @@ func isPrime(n, divisor) {
 }
 
 let number = 17;
-print(isPrime(number, int(number ** 0.5)))
+print(isPrime(number, int(number ** 0.5)));
 ```
 <details> <summary>Output</summary>
 ```C linenums="1"
@@ -238,7 +238,7 @@ func makeAdder(offset) {
 }
 
 let adder = makeAdder(10);
-print(adder(5, 10))
+print(adder(5, 10));
 ```
 <details> <summary>Output</summary>
 ```C linenums="1"
@@ -256,7 +256,7 @@ func sumOfDigits(n) {
     return (n % 10) + sumOfDigits(int(n / 10));
 }
 
-print(sumOfDigits(12345))
+print(sumOfDigits(12345));
 ```
 <details> <summary>Output</summary>
 ```C linenums="1"
@@ -271,11 +271,11 @@ func reverseNumber(n, reversed) {
     if (n == 0) {
         return reversed;
     }
-    reversed = reversed * 10 + (n % 10)
+    reversed = reversed * 10 + (n % 10);
     return reverseNumber(int(n / 10), reversed);
 }
 
-print(reverseNumber(12345, 0))
+print(reverseNumber(12345, 0));
 ```
 <details> <summary>Output</summary>
 ```C linenums="1"
@@ -297,7 +297,7 @@ func isSorted(arr, idx) {
 }
 
 let nums = [1, 2, 3, 4, 5];
-print(isSorted(nums, len(nums) - 1))
+print(isSorted(nums, len(nums) - 1));
 ```
 <details> <summary>Output</summary>
 ```C linenums="1"

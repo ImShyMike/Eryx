@@ -6,8 +6,8 @@ Bellow are of all features currently supported by Eryx.
 ## Comments
 Single line comments are supported with the `#` character and can be stopped early with the `;` character.
 ```sh linenums="1"
-print("Hello, ") # This is a comment print("This will not be printed")
-print("World!") # This is also a comment ; print("This will be printed")
+print("Hello, "); # This is a comment print("This will not be printed")
+print("World!"); # This is also a comment ; print("This will be printed")
 ```
 !!! note "Stopping line comments"
     The `;` above makes it so the code after it is also executed, making the output:
@@ -18,21 +18,12 @@ print("World!") # This is also a comment ; print("This will be printed")
     This will be printed
     ```
 
-## Current Semicolon Usage
-Semicolon usage is a bit inconsistent, I am working on a fix but until then this is how they work:
-```sh linenums="1"
-let var = 1; # on variable declarations
-var = 10 # NOT on variable assigning
-return val; # on return statements
-print("test") # NOT on function calls
-```
-
 ## Variable declarations
 Mutable variables and constants are supported.
 ```sh linenums="1"
 let var = 1; # This is a mutable variable
 const constant = true; # This is a constant
-var = 100 # Redefining a variable's value does not need a semicolon
+var = 100; # Redefining a variable's value does not need a semicolon
 ```
 !!! note "Semicolon usage"
     All variable declarations **must** end in a semicolon (`;`)
@@ -54,7 +45,7 @@ let float_num = 3.14; # This is a float
 let boolean = true; # This is a boolean
 let string = "Hello, World!"; # This is a string
 let arr = [1, 2, 3, 5]; # This is an array
-let dict = {key: "value", num: 3} # This is a dictionary/object
+let dict = {key: "value", num: 3}; # This is a dictionary/object
 let null_val = null; # This is a null
 ```
 
@@ -62,9 +53,9 @@ let null_val = null; # This is a null
 Importing is done with the `import` keyword.
 
 ```sh linenums="1"
-import "test.erx" # Imports a file name 'test.eryx'
-from "test.eryx" import ["add", "pi"] # Imports the function 'add' and variable 'pi' from 'test.eryx'
-import "math" as "meth" # Imports the builtin 'math' module as 'meth'
+import "test.erx"; # Imports a file name 'test.eryx'
+from "test.eryx" import ["add", "pi"]; # Imports the function 'add' and variable 'pi' from 'test.eryx'
+import "math" as "meth"; # Imports the builtin 'math' module as 'meth'
 ```
 
 !!! note "Builtins"
@@ -77,7 +68,7 @@ Functions can be declared using the `func` keyword.
 func add(x, y) {
     return x + y; # Return statements must end in a semicolon and can be empty
 }
-print(add(1, 2)) # Output: 3
+print(add(1, 2)); # Output: 3
 ```
 
 There are also many builtin functions:
@@ -159,8 +150,8 @@ For now, the only supported control structures are:
 
 ```C linenums="1"
 if (1 == 1) {
-    print("This will be printed")
+    print("This will be printed");
 } else {
-    print("This will not be printed")
+    print("This will not be printed");
 }
 ```

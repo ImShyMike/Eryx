@@ -1,0 +1,228 @@
+/* Catppuccin Frappe theme https://catppuccin.com/palette */
+:root {
+    --base: #303446;
+    --mantle: #292c3c;
+    --crust: #232634;
+
+    /* Text colors */
+    --text: #c6d0f5;
+    --subtext0: #a5adce;
+    --subtext1: #b5bfe2;
+
+    /* Overlay colors */
+    --surface0: #414559;
+    --surface1: #51576d;
+    --surface2: #626880;
+
+    /* Accent colors */
+    --overlay0: #6c7086;
+    --overlay1: #7c7f93;
+    --overlay2: #8c8fa1;
+
+    /* Colors */
+    --blue: #8caaee;
+    --lavender: #babbf1;
+    --rosewater: #f2d5cf;
+    --flamingo: #eebebe;
+    --pink: #f4b8e4;
+    --mauve: #ca9ee6;
+    --red: #e78284;
+    --maroon: #ea999c;
+    --peach: #ef9f76;
+    --yellow: #e5c890;
+    --green: #a6d189;
+    --teal: #81c8be;
+    --sky: #99d1db;
+
+    background-color: var(--base);
+    color: var(--text);
+    font-size: 1.3rem;
+}
+
+body {
+    font-family: system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden auto;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: 0px;
+}
+
+header {
+    background-color: var(--mantle);
+    color: var(--text);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    border-bottom: 1px solid var(--surface1);
+    margin-bottom: 10px;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.container {
+    background-color: var(--mantle);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 20px 20px;
+    margin-bottom: 14px;
+    border: 1px solid var(--surface0);
+    max-width: 1000px;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.container p {
+    margin: 0px;
+}
+
+#name {
+    font-size: 4rem;
+    position: relative;
+    top: -11px;
+
+    background: linear-gradient(90deg, #c6a0f6 0%, #a8e6cf 100%);
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    background-clip: text;
+    color: transparent;
+
+    margin: 0px;
+}
+
+#name::selection {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+::selection {
+    background-color: var(--overlay0);
+}
+
+button {
+    font-size: 0.9rem;
+    background-color: var(--blue);
+    color: var(--crust);
+    position: relative;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    filter: brightness(90%);
+    padding-right: 50px;
+}
+
+button .hover {
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+button:hover .hover {
+    right: 15px;
+    opacity: 1;
+}
+
+#example-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    overflow-x: auto;
+}
+
+#example {
+    display: inline-block;
+    text-align: left;
+    background-color: var(--crust);
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: -5px 5px 5px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+    white-space: pre;
+    min-width: 95%;
+}
+
+code {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    overflow: visible;
+    max-width: 50vh;
+}
+
+.variable {
+    color: var(--blue);
+}
+
+.string {
+    color: var(--green);
+}
+
+.function {
+    color: var(--mauve);
+}
+
+.keyword {
+    color: var(--peach);
+}
+
+.comment {
+    color: var(--subtext0);
+}
+
+.number {
+    color: var(--yellow);
+}
+
+@media (max-width: 800px) {
+    #name {
+        font-size: 3rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .buttons {
+        flex-direction: column;
+    }
+
+    button {
+        font-size: 0.9rem;
+        min-width: 200px;
+    }
+}
+
+@media (max-width: 900px) {
+    .container {
+        max-width: 79.5vw;
+    }
+}

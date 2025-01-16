@@ -4,8 +4,9 @@ Eryx is simple and easy to use programming language based on python/javascript t
 !!! note "Dynamic Typing in Eryx"
     Eryx is a **dynamically typed language**. This means variables can change their type during runtime.
 
-## Useful links
+## Useful urls
 
+- [:fontawesome-solid-house:](https://eryx-home.shymike.tech) Homepage
 - [:material-github:](https://github.com/ImShyMike/Eryx) GitHub Repository
 - [:fontawesome-solid-box-archive:](https://eryx-packages.shymike.tech) Package Index
 - [:material-console:](https://eryx.shymike.tech) Online IDE
@@ -52,7 +53,7 @@ func factorial(n) {
     return n * factorial(n - 1);
 }
 
-print(factorial(5))
+print(factorial(5));
 ```
 <details>
 <summary>Output</summary>

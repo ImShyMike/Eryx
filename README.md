@@ -10,7 +10,7 @@
 [license]: https://github.com/ImShyMike/Eryx/blob/main/LICENSE
 
 ## What is Eryx?
- Eryx is a decently fast simple dynamically typed programming language similar to javascript/python.
+ Eryx is a decently fast and simple dynamically typed programming language similar to javascript/python.
 
 
 > Why the name "Eryx"?

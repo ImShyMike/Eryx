@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" class="custom-scroll">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eryx</title>
+    <base target="_blank" rel="noopener noreferrer">
+    <meta name="description" content="A decently fast and simple dynamically typed programming language similar to javascript/python">
+    <meta property="og:title" content="Eryx">
+    <meta property="og:site_name" content="Eryx Programming Language">
+    <meta property="og:description" content="A decently fast and simple dynamically typed programming language similar to javascript/python.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://github.com/ImShyMike/Eryx/blob/main/assets/eryx_small.png">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ImShyMike/Eryx/refs/heads/main/eryx/server/static/eryx.ico"/>
+    <script src="https://kit.fontawesome.com/eac9640f06.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <header>
+        <h1 id="name">Eryx</h1>
+    </header>
+
+    <main>
+        <div class="buttons">
+            <a href="https://github.com/ImShyMike/Eryx" target="_blank"><button style="background-color:var(--rosewater)"><i class="fa-brands fa-github"></i> GitHub <i class="hover fa-solid fa-up-right-from-square"></i></button></a>
+            <a href="https://pypi.org/project/Eryx" target="_blank"><button style="background-color:var(--teal)"><i class="fa-brands fa-python"></i> PyPI <i class="hover fa-solid fa-up-right-from-square"></i></button></a>
+        </div>
+        <div class="buttons">
+            <a href="https://shymike.is-a.dev/Eryx" target="_blank"><button style="background-color:var(--peach)"><i class="fa-solid fa-book"></i> Documentation <i class="hover fa-solid fa-up-right-from-square"></i></button></a>
+            <a href="https://eryx.shymike.tech/" target="_blank"><button style="background-color:var(--mauve)"><i class="fa-solid fa-terminal"></i> Online IDE <i class="hover fa-solid fa-up-right-from-square"></i></button></a>
+            <a href="https://eryx-packages.shymike.tech" target="_blank"><button style="background-color:var(--maroon)"><i class="fa-solid fa-box-archive"></i> Package Index <i class="hover fa-solid fa-up-right-from-square"></i></button></a>
+            <a href="https://uptime.shymike.tech/status/eryx" target="_blank"><button style="background-color:var(--green)"><i class="fa-solid fa-circle-info"></i> Service Status <i class="hover fa-solid fa-up-right-from-square"></i></button></a>
+        </div>
+
+        <div class="container">
+            <p>Eryx is a decently fast and simple dynamically typed programming language similar to javascript/python.</p>
+
+            <br>
+
+            <h2>Example</h2>
+            <pre id="example-container">
+<code id="example" class="custom-scroll"><span class="keyword">import</span> <span class="string">"math"</span> <span class="keyword">as</span> <span class="string">"maths"</span>;
+
+<span class="keyword">const</span> <span class="variable">threshold</span> = <span class="number">10</span>;
+<span class="keyword">let</span> <span class="variable">value</span> = <span class="number">7</span>;
+
+<span class="keyword">func</span> <span class="function">checkValue</span>(<span class="variable">val</span>) {
+    <span class="keyword">if</span> (<span class="variable">val</span> < <span class="variable">threshold</span>) {
+        <span class="function">print</span>(<span class="string">"Value is below the threshold."</span>);
+    } <span class="keyword">else</span> {
+        <span class="function">print</span>(<span class="string">"Value meets or exceeds the threshold."</span>);
+    }
+}
+
+<span class="function">checkValue</span>(<span class="variable">value</span>);
+<span class="comment"># Output: Value is below the threshold.</span>
+
+<span class="function">print</span>(<span class="string">"The square root of 16 is "</span> + <span class="function">str</span>(<span class="function">maths</span>.<span class="function">sqrt</span>(<span class="number">16</span>)));
+<span class="comment"># Output: The square root of 16 is 4</span>
+</code>
+            </pre>
+        </div>
+    </main>
+</body>
+</html>

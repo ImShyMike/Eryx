@@ -211,6 +211,9 @@ class Parser:
                         "expected closing parenthesis.",
                 )  # Skip the close parenthesis
                 return expression
+            case TokenType.SEMICOLON:
+                self.next() # Skip the semicolon
+                return Expression()
             case _:
                 syntax_error(self.source_code, token.position, "Unexpected token.")
                 return Expression()  # This will never be reached
@@ -324,7 +327,9 @@ class Parser:
 
         body = []
         while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
-            body.append(self.parse_statement())
+            statement = self.parse_statement()
+            if statement != Expression():
+                body.append(statement)
 
         self.assert_next(
             TokenType.CLOSE_BRACE, "Expected a closing brace after the if body."
@@ -338,7 +343,9 @@ class Parser:
 
             else_body = []
             while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
-                else_body.append(self.parse_statement())
+                statement = self.parse_statement()
+                if statement != Expression():
+                    else_body.append(statement)
 
             self.assert_next(
                 TokenType.CLOSE_BRACE, "Expected a closing brace after the else body."
@@ -386,7 +393,9 @@ class Parser:
 
         body = []
         while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
-            body.append(self.parse_statement())
+            statement = self.parse_statement()
+            if statement != Expression():
+                body.append(statement)
 
         self.assert_next(
             TokenType.CLOSE_BRACE,
@@ -524,6 +533,8 @@ class Parser:
 
         # Parse all statements in the program until the EOF
         while self.not_eof():
-            program.body.append(self.parse_statement())
+            statement = self.parse_statement()
+            if statement != Expression():
+                program.body.append(statement)
 
         return program
