@@ -4,7 +4,7 @@ import math
 import random
 import sys
 import time
-from urllib.request import Request, urlopen
+import requests
 
 from eryx.runtime.values import (
     ArrayValue,
@@ -192,14 +192,13 @@ def _getRequest(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     if not isinstance(args[0], StringValue):
         raise RuntimeError("URL must be a string")
     try:
-        request = Request(args[0].value, method="GET")
-        with urlopen(request) as response:
-            return ObjectValue(
-                {
-                    "data": StringValue(response.read().decode("utf-8")),
-                    "status": NumberValue(response.status),
-                }
-            )
+        response = requests.get(args[0].value, timeout=10)
+        return ObjectValue(
+            {
+                "data": StringValue(response.content.decode("utf-8")),
+                "status": NumberValue(response.status_code),
+            }
+        )
     except Exception as e:
         raise RuntimeError(f"Error fetching URL '{args[0].value}'") from e
 
@@ -212,15 +211,13 @@ def _postRequest(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     if not isinstance(args[1], StringValue):
         raise RuntimeError("Data must be a string")
     try:
-        request = Request(args[0].value, method="POST")
-        request.add_header("Content-Type", "application/json")
-        with urlopen(request, data=args[1].value.encode("utf-8")) as response:
-            return ObjectValue(
-                {
-                    "data": StringValue(response.read().decode("utf-8")),
-                    "status": NumberValue(response.status),
-                }
-            )
+        response = requests.post(args[0].value, data=args[1].value, timeout=10)
+        return ObjectValue(
+            {
+                "data": StringValue(response.content.decode("utf-8")),
+                "status": NumberValue(response.status_code),
+            }
+        )
     except Exception as e:
         raise RuntimeError(f"Error fetching URL '{args[0].value}'") from e
 

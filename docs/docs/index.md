@@ -6,10 +6,10 @@ Eryx is simple and easy to use programming language based on python/javascript t
 
 ## Useful urls
 
-- [:fontawesome-solid-house:](https://eryx-home.shymike.tech) Homepage
+- [:fontawesome-solid-house:](https://eryx.shymike.tech) Homepage
 - [:material-github:](https://github.com/ImShyMike/Eryx) GitHub Repository
 - [:fontawesome-solid-box-archive:](https://eryx-packages.shymike.tech) Package Index
-- [:material-console:](https://eryx.shymike.tech) Online IDE
+- [:material-console:](https://eryx-ide.shymike.tech) Online IDE
 - [:fontawesome-brands-python:](https://pypi.org/project/Eryx) PyPI Package
 
 
