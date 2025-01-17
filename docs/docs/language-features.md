@@ -74,7 +74,7 @@ print(add(1, 2)); # Output: 3
 There are also many builtin functions:
 
 !!! note "Values"
-    Values containing '?' are optional and '...' reffers to any amount of arguments.
+    Values containing '?' are optional and '...' refers to any amount of arguments.
 
 * **print(** ... **)**: Print all values passed to it
 * **input(** text? **)**: Get user input as a string, optionally prompt with a message
@@ -144,7 +144,6 @@ Currently, all supported operators are:
     The `+ (Add)` operator can also be used to concatenate strings, arrays and dictionaries/objects.
 
 ## Control structures
-For now, the only supported control structures are:
 
 ### If/Else statements
 
@@ -155,3 +154,26 @@ if (1 == 1) {
     print("This will not be printed");
 }
 ```
+
+### Loops
+
+Infinite loops and while loops are supported.
+
+```rust linenums="1"
+loop {
+    print("This will be printed forever!");
+}
+
+let value = 0;
+const threshold = 3;
+while (value < threshold) {
+    value = value + 1
+
+    print(value);
+}
+```
+
+Supported keywords are:
+
+* **break**: Exit the loop
+* **continue**: Skip to the next loop iteration

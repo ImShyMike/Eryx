@@ -4,12 +4,15 @@ from eryx.frontend.ast import (
     ArrayLiteral,
     AssignmentExpression,
     BinaryExpression,
+    BreakLiteral,
     CallExpression,
+    ContinueLiteral,
     Expression,
     FunctionDeclaration,
     Identifier,
     IfStatement,
     ImportStatement,
+    LoopStatement,
     MemberExpression,
     NumericLiteral,
     ObjectLiteral,
@@ -19,6 +22,7 @@ from eryx.frontend.ast import (
     Statement,
     StringLiteral,
     VariableDeclaration,
+    WhileStatement,
 )
 from eryx.frontend.lexer import Token, TokenType, tokenize
 from eryx.utils.errors import syntax_error
@@ -198,6 +202,12 @@ class Parser:
                 return NumericLiteral(float(self.next().value))
             case TokenType.STRING:
                 return StringLiteral(self.next().value)
+            case TokenType.BREAK:
+                self.next()
+                return BreakLiteral()
+            case TokenType.CONTINUE:
+                self.next()
+                return ContinueLiteral()
             case TokenType.OPEN_BRACKET:
                 return self.parse_array_expression()
             case TokenType.OPEN_BRACE:
@@ -207,12 +217,12 @@ class Parser:
                 expression = self.parse_expression()
                 self.assert_next(
                     TokenType.CLOSE_PAREN,
-                    "Unexpected token found inside parenthesised expression, " \
-                        "expected closing parenthesis.",
+                    "Unexpected token found inside parenthesised expression, "
+                    "expected closing parenthesis.",
                 )  # Skip the close parenthesis
                 return expression
             case TokenType.SEMICOLON:
-                self.next() # Skip the semicolon
+                self.next()  # Skip the semicolon
                 return Expression()
             case _:
                 syntax_error(self.source_code, token.position, "Unexpected token.")
@@ -445,9 +455,11 @@ class Parser:
         )
 
         if self.at().type == TokenType.AS:
-            self.next() # Skip the as keyword
+            self.next()  # Skip the as keyword
 
-            alias = self.assert_next(TokenType.STRING, "Expected a string for the import alias.")
+            alias = self.assert_next(
+                TokenType.STRING, "Expected a string for the import alias."
+            )
 
             return ImportStatement(value.value, alias=alias.value)
 
@@ -505,6 +517,58 @@ class Parser:
             ],
         )
 
+    def parse_loop_statement(self) -> Statement:
+        """Parse a loop statement."""
+        self.next()  # Skip the loop keyword
+
+        self.assert_next(
+            TokenType.OPEN_BRACE, "Expected opening brace for the loop statement."
+        )
+
+        body = []
+        while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
+            statement = self.parse_statement()
+            if statement != Expression():
+                body.append(statement)
+
+        self.assert_next(
+            TokenType.CLOSE_BRACE, "Expected closing brace for the loop statement."
+        )
+
+        return LoopStatement(body)
+
+    def parse_while_statement(self) -> Statement:
+        """Parse a while statement."""
+        self.next()  # Skip the while keyword
+
+        self.assert_next(
+            TokenType.OPEN_PAREN,
+            "Expected an opening parenthesis for the while condition.",
+        )
+
+        condition = self.parse_expression()
+
+        self.assert_next(
+            TokenType.CLOSE_PAREN,
+            "Expected a closing parenthesis after the while condition.",
+        )
+
+        self.assert_next(
+            TokenType.OPEN_BRACE, "Expected opening brace for the while statement."
+        )
+
+        body = []
+        while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
+            statement = self.parse_statement()
+            if statement != Expression():
+                body.append(statement)
+
+        self.assert_next(
+            TokenType.CLOSE_BRACE, "Expected closing brace for the while statement."
+        )
+
+        return WhileStatement(condition, body)
+
     def parse_statement(self) -> Statement:
         """Parse a statement."""
         match self.at().type:
@@ -522,6 +586,10 @@ class Parser:
                 return self.parse_import_statement()
             case TokenType.FROM:
                 return self.parse_from_statement()
+            case TokenType.WHILE:
+                return self.parse_while_statement()
+            case TokenType.LOOP:
+                return self.parse_loop_statement()
             case _:
                 return self.parse_expression()
 

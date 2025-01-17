@@ -39,7 +39,7 @@ def run_code(
                 print("Tokenized:")
                 pprint(TokenList(tokenized))
             except RuntimeError as e:
-                print(f"{Fore.RED}Tokenizer Error: {e}{Fore.RESET}")
+                print(f"{Fore.RED}Tokenizer Error{Fore.RESET}: {e}")
                 return
 
         try:
@@ -48,7 +48,7 @@ def run_code(
                 print("AST:")
                 pprint(ast)
         except RuntimeError as e:
-            print(f"{Fore.RED}Parser Error: {e}{Fore.RESET}")
+            print(f"{Fore.RED}Parser Error{Fore.RESET}: {e}")
             return
     except SyntaxError as e:
         print(e)
@@ -60,7 +60,7 @@ def run_code(
             print("\nResult:")
             pprint(result)
     except RuntimeError as e:
-        print(f"{Fore.RED}Runtime Error: {e}{Fore.RESET}")
+        print(f"{Fore.RED}Runtime Error{Fore.RESET}: {e}")
 
     if result is not None and not isinstance(result, NullValue):
         return get_value(result)

@@ -4,6 +4,7 @@ import math
 import random
 import sys
 import time
+
 import requests
 
 from eryx.runtime.values import (

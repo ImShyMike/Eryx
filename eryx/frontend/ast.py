@@ -131,6 +131,7 @@ class ReturnStatement(Statement):
 
     value: Union[Expression, None] = None
 
+
 @dataclass()
 class ImportStatement(Statement):
     """Import statement class."""
@@ -138,3 +139,28 @@ class ImportStatement(Statement):
     module: str
     names: List[str] | None = None
     alias: str | None = None
+
+
+@dataclass()
+class LoopStatement(Statement):
+    """Loop statement class."""
+
+    body: list[Statement]
+
+
+@dataclass()
+class WhileStatement(Statement):
+    """While statement class."""
+
+    condition: Expression
+    body: list[Statement]
+
+
+@dataclass()
+class BreakLiteral(Expression):
+    """Break literal class."""
+
+
+@dataclass()
+class ContinueLiteral(Expression):
+    """Continue literal class."""

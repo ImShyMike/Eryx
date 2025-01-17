@@ -40,7 +40,7 @@ null
 </details>
 
 ### Importing
-```C title="functions.eryx" linenums="1"
+```C linenums="1"
 ### math.eryx
 func add(x, y) {
     return x + y;
@@ -51,8 +51,8 @@ const pi = 22 / 7;
 
 
 ### test.eryx
-import "math";
-from "math" import ["add", "pi"];
+import "math.eryx";
+from "math.eryx" import ["add", "pi"];
 
 print(add(5, 10), pi);
 print(math.one);
@@ -88,7 +88,6 @@ if (x == y) {
 } else {
     print("x is not equal y");
 }
-
 ```
 <details><summary>Output</summary>
 ```C linenums="1"
@@ -96,8 +95,50 @@ x is not equal y
 ```
 </details>
 
+### Loops
+```rust title="loops.eryx" linenums="1"
+let value = 0;
+const threshold = 5;
+
+loop {
+    if (value >= threshold) {
+        break;
+    } else {
+        value = value + 1
+    }
+
+    print(value);
+}
+
+print("done!");
+
+value = 0;
+
+while (value < threshold) {
+    value = value + 1
+
+    if (value % 2 != 0) {
+        continue;
+    }
+
+    print(value);
+}
+```
+<details><summary>Output</summary>
+```C linenums="1"
+1
+2
+3
+4
+5
+done!
+2
+4
+```
+</details>
+
 ### Arithmetic operations
-```C title="arithmetic.eryx" linenums="1"
+```rust title="arithmetic.eryx" linenums="1"
 let x = 10;
 let y = 5;
 

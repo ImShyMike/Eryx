@@ -2,16 +2,20 @@
 
 import json
 import os
+from typing import Tuple
 
 from eryx.frontend.ast import (
     ArrayLiteral,
     AssignmentExpression,
     BinaryExpression,
+    BreakLiteral,
     CallExpression,
+    ContinueLiteral,
     FunctionDeclaration,
     Identifier,
     IfStatement,
     ImportStatement,
+    LoopStatement,
     MemberExpression,
     NumericLiteral,
     ObjectLiteral,
@@ -20,6 +24,7 @@ from eryx.frontend.ast import (
     Statement,
     StringLiteral,
     VariableDeclaration,
+    WhileStatement,
 )
 from eryx.frontend.parser import Parser
 from eryx.packages.packages import CFG_FILE, INSTALLED_PACKAGES_LOC, packages_dir
@@ -38,12 +43,26 @@ from eryx.runtime.values import (
 from eryx.utils.pretty_print import pprint
 
 
-# Custom exception to manage returns
+# Custom exception to manage returns/breaks/continues
 class ReturnException(Exception):
     """Dummy exception to manage return statements."""
 
     def __init__(self, value):
         self.value = value
+
+
+class BreakException(Exception):
+    """Dummy exception to manage break statements."""
+
+    def __init__(self):
+        pass
+
+
+class ContinueException(Exception):
+    """Dummy exception to manage continue statements."""
+
+    def __init__(self):
+        pass
 
 
 # STATEMENTS
@@ -81,8 +100,13 @@ def eval_program(program: Program, environment: Environment) -> RuntimeValue:
     try:
         for statement in program.body:
             last_evaluated = evaluate(statement, environment)
-    except ReturnException as e:
-        raise RuntimeError("Return statement found outside of a function.") from e
+    except (ReturnException, BreakException, ContinueException) as e:
+        if isinstance(e, ReturnException):
+            raise RuntimeError("Return statement found outside of a function.") from e
+        if isinstance(e, BreakException):
+            raise RuntimeError("Break keyword found outside of a loop.") from e
+        if isinstance(e, ContinueException):
+            raise RuntimeError("Continue keyword found outside of a loop.") from e
 
     return last_evaluated
 
@@ -196,6 +220,48 @@ def eval_import_statement(
                     raise RuntimeError(
                         f"Variable/function '{name}' not found in module '{module_name}'."
                     )
+
+    return NullValue()
+
+
+def eval_loop_statement(
+    loop_statement: LoopStatement, environment: Environment
+) -> RuntimeValue:
+    """Evaluate a loop statement."""
+    try:
+        while True:
+            try:
+                for statement in loop_statement.body:
+                    evaluate(statement, environment)
+            except ContinueException:
+                pass
+    except BreakException:
+        pass
+
+    return NullValue()
+
+
+def eval_while_statement(
+    while_statement: WhileStatement, environment: Environment
+) -> RuntimeValue:
+    """Evaluate a while statement."""
+
+    try:
+        while True:
+            condition = evaluate(while_statement.condition, environment)
+            if isinstance(
+                condition, (BooleanValue, NumberValue, StringValue, NullValue)
+            ):
+                if condition.value:
+                    try:
+                        for statement in while_statement.body:
+                            evaluate(statement, environment)
+                    except ContinueException:
+                        pass
+                else:
+                    break
+    except BreakException:
+        pass
 
     return NullValue()
 
@@ -428,12 +494,68 @@ def eval_assignment_expression(
     node: AssignmentExpression, environment: Environment
 ) -> RuntimeValue:
     """Evaluate an assignment expression."""
-    if not isinstance(node.assigne, Identifier):
-        raise RuntimeError("Expected an identifier on the left side of an assignment.")
+    value = evaluate(node.value, environment)
 
-    return environment.assign_variable(
-        node.assigne.symbol, evaluate(node.value, environment)
+    if isinstance(node.assigne, Identifier):
+        environment.assign_variable(node.assigne.symbol, value)
+        return value
+
+    if isinstance(node.assigne, MemberExpression):
+        obj, prop = resolve_member_expression(
+            node.assigne, environment, create_path=True
+        )
+
+        if not isinstance(obj, ObjectValue):
+            raise RuntimeError(
+                f"Cannot assign to a non-object value: {type(obj).__name__}"
+            )
+
+        if isinstance(node.assigne.object, Identifier):
+            symbol = node.assigne.object.symbol
+            env = environment.resolve(symbol)
+            if symbol in env.constants:
+                raise RuntimeError(f'Cannot assign to constant object "{symbol}"')
+
+        if obj.immutable:
+            raise RuntimeError(f'Cannot assign to immutable object "{prop}"')
+
+        obj.properties[prop] = value
+        return value
+
+    raise RuntimeError(
+        "Expected an identifier or member expression on the left side of an assignment."
     )
+
+
+def resolve_member_expression(
+    member: MemberExpression, environment: Environment, create_path: bool = False
+) -> Tuple[RuntimeValue, str]:
+    """Resolve a member expression."""
+    current = evaluate(member.object, environment)
+
+    if isinstance(member.object, MemberExpression):
+        parent, prop = resolve_member_expression(
+            member.object, environment, create_path
+        )
+        if create_path and not isinstance(parent, ObjectValue):
+            parent = ObjectValue(properties={})
+            current = parent.properties[prop] = ObjectValue(properties={})
+        else:
+            if isinstance(parent, ObjectValue):
+                current = parent.properties.get(prop, NullValue())
+            else:
+                current = NullValue()
+
+    if not isinstance(current, ObjectValue) and create_path:
+        current = ObjectValue(properties={})
+
+    prop = (
+        member.property.symbol
+        if isinstance(member.property, Identifier)
+        else evaluate(member.property, environment)
+    )
+
+    return current, str(prop)
 
 
 def eval_call_expression(
@@ -509,6 +631,14 @@ def evaluate(ast_node: Statement | None, environment: Environment) -> RuntimeVal
             return eval_object_expression(ast_node, environment)
         case IfStatement():
             return eval_if_statement(ast_node, environment)
+        case LoopStatement():
+            return eval_loop_statement(ast_node, environment)
+        case WhileStatement():
+            return eval_while_statement(ast_node, environment)
+        case BreakLiteral():
+            raise BreakException()
+        case ContinueLiteral():
+            raise ContinueException()
         case ReturnStatement():
             # Directly evaluate and raise ReturnException if it's a return statement
             value = evaluate(ast_node.value, environment)

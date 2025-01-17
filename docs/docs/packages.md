@@ -75,5 +75,9 @@ After entering your API key, the package will be uploaded and available at:
 And you can install it using:
 
 ```sh
-eryx package install <package-name> (optionally: <package-name>@<package-version>)
+eryx package install <package-name>
+```
+or
+```sh
+eryx package install  <package-name>@<package-version>
 ```
