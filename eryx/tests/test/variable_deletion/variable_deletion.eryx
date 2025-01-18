@@ -1,0 +1,7 @@
+const x = 10;
+
+del x;
+
+const x = 1;
+
+print(x)

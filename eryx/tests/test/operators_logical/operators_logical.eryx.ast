@@ -1,0 +1,235 @@
+Program(
+  body: [    
+    VariableDeclaration(
+      constant: False,
+      identifier: Identifier(
+        symbol: "x"
+      ),
+      value: Identifier(
+        symbol: "true"
+      )
+    ),
+    
+    VariableDeclaration(
+      constant: False,
+      identifier: Identifier(
+        symbol: "y"
+      ),
+      value: Identifier(
+        symbol: "false"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        BinaryExpression(
+          left: Identifier(
+            symbol: "x"
+          ),
+          operator: "&&",
+          right: Identifier(
+            symbol: "y"
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        BinaryExpression(
+          left: Identifier(
+            symbol: "x"
+          ),
+          operator: "||",
+          right: Identifier(
+            symbol: "y"
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        BinaryExpression(
+          left: BinaryExpression(
+            left: Identifier(
+              symbol: "x"
+            ),
+            operator: "||",
+            right: Identifier(
+              symbol: "y"
+            )
+          ),
+          operator: "&&",
+          right: Identifier(
+            symbol: "x"
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        BinaryExpression(
+          left: BinaryExpression(
+            left: Identifier(
+              symbol: "x"
+            ),
+            operator: "&&",
+            right: Identifier(
+              symbol: "y"
+            )
+          ),
+          operator: "||",
+          right: Identifier(
+            symbol: "x"
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        BinaryExpression(
+          left: BinaryExpression(
+            left: BinaryExpression(
+              left: Identifier(
+                symbol: "x"
+              ),
+              operator: "&&",
+              right: Identifier(
+                symbol: "y"
+              )
+            ),
+            operator: "||",
+            right: Identifier(
+              symbol: "x"
+            )
+          ),
+          operator: "&&",
+          right: Identifier(
+            symbol: "y"
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        BinaryExpression(
+          left: BinaryExpression(
+            left: BinaryExpression(
+              left: BinaryExpression(
+                left: Identifier(
+                  symbol: "x"
+                ),
+                operator: "&&",
+                right: Identifier(
+                  symbol: "y"
+                )
+              ),
+              operator: "||",
+              right: Identifier(
+                symbol: "x"
+              )
+            ),
+            operator: "&&",
+            right: Identifier(
+              symbol: "y"
+            )
+          ),
+          operator: "&&",
+          right: Identifier(
+            symbol: "x"
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        BinaryExpression(
+          left: Identifier(
+            symbol: "x"
+          ),
+          operator: "&&",
+          right: Identifier(
+            symbol: "x"
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        BinaryExpression(
+          left: Identifier(
+            symbol: "y"
+          ),
+          operator: "&&",
+          right: Identifier(
+            symbol: "y"
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        BinaryExpression(
+          left: Identifier(
+            symbol: "x"
+          ),
+          operator: "||",
+          right: Identifier(
+            symbol: "x"
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        BinaryExpression(
+          left: Identifier(
+            symbol: "y"
+          ),
+          operator: "||",
+          right: Identifier(
+            symbol: "y"
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    )
+  ]
+)

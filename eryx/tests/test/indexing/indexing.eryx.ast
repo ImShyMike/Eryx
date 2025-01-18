@@ -1,0 +1,276 @@
+Program(
+  body: [    
+    VariableDeclaration(
+      constant: False,
+      identifier: Identifier(
+        symbol: "obj"
+      ),
+      value: ObjectLiteral(
+        properties: [          
+          Property(
+            key: "nested",
+            value: ObjectLiteral(
+              properties: [                
+                Property(
+                  key: "nested_val",
+                  value: NumericLiteral(
+                    value: 100.0
+                  )
+                ),
+                
+                Property(
+                  key: "nest_squared",
+                  value: ObjectLiteral(
+                    properties: [                      
+                      Property(
+                        key: "maybe",
+                        value: StringLiteral(
+                          value: "works"
+                        )
+                      )
+                    ]
+                  )
+                )
+              ]
+            )
+          )
+        ]
+      )
+    ),
+    
+    VariableDeclaration(
+      constant: False,
+      identifier: Identifier(
+        symbol: "lst"
+      ),
+      value: ArrayLiteral(
+        elements: [          
+          NumericLiteral(
+            value: 1.0
+          ),
+          
+          NumericLiteral(
+            value: 2.0
+          ),
+          
+          NumericLiteral(
+            value: 3.0
+          )
+        ]
+      )
+    ),
+    
+    VariableDeclaration(
+      constant: False,
+      identifier: Identifier(
+        symbol: "string"
+      ),
+      value: StringLiteral(
+        value: "Hello, World!"
+      )
+    ),
+    
+    VariableDeclaration(
+      constant: False,
+      identifier: Identifier(
+        symbol: "num"
+      ),
+      value: NumericLiteral(
+        value: 2.0
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        MemberExpression(
+          computed: True,
+          object: Identifier(
+            symbol: "lst"
+          ),
+          property: NumericLiteral(
+            value: 0.0
+          )
+        ),
+        
+        MemberExpression(
+          computed: False,
+          object: MemberExpression(
+            computed: False,
+            object: Identifier(
+              symbol: "obj"
+            ),
+            property: Identifier(
+              symbol: "nested"
+            )
+          ),
+          property: Identifier(
+            symbol: "nested_val"
+          )
+        ),
+        
+        MemberExpression(
+          computed: False,
+          object: MemberExpression(
+            computed: False,
+            object: MemberExpression(
+              computed: False,
+              object: Identifier(
+                symbol: "obj"
+              ),
+              property: Identifier(
+                symbol: "nested"
+              )
+            ),
+            property: Identifier(
+              symbol: "nest_squared"
+            )
+          ),
+          property: Identifier(
+            symbol: "maybe"
+          )
+        ),
+        
+        MemberExpression(
+          computed: True,
+          object: Identifier(
+            symbol: "string"
+          ),
+          property: NumericLiteral(
+            value: 0.0
+          )
+        ),
+        
+        MemberExpression(
+          computed: True,
+          object: Identifier(
+            symbol: "string"
+          ),
+          property: NumericLiteral(
+            value: 7.0
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        MemberExpression(
+          computed: True,
+          object: Identifier(
+            symbol: "lst"
+          ),
+          property: NumericLiteral(
+            value: 1.0
+          )
+        ),
+        
+        MemberExpression(
+          computed: False,
+          object: MemberExpression(
+            computed: True,
+            object: Identifier(
+              symbol: "obj"
+            ),
+            property: StringLiteral(
+              value: "nested"
+            )
+          ),
+          property: Identifier(
+            symbol: "nested_val"
+          )
+        ),
+        
+        MemberExpression(
+          computed: False,
+          object: MemberExpression(
+            computed: True,
+            object: MemberExpression(
+              computed: False,
+              object: Identifier(
+                symbol: "obj"
+              ),
+              property: Identifier(
+                symbol: "nested"
+              )
+            ),
+            property: StringLiteral(
+              value: "nest_squared"
+            )
+          ),
+          property: Identifier(
+            symbol: "maybe"
+          )
+        ),
+        
+        MemberExpression(
+          computed: True,
+          object: Identifier(
+            symbol: "string"
+          ),
+          property: NumericLiteral(
+            value: 1.0
+          )
+        ),
+        
+        MemberExpression(
+          computed: True,
+          object: Identifier(
+            symbol: "string"
+          ),
+          property: NumericLiteral(
+            value: 6.0
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        MemberExpression(
+          computed: True,
+          object: Identifier(
+            symbol: "lst"
+          ),
+          property: Identifier(
+            symbol: "num"
+          )
+        ),
+        
+        MemberExpression(
+          computed: True,
+          object: Identifier(
+            symbol: "string"
+          ),
+          property: Identifier(
+            symbol: "num"
+          )
+        ),
+        
+        MemberExpression(
+          computed: True,
+          object: Identifier(
+            symbol: "string"
+          ),
+          property: BinaryExpression(
+            left: Identifier(
+              symbol: "num"
+            ),
+            operator: "+",
+            right: NumericLiteral(
+              value: 7.0
+            )
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    )
+  ]
+)

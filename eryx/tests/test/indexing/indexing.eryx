@@ -1,0 +1,20 @@
+let obj = {
+    nested: {
+        nested_val: 100,
+        nest_squared: {
+            maybe: "works"
+        }
+    }
+};
+
+let lst = [1, 2, 3];
+
+let string = "Hello, World!";
+
+let num = 2;
+
+print(lst[0], obj.nested.nested_val, obj.nested.nest_squared.maybe, string[0], string[7]);
+
+print(lst[1], obj["nested"].nested_val, obj.nested["nest_squared"].maybe, string[1], string[6]);
+
+print(lst[num], string[num], string[num + 7]);

@@ -60,11 +60,13 @@ class Environment:
 
         return value
 
-    def assign_variable(self, variable_name: str, value: RuntimeValue) -> RuntimeValue:
+    def assign_variable(
+        self, variable_name: str, value: RuntimeValue, overwrite: bool = False
+    ) -> RuntimeValue:
         """Assign a value to a variable in the current scope."""
         environment = self.resolve(variable_name)
 
-        if variable_name in environment.constants:
+        if variable_name in environment.constants and not overwrite:
             raise RuntimeError(f'Cannot assign to constant variable "{variable_name}"')
 
         environment.variables[variable_name] = value
@@ -194,9 +196,11 @@ def _range(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     if len(args) == 2:
         if all(isinstance(i, NumberValue) for i in args):
             return ArrayValue(
-                [NumberValue(i) for i in range(
-                    int(args[0].value), # type: ignore
-                    int(args[1].value), # type: ignore
+                [
+                    NumberValue(i)
+                    for i in range(
+                        int(args[0].value),  # type: ignore
+                        int(args[1].value),  # type: ignore
                     )
                 ]
             )
@@ -206,8 +210,8 @@ def _range(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
                 [
                     NumberValue(i)
                     for i in range(
-                        int(args[0].value), # type: ignore
-                        int(args[1].value), # type: ignore
+                        int(args[0].value),  # type: ignore
+                        int(args[1].value),  # type: ignore
                         int(args[2].value),  # type: ignore
                     )
                 ]

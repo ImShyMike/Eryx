@@ -1,0 +1,18 @@
+let obj = {
+    nested: {
+        nested_val: 100,
+        nest_squared: {
+            maybe: "works"
+        }
+    }
+};
+
+let lst = [1, 2, 3];
+
+obj.nested.nested_val = 80;
+obj.nested.nest_squared.maybe = "yep";
+
+lst[0] = 10;
+
+print(obj);
+print(lst);

@@ -5,7 +5,7 @@ import sys
 import tkinter as tk
 from io import StringIO
 from tkinter import messagebox
-from tkinter.filedialog import askdirectory
+from tkinter.filedialog import askdirectory, askopenfilename
 
 from eryx.__init__ import CURRENT_VERSION
 from eryx.frontend.parser import Parser
@@ -133,14 +133,37 @@ def on_remake_test():
     messagebox.showinfo("Success", f"Test files for {info["name"]} have been regenerated.")
 
 
+def on_make_test():
+    """Handle making a test from a file."""
+    test_file = askopenfilename(
+        initialdir=os.path.join(current_path, "test"),
+        title="Select File",
+        filetypes=[("Eryx Files", "*.eryx")],
+    )
+
+    if not test_file:
+        return
+
+    with open(test_file, "r", encoding="utf8") as f:
+        code = f.read()
+
+    test_name = os.path.basename(test_file).replace(".eryx", "")
+    description = ""
+
+    create_test_files(code, description, test_name)
+
 # Set up the Tkinter GUI
 root = tk.Tk()
 root.title("Test File Generator")
 root.resizable(False, False)
 
 # Remake test
-remake_label = tk.Button(root, text="Remake Test", command=on_remake_test)
-remake_label.pack()
+remake_button = tk.Button(root, text="Remake Test", command=on_remake_test)
+remake_button.pack()
+
+# Make test from file
+make_test_button = tk.Button(root, text="From File", command=on_make_test)
+make_test_button.pack()
 
 # Code input
 code_label = tk.Label(root, text="Code:")

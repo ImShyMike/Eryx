@@ -1,0 +1,76 @@
+Program(
+  body: [    
+    VariableDeclaration(
+      constant: False,
+      identifier: Identifier(
+        symbol: "x"
+      ),
+      value: NumericLiteral(
+        value: 0.0
+      )
+    ),
+    
+    WhileStatement(
+      body: [        
+        AssignmentExpression(
+          assigne: Identifier(
+            symbol: "x"
+          ),
+          value: BinaryExpression(
+            left: Identifier(
+              symbol: "x"
+            ),
+            operator: "+",
+            right: NumericLiteral(
+              value: 1.0
+            )
+          )
+        ),
+        
+        IfStatement(
+          condition: BinaryExpression(
+            left: BinaryExpression(
+              left: Identifier(
+                symbol: "x"
+              ),
+              operator: "%",
+              right: NumericLiteral(
+                value: 2.0
+              )
+            ),
+            operator: "==",
+            right: NumericLiteral(
+              value: 0.0
+            )
+          ),
+          else_: [            
+          ],
+          then: [            
+            ContinueLiteral(
+            )
+          ]
+        ),
+        
+        CallExpression(
+          arguments: [            
+            Identifier(
+              symbol: "x"
+            )
+          ],
+          caller: Identifier(
+            symbol: "print"
+          )
+        )
+      ],
+      condition: BinaryExpression(
+        left: Identifier(
+          symbol: "x"
+        ),
+        operator: "<",
+        right: NumericLiteral(
+          value: 10.0
+        )
+      )
+    )
+  ]
+)

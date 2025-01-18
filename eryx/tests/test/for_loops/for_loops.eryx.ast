@@ -1,0 +1,148 @@
+Program(
+  body: [    
+    VariableDeclaration(
+      constant: True,
+      identifier: Identifier(
+        symbol: "item"
+      ),
+      value: NumericLiteral(
+        value: 4000.0
+      )
+    ),
+    
+    ForStatement(
+      body: [        
+        CallExpression(
+          arguments: [            
+            Identifier(
+              symbol: "item"
+            )
+          ],
+          caller: Identifier(
+            symbol: "print"
+          )
+        )
+      ],
+      iterator: ArrayLiteral(
+        elements: [          
+          NumericLiteral(
+            value: 1.0
+          ),
+          
+          NumericLiteral(
+            value: 2.0
+          ),
+          
+          NumericLiteral(
+            value: 3.0
+          ),
+          
+          NumericLiteral(
+            value: 4.0
+          ),
+          
+          NumericLiteral(
+            value: 5.0
+          )
+        ]
+      ),
+      variable: Identifier(
+        symbol: "item"
+      )
+    ),
+    
+    ForStatement(
+      body: [        
+        CallExpression(
+          arguments: [            
+            Identifier(
+              symbol: "item"
+            )
+          ],
+          caller: Identifier(
+            symbol: "print"
+          )
+        )
+      ],
+      iterator: CallExpression(
+        arguments: [          
+          NumericLiteral(
+            value: 1.0
+          ),
+          
+          NumericLiteral(
+            value: 6.0
+          )
+        ],
+        caller: Identifier(
+          symbol: "range"
+        )
+      ),
+      variable: Identifier(
+        symbol: "item"
+      )
+    ),
+    
+    VariableDeclaration(
+      constant: True,
+      identifier: Identifier(
+        symbol: "lst"
+      ),
+      value: ArrayLiteral(
+        elements: [          
+          NumericLiteral(
+            value: 1.0
+          ),
+          
+          NumericLiteral(
+            value: 2.0
+          ),
+          
+          NumericLiteral(
+            value: 3.0
+          ),
+          
+          NumericLiteral(
+            value: 4.0
+          ),
+          
+          NumericLiteral(
+            value: 5.0
+          )
+        ]
+      )
+    ),
+    
+    ForStatement(
+      body: [        
+        CallExpression(
+          arguments: [            
+            Identifier(
+              symbol: "item"
+            )
+          ],
+          caller: Identifier(
+            symbol: "print"
+          )
+        )
+      ],
+      iterator: Identifier(
+        symbol: "lst"
+      ),
+      variable: Identifier(
+        symbol: "item"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        Identifier(
+          symbol: "item"
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    )
+  ]
+)

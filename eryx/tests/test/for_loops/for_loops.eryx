@@ -1,0 +1,16 @@
+const item = 4000;
+
+for item in [1, 2, 3, 4, 5] {
+    print(item);
+}
+
+for item in range(1, 6) {
+    print(item);
+}
+
+const lst = [1, 2, 3, 4, 5];
+for item in lst {
+    print(item);
+}
+
+print(item);

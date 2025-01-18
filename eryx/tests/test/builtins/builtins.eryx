@@ -1,0 +1,6 @@
+import "math";
+import "time";
+from "file" import ["read"];
+import "http" as "client";
+
+print(math.min([1, 2]));

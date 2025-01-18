@@ -265,6 +265,13 @@ def eval_for_statement(
         iterator = evaluate(for_statement.iterator, environment)
         if not isinstance(iterator, ArrayValue):
             raise RuntimeError("Expected an array as an iterator.")
+
+        variable_value = None
+        try:
+            variable_value = environment.lookup_variable(for_statement.variable.symbol)
+        except RuntimeError:
+            pass
+
         for element in iterator.elements:
             environment.declare_variable(for_statement.variable.symbol, element, False, True)
             try:
@@ -274,6 +281,11 @@ def eval_for_statement(
                 pass
     except BreakException:
         pass
+
+    if variable_value:
+        environment.assign_variable(for_statement.variable.symbol, variable_value, overwrite=True)
+    else:
+        environment.delete_variable(for_statement.variable.symbol)
 
     return NullValue()
 

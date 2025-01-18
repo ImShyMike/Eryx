@@ -1,0 +1,8 @@
+let x = 100;
+let y = 6430;
+
+print(x == y);
+print(x != y);
+print(x > y);
+print(x < y);
+print(x >= y);

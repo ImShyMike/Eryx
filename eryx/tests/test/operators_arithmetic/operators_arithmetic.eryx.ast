@@ -1,0 +1,195 @@
+Program(
+  body: [    
+    VariableDeclaration(
+      constant: False,
+      identifier: Identifier(
+        symbol: "x"
+      ),
+      value: NumericLiteral(
+        value: 100.0
+      )
+    ),
+    
+    AssignmentExpression(
+      assigne: Identifier(
+        symbol: "x"
+      ),
+      value: BinaryExpression(
+        left: Identifier(
+          symbol: "x"
+        ),
+        operator: "+",
+        right: Identifier(
+          symbol: "x"
+        )
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        Identifier(
+          symbol: "x"
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    AssignmentExpression(
+      assigne: Identifier(
+        symbol: "x"
+      ),
+      value: BinaryExpression(
+        left: Identifier(
+          symbol: "x"
+        ),
+        operator: "-",
+        right: NumericLiteral(
+          value: 5.0
+        )
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        Identifier(
+          symbol: "x"
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    AssignmentExpression(
+      assigne: Identifier(
+        symbol: "x"
+      ),
+      value: BinaryExpression(
+        left: Identifier(
+          symbol: "x"
+        ),
+        operator: "/",
+        right: NumericLiteral(
+          value: 2.0
+        )
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        Identifier(
+          symbol: "x"
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    AssignmentExpression(
+      assigne: Identifier(
+        symbol: "x"
+      ),
+      value: BinaryExpression(
+        left: Identifier(
+          symbol: "x"
+        ),
+        operator: "*",
+        right: Identifier(
+          symbol: "x"
+        )
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        Identifier(
+          symbol: "x"
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    AssignmentExpression(
+      assigne: Identifier(
+        symbol: "x"
+      ),
+      value: BinaryExpression(
+        left: Identifier(
+          symbol: "x"
+        ),
+        operator: "**",
+        right: NumericLiteral(
+          value: 2.0
+        )
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        Identifier(
+          symbol: "x"
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    AssignmentExpression(
+      assigne: Identifier(
+        symbol: "x"
+      ),
+      value: BinaryExpression(
+        left: Identifier(
+          symbol: "x"
+        ),
+        operator: "**",
+        right: NumericLiteral(
+          value: 0.5
+        )
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        Identifier(
+          symbol: "x"
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    AssignmentExpression(
+      assigne: Identifier(
+        symbol: "x"
+      ),
+      value: BinaryExpression(
+        left: Identifier(
+          symbol: "x"
+        ),
+        operator: "%",
+        right: NumericLiteral(
+          value: 45.0
+        )
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        Identifier(
+          symbol: "x"
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    )
+  ]
+)

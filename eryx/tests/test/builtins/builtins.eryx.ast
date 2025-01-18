@@ -1,0 +1,61 @@
+Program(
+  body: [    
+    ImportStatement(
+      alias: None,
+      module: "math",
+      names: None
+    ),
+    
+    ImportStatement(
+      alias: None,
+      module: "time",
+      names: None
+    ),
+    
+    ImportStatement(
+      alias: None,
+      module: "file",
+      names: [        
+        "read"
+      ]
+    ),
+    
+    ImportStatement(
+      alias: "client",
+      module: "http",
+      names: None
+    ),
+    
+    CallExpression(
+      arguments: [        
+        CallExpression(
+          arguments: [            
+            ArrayLiteral(
+              elements: [                
+                NumericLiteral(
+                  value: 1.0
+                ),
+                
+                NumericLiteral(
+                  value: 2.0
+                )
+              ]
+            )
+          ],
+          caller: MemberExpression(
+            computed: False,
+            object: Identifier(
+              symbol: "math"
+            ),
+            property: Identifier(
+              symbol: "min"
+            )
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    )
+  ]
+)

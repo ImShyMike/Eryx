@@ -172,7 +172,7 @@ def tokenize(source_code: str) -> list[Token]:
 
         if src[0] == "&":
             src.pop(0)
-            if len(src) > 1 and src[1] == "&":
+            if len(src) > 0 and src[0] == "&":
                 src.pop(0)
                 tokens.append(Token("&&", TokenType.BINARY_OPERATOR, current_pos))
             else:
@@ -181,7 +181,7 @@ def tokenize(source_code: str) -> list[Token]:
 
         if src[0] == "|":
             src.pop(0)
-            if len(src) > 1 and src[1] == "|":
+            if len(src) > 0 and src[0] == "|":
                 src.pop(0)
                 tokens.append(Token("||", TokenType.BINARY_OPERATOR, current_pos))
             else:

@@ -1,0 +1,12 @@
+let x = 1060080;
+
+x = x ^ 140;
+print(x);
+x = x & 290845;
+print(x);
+x = x | 4484;
+print(x);
+x = x >> 2;
+print(x);
+x = x << 2;
+print(x);

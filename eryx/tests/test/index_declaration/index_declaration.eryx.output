@@ -1,0 +1,2 @@
+{ nested: { nested_val: 80, nest_squared: { maybe: "yep" } } }
+[ 1, 2, 3 ]

@@ -1,0 +1,14 @@
+Program(
+  body: [    
+    CallExpression(
+      arguments: [        
+        StringLiteral(
+          value: "this will be printed"
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    )
+  ]
+)

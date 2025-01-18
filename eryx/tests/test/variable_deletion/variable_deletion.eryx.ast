@@ -1,0 +1,40 @@
+Program(
+  body: [    
+    VariableDeclaration(
+      constant: True,
+      identifier: Identifier(
+        symbol: "x"
+      ),
+      value: NumericLiteral(
+        value: 10.0
+      )
+    ),
+    
+    DelStatement(
+      identifier: Identifier(
+        symbol: "x"
+      )
+    ),
+    
+    VariableDeclaration(
+      constant: True,
+      identifier: Identifier(
+        symbol: "x"
+      ),
+      value: NumericLiteral(
+        value: 1.0
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        Identifier(
+          symbol: "x"
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    )
+  ]
+)

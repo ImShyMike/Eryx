@@ -95,7 +95,10 @@ There are also many builtin functions:
 * **range(** start, end?, step? **)**: Generates an array from start to end with step
 
 
-There are also many builtin modules:
+There are also many builtin modules.
+They can be imported using `import` (without ".eryx")
+
+Full list:
 
 - **time**:
     - **time()**: Get the current time in seconds since the Epoch
