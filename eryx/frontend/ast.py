@@ -157,8 +157,24 @@ class WhileStatement(Statement):
 
 
 @dataclass()
+class ForStatement(Statement):
+    """For statement class."""
+
+    variable: Expression
+    iterator: Expression
+    body: list[Statement]
+
+
+@dataclass()
 class BreakLiteral(Expression):
     """Break literal class."""
+
+
+@dataclass()
+class DelStatement(Statement):
+    """Del statement class."""
+
+    identifier: Expression
 
 
 @dataclass()

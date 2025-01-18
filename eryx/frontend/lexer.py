@@ -37,6 +37,8 @@ class TokenType(Enum):
 
     LOOP = auto()
     WHILE = auto()
+    FOR = auto()
+    IN = auto()
     BREAK = auto()
     CONTINUE = auto()
 
@@ -45,6 +47,8 @@ class TokenType(Enum):
     AS = auto()
 
     EQUALS = auto()
+
+    DEL = auto()
 
     COMMA = auto()
     COLON = auto()
@@ -80,8 +84,11 @@ KEYWORDS = {
     "as": TokenType.AS,
     "loop": TokenType.LOOP,
     "while": TokenType.WHILE,
+    "for": TokenType.FOR,
+    "in": TokenType.IN,
     "break": TokenType.BREAK,
     "continue": TokenType.CONTINUE,
+    "del": TokenType.DEL,
 }
 
 

@@ -5,6 +5,7 @@ import sys
 import tkinter as tk
 from io import StringIO
 from tkinter import messagebox
+from tkinter.filedialog import askdirectory
 
 from eryx.__init__ import CURRENT_VERSION
 from eryx.frontend.parser import Parser
@@ -34,19 +35,20 @@ def capture_output(func, *args, **kwargs):
         sys.stdout = old_stdout
 
 
-def create_test_files(code, description, test_name):
-    """Create the test files with actual values."""
-    # Create the folder to store the test files
-    test_folder = os.path.join(current_path, "test", test_name)
-    if not os.path.exists(test_folder):
-        os.makedirs(test_folder)
+def read_info(file_path: str) -> dict:
+    """Read the info.test file to get the metadata."""
+    with open(file_path, "r", encoding="utf8") as file:
+        lines = file.readlines()
+        info = {
+            "version": lines[0].split(":")[1].strip(),
+            "name": lines[1].split(":")[1].strip(),
+            "description": lines[2].split(":")[1].strip(),
+        }
+    return info
 
-    # Create .eryx file (the code itself)
-    with open(
-        os.path.join(test_folder, f"{test_name}.eryx"), "w", encoding="utf8"
-    ) as f:
-        f.write(code)
 
+def write_files(test_folder, code, test_name, description):
+    """Write the test files to the test folder."""
     # Generate AST
     test_ast = generate_ast(code)
     with open(
@@ -69,11 +71,27 @@ def create_test_files(code, description, test_name):
     ) as f:
         f.write(output[:-1])
 
-    # Create info.test file (Description and expected behavior)
+    # Create info.test file
     with open(os.path.join(test_folder, "test.info"), "w", encoding="utf8") as f:
         f.write(f"Version: {CURRENT_VERSION}\n")
         f.write(f"Name: {test_name}\n")
         f.write(f"Description: {description}")
+
+
+def create_test_files(code, description, test_name):
+    """Create the test files with actual values."""
+    # Create the folder to store the test files
+    test_folder = os.path.join(current_path, "test", test_name)
+    if not os.path.exists(test_folder):
+        os.makedirs(test_folder)
+
+    # Create .eryx file (the code itself)
+    with open(
+        os.path.join(test_folder, f"{test_name}.eryx"), "w", encoding="utf8"
+    ) as f:
+        f.write(code)
+
+    write_files(test_folder, code, test_name, description)
 
     messagebox.showinfo("Success", f"Test files for {test_name} have been created.")
 
@@ -92,10 +110,37 @@ def on_create_test():
     create_test_files(code, description, test_name)
 
 
+def on_remake_test():
+    """Handle remaking of a test."""
+    test_folder = askdirectory(
+        initialdir=os.path.join(current_path, "test"),
+        mustexist=True,
+        title="Select Test Folder",
+    )
+    if not test_folder:
+        return
+
+    info = read_info(os.path.join(test_folder, "test.info"))
+
+    # Get the code from the .eryx file
+    with open(
+        os.path.join(test_folder, f"{info['name']}.eryx"), "r", encoding="utf8"
+    ) as f:
+        code = f.read()
+
+    write_files(test_folder, code, info["name"], info["description"])
+
+    messagebox.showinfo("Success", f"Test files for {info["name"]} have been regenerated.")
+
+
 # Set up the Tkinter GUI
 root = tk.Tk()
 root.title("Test File Generator")
 root.resizable(False, False)
+
+# Remake test
+remake_label = tk.Button(root, text="Remake Test", command=on_remake_test)
+remake_label.pack()
 
 # Code input
 code_label = tk.Label(root, text="Code:")

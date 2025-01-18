@@ -86,6 +86,15 @@ class Environment:
         # If it does not exist in the parent scope, raise an exception
         raise RuntimeError(f'Variable "{variable_name}" not found in scope')
 
+    def delete_variable(self, variable_name: str) -> None:
+        """Delete a variable from the current scope."""
+        if variable_name in self.variables:
+            if variable_name in self.constants:
+                del self.constants[self.constants.index(variable_name)]
+            del self.variables[variable_name]
+        else:
+            raise RuntimeError(f'Variable "{variable_name}" not found in scope')
+
     def setup_scope(self) -> None:
         """Setup the global scope."""
         # Declare global variables
@@ -103,6 +112,7 @@ class Environment:
         self.declare_variable("bool", NativeFunctionValue(_bool), True)
         self.declare_variable("array", NativeFunctionValue(_array), True)
         self.declare_variable("type", NativeFunctionValue(_type), True)
+        self.declare_variable("range", NativeFunctionValue(_range), True)
 
 
 def get_value(value: RuntimeValue, inside_array: bool = False) -> str:
@@ -175,6 +185,34 @@ def _random(_: list[RuntimeValue], __: Environment):
 
 def _time(_: list[RuntimeValue], __: Environment) -> RuntimeValue:
     return NumberValue(time.time())
+
+
+def _range(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) == 1:
+        if isinstance(args[0], NumberValue):
+            return ArrayValue([NumberValue(i) for i in range(int(args[0].value))])
+    if len(args) == 2:
+        if all(isinstance(i, NumberValue) for i in args):
+            return ArrayValue(
+                [NumberValue(i) for i in range(
+                    int(args[0].value), # type: ignore
+                    int(args[1].value), # type: ignore
+                    )
+                ]
+            )
+    if len(args) == 3:
+        if all(isinstance(i, NumberValue) for i in args):
+            return ArrayValue(
+                [
+                    NumberValue(i)
+                    for i in range(
+                        int(args[0].value), # type: ignore
+                        int(args[1].value), # type: ignore
+                        int(args[2].value),  # type: ignore
+                    )
+                ]
+            )
+    raise RuntimeError(f"Cannot create range with {args}")
 
 
 def _input(args: list[RuntimeValue], env: Environment) -> RuntimeValue:

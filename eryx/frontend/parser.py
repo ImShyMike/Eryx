@@ -7,7 +7,9 @@ from eryx.frontend.ast import (
     BreakLiteral,
     CallExpression,
     ContinueLiteral,
+    DelStatement,
     Expression,
+    ForStatement,
     FunctionDeclaration,
     Identifier,
     IfStatement,
@@ -537,6 +539,46 @@ class Parser:
 
         return LoopStatement(body)
 
+    def parse_for_statement(self) -> Statement:
+        """Parse a for statement."""
+        self.next()  # Skip the for keyword
+
+        variable = self.assert_next(
+            TokenType.IDENTIFIER, "Expected an identifier for the loop variable."
+        )
+
+        self.assert_next(TokenType.IN, "Expected the 'in' keyword for the for loop.")
+
+        iterator = self.parse_expression()
+
+        self.assert_next(
+            TokenType.OPEN_BRACE, "Expected opening brace for the for statement."
+        )
+
+        body = []
+        while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
+            statement = self.parse_statement()
+            if statement != Expression():
+                body.append(statement)
+
+        self.assert_next(
+            TokenType.CLOSE_BRACE, "Expected closing brace for the for statement."
+        )
+
+        return ForStatement(
+            Identifier(variable.value), iterator, body
+        )
+
+    def parse_del_statement(self) -> Statement:
+        """Parse a del statement."""
+        self.next() # Skip the del keyword
+
+        variable = self.assert_next(
+            TokenType.IDENTIFIER, "Expected an identifier after the del keyword."
+        )
+
+        return DelStatement(Identifier(variable.value))
+
     def parse_while_statement(self) -> Statement:
         """Parse a while statement."""
         self.next()  # Skip the while keyword
@@ -590,6 +632,10 @@ class Parser:
                 return self.parse_while_statement()
             case TokenType.LOOP:
                 return self.parse_loop_statement()
+            case TokenType.FOR:
+                return self.parse_for_statement()
+            case TokenType.DEL:
+                return self.parse_del_statement()
             case _:
                 return self.parse_expression()
 

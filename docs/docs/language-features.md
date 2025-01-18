@@ -28,6 +28,13 @@ var = 100; # Redefining a variable's value does not need a semicolon
 !!! note "Semicolon usage"
     All variable declarations **must** end in a semicolon (`;`)
 
+## Variable deletion
+Variables can be deleted with the `del` keyword:
+```sh linenums="1"
+const var = 1; # Declare a constant variable
+del var; # Delete it so it can be redeclared
+```
+
 ## Value types
 All currently suppoted value types are:
 
@@ -85,6 +92,7 @@ There are also many builtin functions:
 * **bool(** value? **)**: Convert a value to a boolean
 * **array(** ... or string **)**: Create a new array from the given values or turn a string into an array
 * **type(** value **)**: Get the type of the given value
+* **range(** start, end?, step? **)**: Generates an array from start to end with step
 
 
 There are also many builtin modules:
@@ -157,7 +165,10 @@ if (1 == 1) {
 
 ### Loops
 
-Infinite loops and while loops are supported.
+Infinite loops, while loops and for loops are supported.
+
+!!! note "For Loops"
+    For loops can only iterate over arrays.
 
 ```rust linenums="1"
 loop {
@@ -170,6 +181,10 @@ while (value < threshold) {
     value = value + 1
 
     print(value);
+}
+
+for i in range(5) {
+    print(i)
 }
 ```
 

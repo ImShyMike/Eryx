@@ -11,6 +11,8 @@ from eryx.frontend.ast import (
     BreakLiteral,
     CallExpression,
     ContinueLiteral,
+    DelStatement,
+    ForStatement,
     FunctionDeclaration,
     Identifier,
     IfStatement,
@@ -224,6 +226,18 @@ def eval_import_statement(
     return NullValue()
 
 
+def eval_del_statement(
+    del_statement: DelStatement, environment: Environment
+) -> RuntimeValue:
+    """Evaluate a del statement."""
+    if not isinstance(del_statement.identifier, Identifier):
+        raise RuntimeError("Expected an identifier (variable) to delete.")
+
+    environment.delete_variable(del_statement.identifier.symbol)
+
+    return NullValue()
+
+
 def eval_loop_statement(
     loop_statement: LoopStatement, environment: Environment
 ) -> RuntimeValue:
@@ -240,6 +254,28 @@ def eval_loop_statement(
 
     return NullValue()
 
+
+def eval_for_statement(
+    for_statement: ForStatement, environment: Environment
+) -> RuntimeValue:
+    """Evaluate a for statement."""
+    if not isinstance(for_statement.variable, Identifier):
+        raise RuntimeError("Expected an identifier as a variable.")
+    try:
+        iterator = evaluate(for_statement.iterator, environment)
+        if not isinstance(iterator, ArrayValue):
+            raise RuntimeError("Expected an array as an iterator.")
+        for element in iterator.elements:
+            environment.declare_variable(for_statement.variable.symbol, element, False, True)
+            try:
+                for statement in for_statement.body:
+                    evaluate(statement, environment)
+            except ContinueException:
+                pass
+    except BreakException:
+        pass
+
+    return NullValue()
 
 def eval_while_statement(
     while_statement: WhileStatement, environment: Environment
@@ -387,7 +423,21 @@ def eval_member_expression(
                 else NullValue()
             )
 
-        raise RuntimeError("Expected a computed property for an array (number).")
+        raise RuntimeError("Expected a computed property for an array: string[number].")
+
+    if isinstance(object_value, StringValue):
+        if member.computed:
+            property_value = evaluate(member.property, environment)
+            if not isinstance(property_value, NumberValue):
+                raise RuntimeError("Expected a number as an index.")
+
+            return (
+                StringValue(object_value.value[int(property_value.value)])
+                if len(object_value.value) > int(property_value.value)
+                else NullValue()
+            )
+
+        raise RuntimeError("Expected a computed property for a string: string[number].")
 
     raise RuntimeError("Expected an object or array.")
 
@@ -631,10 +681,14 @@ def evaluate(ast_node: Statement | None, environment: Environment) -> RuntimeVal
             return eval_object_expression(ast_node, environment)
         case IfStatement():
             return eval_if_statement(ast_node, environment)
+        case DelStatement():
+            return eval_del_statement(ast_node, environment)
         case LoopStatement():
             return eval_loop_statement(ast_node, environment)
         case WhileStatement():
             return eval_while_statement(ast_node, environment)
+        case ForStatement():
+            return eval_for_statement(ast_node, environment)
         case BreakLiteral():
             raise BreakException()
         case ContinueLiteral():
