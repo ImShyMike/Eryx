@@ -23,6 +23,7 @@ To install a package, use `eryx package install <name>` and to install a specifi
 ## Developing a package
 
 ### Package Structure
+
 The minimum package structure is:
 
 ```sh
@@ -37,9 +38,9 @@ The minimum package structure is:
 
 ### Package Files
 
- - `main.eryx` - This is the package's entrypoint, set up all main functions and values that you want to be importable here.
- - `README.md` - This is where the big package description is, it's displayed on the package's page.
- - `package.toml` - This is where all of the package configuration is, it requires the format bellow:
+- `main.eryx` - This is the package's entrypoint, set up all main functions and values that you want to be importable here.
+- `README.md` - This is where the big package description is, it's displayed on the package's page.
+- `package.toml` - This is where all of the package configuration is, it requires the format bellow:
 
 ```toml
 [package]
@@ -77,7 +78,9 @@ And you can install it using:
 ```sh
 eryx package install <package-name>
 ```
+
 or
+
 ```sh
 eryx package install  <package-name>@<package-version>
 ```

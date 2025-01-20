@@ -79,3 +79,20 @@ class ArrayValue(RuntimeValue):
     """Array value class."""
 
     elements: List[RuntimeValue]
+
+
+@dataclass()
+class ClassValue(RuntimeValue):
+    """Class value class."""
+
+    name: str
+    methods: Dict[str, RuntimeValue]
+    arguments: List[str] | None = None
+
+
+@dataclass()
+class EnumValue(RuntimeValue):
+    """Enum value class."""
+
+    name: str
+    values: Dict[str, RuntimeValue]

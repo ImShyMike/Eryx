@@ -15,6 +15,7 @@ pip --version
     The Python version **must** be above **3.10.0**
 
 Installing and verifying the installation is as simple as:
+
 ```sh
 pip install eryx && eryx --version
 # Eryx, version 0.3.6
@@ -23,7 +24,9 @@ pip install eryx && eryx --version
 ## Interacting with the CLI
 
 The CLI can accessed via the following command:
+
 ```sh
 eryx
 ```
+
 The CLI is used to do everything within the language, as explained [here](cli.md).

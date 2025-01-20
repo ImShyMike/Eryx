@@ -6,8 +6,10 @@ from eryx.frontend.ast import (
     BinaryExpression,
     BreakLiteral,
     CallExpression,
+    ClassDeclaration,
     ContinueLiteral,
     DelStatement,
+    EnumDeclaration,
     Expression,
     ForStatement,
     FunctionDeclaration,
@@ -118,9 +120,16 @@ class Parser:
         """Parse an arguments list."""
         arguments = [self.parse_assignment_expression()]
 
-        while self.at().type == TokenType.COMMA:
-            self.next()  # Skip the comma
-            arguments.append(self.parse_assignment_expression())
+        while self.not_eof() and self.at().type in (TokenType.COMMA, TokenType.COLON):
+            skipped = self.next()  # Skip the comma / colon
+
+            if skipped.type == TokenType.COLON:  # Handle type hinting
+                self.next()  # Skip the type hint
+                continue
+
+            value = self.parse_assignment_expression()
+
+            arguments.append(value)
 
         return arguments
 
@@ -233,6 +242,10 @@ class Parser:
     def parse_assignment_expression(self) -> Expression:
         """Parse an assignment expression."""
         left = self.parse_comparison_expression()
+
+        if self.at().type == TokenType.COLON:  # Handle type hinting
+            self.next()  # Skip the colon
+            self.next()  # Skip the type hint
 
         if (
             self.at().type == TokenType.EQUALS
@@ -384,6 +397,7 @@ class Parser:
     def parse_function_declaration(self) -> Statement:
         """Parse a function declaration."""
         self.next()  # Skip the func keyword
+
         name = self.assert_next(
             TokenType.IDENTIFIER,
             "Expected an function name after the function keyword.",
@@ -415,6 +429,79 @@ class Parser:
         )
 
         return FunctionDeclaration(name, parameters, body)
+
+    def parse_enum_declaration(self) -> Statement:
+        """Parse an enum declaration."""
+        self.next()  # Skip the enum declaration
+
+        name = self.assert_next(
+            TokenType.IDENTIFIER,
+            "Expected a class name after the class keyword.",
+        ).value
+
+        self.assert_next(
+            TokenType.OPEN_BRACE,
+            "Expected an opening brace for the class body.",
+        )
+
+        values = []
+        while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
+            statement = self.parse_statement()
+            if statement != Expression():
+                if isinstance(statement, Identifier):
+                    values.append(Identifier(statement.symbol))
+                else:
+                    syntax_error(
+                        self.source_code,
+                        self.at().position,
+                        "Invalid statement in enum body.",
+                    )
+
+        self.assert_next(
+            TokenType.CLOSE_BRACE,
+            "Expected a closing brace after the class body.",
+        )
+
+        return EnumDeclaration(name, values)
+
+    def parse_class_declaration(self) -> Statement:
+        """Parse a class declaration."""
+        self.next()  # Skip the class keyword
+
+        name = self.assert_next(
+            TokenType.IDENTIFIER,
+            "Expected a class name after the class keyword.",
+        ).value
+
+        self.assert_next(
+            TokenType.OPEN_BRACE,
+            "Expected an opening brace for the class body.",
+        )
+
+        body = []
+        parameters = []
+        while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
+            statement = self.parse_statement()
+            if statement != Expression():
+                if isinstance(statement, AssignmentExpression):
+                    body.append(statement)
+                elif isinstance(statement, FunctionDeclaration):
+                    body.append(statement)
+                elif isinstance(statement, Identifier):
+                    parameters.append(statement.symbol)
+                else:
+                    syntax_error(
+                        self.source_code,
+                        self.at().position,
+                        "Invalid statement in class body.",
+                    )
+
+        self.assert_next(
+            TokenType.CLOSE_BRACE,
+            "Expected a closing brace after the class body.",
+        )
+
+        return ClassDeclaration(name, body, parameters)
 
     def parse_variable_declaration(self) -> Statement:
         """Parse a variable declaration."""
@@ -565,13 +652,11 @@ class Parser:
             TokenType.CLOSE_BRACE, "Expected closing brace for the for statement."
         )
 
-        return ForStatement(
-            Identifier(variable.value), iterator, body
-        )
+        return ForStatement(Identifier(variable.value), iterator, body)
 
     def parse_del_statement(self) -> Statement:
         """Parse a del statement."""
-        self.next() # Skip the del keyword
+        self.next()  # Skip the del keyword
 
         variable = self.assert_next(
             TokenType.IDENTIFIER, "Expected an identifier after the del keyword."
@@ -636,6 +721,10 @@ class Parser:
                 return self.parse_for_statement()
             case TokenType.DEL:
                 return self.parse_del_statement()
+            case TokenType.CLASS:
+                return self.parse_class_declaration()
+            case TokenType.ENUM:
+                return self.parse_enum_declaration()
             case _:
                 return self.parse_expression()
 

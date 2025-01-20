@@ -2,7 +2,7 @@
   "name": "eryx-syntax-highlighting",
   "displayName": "Eryx Syntax Highlighting",
   "description": "Syntax highligh extension for the Eryx programming language",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "homepage": "https://github.com/ImShyMike/Eryx/tree/main/eryx-syntax-highlighting",
   "repository": {
     "type": "git",

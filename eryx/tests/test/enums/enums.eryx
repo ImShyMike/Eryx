@@ -1,0 +1,10 @@
+enum Colors {
+    green
+    black
+    cyan
+    magenta
+}
+
+print(Colors)
+
+print(Colors.green)

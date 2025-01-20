@@ -1,0 +1,52 @@
+Program(
+  body: [    
+    EnumDeclaration(
+      name: "Colors",
+      values: [        
+        Identifier(
+          symbol: "green"
+        ),
+        
+        Identifier(
+          symbol: "black"
+        ),
+        
+        Identifier(
+          symbol: "cyan"
+        ),
+        
+        Identifier(
+          symbol: "magenta"
+        )
+      ]
+    ),
+    
+    CallExpression(
+      arguments: [        
+        Identifier(
+          symbol: "Colors"
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        MemberExpression(
+          computed: False,
+          object: Identifier(
+            symbol: "Colors"
+          ),
+          property: Identifier(
+            symbol: "green"
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    )
+  ]
+)

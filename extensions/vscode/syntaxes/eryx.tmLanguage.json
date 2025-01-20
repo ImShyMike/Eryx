@@ -28,7 +28,7 @@
 		"keywords": {
 			"patterns": [{
 				"name": "keyword.control.eryx",
-				"match": "\\b(if|else|return|func|let|const|true|false|null|import|from|as)\\b"
+				"match": "\\b(if|else|return|func|let|const|import|from|as|class|enum|for|loop|while|del|in|break|continue)\\b"
 			}]
 		},
 		"strings": {
@@ -58,7 +58,7 @@
 				},
 				{
 					"name": "entity.name.function.builtin.eryx",
-					"match": "\\b(print|input|len|exit|str|int|bool|array|type)\\b"
+					"match": "\\b(print|input|len|exit|str|int|bool|array|range|type)\\b"
 				}
 			]
 		},

@@ -35,6 +35,9 @@ class TokenType(Enum):
     ELSE = auto()
     RETURN = auto()
 
+    CLASS = auto()
+    ENUM = auto()
+
     LOOP = auto()
     WHILE = auto()
     FOR = auto()
@@ -89,6 +92,8 @@ KEYWORDS = {
     "break": TokenType.BREAK,
     "continue": TokenType.CONTINUE,
     "del": TokenType.DEL,
+    "class": TokenType.CLASS,
+    "enum": TokenType.ENUM,
 }
 
 

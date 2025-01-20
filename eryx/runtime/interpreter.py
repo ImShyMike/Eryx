@@ -10,8 +10,10 @@ from eryx.frontend.ast import (
     BinaryExpression,
     BreakLiteral,
     CallExpression,
+    ClassDeclaration,
     ContinueLiteral,
     DelStatement,
+    EnumDeclaration,
     ForStatement,
     FunctionDeclaration,
     Identifier,
@@ -34,6 +36,8 @@ from eryx.runtime.environment import BUILTINS, Environment
 from eryx.runtime.values import (
     ArrayValue,
     BooleanValue,
+    ClassValue,
+    EnumValue,
     FunctionValue,
     NativeFunctionValue,
     NullValue,
@@ -78,6 +82,57 @@ def eval_variable_declaration(
     return environment.declare_variable(
         declaration.identifier.symbol, value, declaration.constant
     )
+
+
+def eval_class_declaration(
+    ast_node: ClassDeclaration, environment: Environment
+) -> RuntimeValue:
+    """Evaluate a class declaration"""
+
+    class_obj = ClassValue(name=ast_node.name, methods={}, arguments=ast_node.arguments)
+
+    for method in ast_node.methods:
+        if not isinstance(method, (FunctionDeclaration, AssignmentExpression)):
+            raise RuntimeError(
+                "Expected a function or variable declaration inside a class."
+            )
+
+        if isinstance(method, FunctionDeclaration):
+            func = FunctionValue(
+                name=method.name,
+                arguments=method.arguments,
+                environment=environment,
+                body=method.body,
+            )
+            class_obj.methods[method.name] = func
+
+        if isinstance(method, AssignmentExpression):
+            value = evaluate(method.value, environment) if method.value else NullValue()
+            if not isinstance(method.assigne, Identifier):
+                raise RuntimeError("Expected an identifier as a property.")
+            class_obj.methods[method.assigne.symbol] = value
+
+    environment.declare_variable(ast_node.name, class_obj)
+
+    return NullValue()
+
+
+def eval_enum_declaration(
+    ast_node: EnumDeclaration, environment: Environment
+) -> RuntimeValue:
+    """Evalueate an enum declaration."""
+
+    enum_obj = EnumValue(name=ast_node.name, values={})
+
+    for value in ast_node.values:
+        if not isinstance(value, Identifier):
+            raise RuntimeError("Expected only identifiers inside an enum")
+
+        enum_obj.values[value.symbol] = StringValue(value.symbol)
+
+    environment.declare_variable(ast_node.name, enum_obj)
+
+    return NullValue()
 
 
 def eval_function_declaration(
@@ -273,7 +328,9 @@ def eval_for_statement(
             pass
 
         for element in iterator.elements:
-            environment.declare_variable(for_statement.variable.symbol, element, False, True)
+            environment.declare_variable(
+                for_statement.variable.symbol, element, False, True
+            )
             try:
                 for statement in for_statement.body:
                     evaluate(statement, environment)
@@ -283,11 +340,14 @@ def eval_for_statement(
         pass
 
     if variable_value:
-        environment.assign_variable(for_statement.variable.symbol, variable_value, overwrite=True)
+        environment.assign_variable(
+            for_statement.variable.symbol, variable_value, overwrite=True
+        )
     else:
         environment.delete_variable(for_statement.variable.symbol)
 
     return NullValue()
+
 
 def eval_while_statement(
     while_statement: WhileStatement, environment: Environment
@@ -410,7 +470,7 @@ def eval_member_expression(
     """Evaluate a member expression."""
     object_value = evaluate(member.object, environment)
 
-    if isinstance(object_value, ObjectValue):
+    if isinstance(object_value, (ObjectValue, ClassValue, EnumValue)):
         if member.computed:
             property_value = evaluate(member.property, environment)
             if not isinstance(property_value, StringValue):
@@ -420,6 +480,12 @@ def eval_member_expression(
             if not isinstance(member.property, Identifier):
                 raise RuntimeError("Expected an identifier as a property.")
             property_value = member.property.symbol
+
+        if isinstance(object_value, ClassValue):
+            return object_value.methods.get(property_value, NullValue())
+
+        if isinstance(object_value, EnumValue):
+            return object_value.values.get(property_value, NullValue())
 
         return object_value.properties.get(property_value, NullValue())
 
@@ -451,7 +517,7 @@ def eval_member_expression(
 
         raise RuntimeError("Expected a computed property for a string: string[number].")
 
-    raise RuntimeError("Expected an object or array.")
+    raise RuntimeError("Unsupported value type in member expression.")
 
 
 def eval_numeric_binary_expression(
@@ -631,6 +697,17 @@ def eval_call_expression(
         result = func.call(arguments, environment)
         return result
 
+    if isinstance(func, ClassValue):
+        methods = func.methods
+        arg_names = func.arguments
+        if arg_names:
+            if len(arg_names) != len(arguments):
+                raise RuntimeError(
+                    f"Expected {len(arg_names)} arguments, got {len(arguments)}."
+                )
+            new_args = dict(zip(arg_names, arguments))
+            return ObjectValue(properties=new_args | methods)
+
     if isinstance(func, FunctionValue):
         function_environment = Environment(
             func.environment, disable_file_io=environment.disable_file_io
@@ -683,6 +760,10 @@ def evaluate(ast_node: Statement | None, environment: Environment) -> RuntimeVal
             return eval_call_expression(ast_node, environment)
         case Program():
             return eval_program(ast_node, environment)
+        case ClassDeclaration():
+            return eval_class_declaration(ast_node, environment)
+        case EnumDeclaration():
+            return eval_enum_declaration(ast_node, environment)
         case VariableDeclaration():
             return eval_variable_declaration(ast_node, environment)
         case FunctionDeclaration():

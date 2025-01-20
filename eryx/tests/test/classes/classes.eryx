@@ -1,0 +1,20 @@
+class Test {
+    yes: String
+    a: Number
+    c: Boolean
+    g
+
+    abc: Number = 1
+
+    func sum(x: Number, y: Number) {
+        return a + b;
+    }
+}
+
+let tst = Test("aaaaa", 7, true, 999);
+
+print(Test)
+
+print(tst)
+
+print(tst.a, tst["a"], Test.abc)

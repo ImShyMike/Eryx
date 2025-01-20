@@ -4,11 +4,14 @@ Eryx supports a wide range of features that are also present in other languages 
 Bellow are of all features currently supported by Eryx.
 
 ## Comments
+
 Single line comments are supported with the `#` character and can be stopped early with the `;` character.
+
 ```sh linenums="1"
 print("Hello, "); # This is a comment print("This will not be printed")
 print("World!"); # This is also a comment ; print("This will be printed")
 ```
+
 !!! note "Stopping line comments"
     The `;` above makes it so the code after it is also executed, making the output:
 
@@ -19,23 +22,29 @@ print("World!"); # This is also a comment ; print("This will be printed")
     ```
 
 ## Variable declarations
+
 Mutable variables and constants are supported.
+
 ```sh linenums="1"
 let var = 1; # This is a mutable variable
 const constant = true; # This is a constant
 var = 100; # Redefining a variable's value does not need a semicolon
 ```
+
 !!! note "Semicolon usage"
     All variable declarations **must** end in a semicolon (`;`)
 
 ## Variable deletion
+
 Variables can be deleted with the `del` keyword:
+
 ```sh linenums="1"
 const var = 1; # Declare a constant variable
 del var; # Delete it so it can be redeclared
 ```
 
 ## Value types
+
 All currently suppoted value types are:
 
 * Numbers (currently there isn't a differnce between integers and floats)
@@ -57,6 +66,7 @@ let null_val = null; # This is a null
 ```
 
 ## Importing
+
 Importing is done with the `import` keyword.
 
 ```sh linenums="1"
@@ -69,6 +79,7 @@ import "math" as "meth"; # Imports the builtin 'math' module as 'meth'
     Builtin modules and installed packages are imported without the ".eryx" (example: "math")
 
 ## Functions
+
 Functions can be declared using the `func` keyword.
 
 ```C linenums="1"
@@ -94,30 +105,87 @@ There are also many builtin functions:
 * **type(** value **)**: Get the type of the given value
 * **range(** start, end?, step? **)**: Generates an array from start to end with step
 
-
 There are also many builtin modules.
 They can be imported using `import` (without ".eryx")
 
 Full list:
 
-- **time**:
-    - **time()**: Get the current time in seconds since the Epoch
-- **math**:
-    - **sum(** array **)**: Get the sum of an array of numbers
-    - **round(** number, n? **)**: Round a number to the n'th decimal place (default 0)
-    - **min(** array **)**: Get the minimum value from an array of numbers
-    - **max(** array **)**: Get the maximum value from an array of numbers
-    - **random()**: Get a random number between 0 and 1
-    - **pi**: The value for pi
-- **file**:
-    - **read(** filename **)**: Read the contents of a file as a string
-    - **write(** filename, text **)**: Write to a file
-    - **append(** filename, text **)**: Append to the contents of a file
-- **http**: (WIP)
-    - **get(** url **)**: Send a get request to a URL
-    - **post(** url, data **)**: Send a post request with JSON data as a string to a URL
+* **time**:
+  * **time()**: Get the current time in seconds since the Epoch
+* **math**:
+  * **sum(** array **)**: Get the sum of an array of numbers
+  * **round(** number, n? **)**: Round a number to the n'th decimal place (default 0)
+  * **min(** array **)**: Get the minimum value from an array of numbers
+  * **max(** array **)**: Get the maximum value from an array of numbers
+  * **random()**: Get a random number between 0 and 1
+  * **pi**: The value for pi
+* **file**:
+  * **read(** filename **)**: Read the contents of a file as a string
+  * **write(** filename, text **)**: Write to a file
+  * **append(** filename, text **)**: Append to the contents of a file
+* **http**: (WIP)
+  * **get(** url **)**: Send a get request to a URL
+  * **post(** url, data **)**: Send a post request with JSON data as a string to a URL
+
+## Classes
+
+Classes can be made using the `class` keyword:
+
+```C linenums="1"
+# They can have initializeable arguments
+class Clock {
+    time: Number # Type hints are done using a colon
+}
+
+let clock = Clock(0);
+clock.time = 100;
+
+print(clock); # Output: 100
+```
+
+```C linenums="1"
+# They can also have pre-declared variables
+class Clock {
+    time: Number = 0
+}
+
+print(clock.time); # Output: 0
+
+clock.time = 100; # This will set the value permanently
+
+print(clock); # Output: 100
+```
+
+```C linenums="1"
+# They can also have functions
+class Maths {
+    func sum(a: Number, b: Number) {
+        return a + b;
+    }
+}
+
+print(Maths.sum(10, 5)); # Output: 15
+```
+
+## Enums
+
+Enums can be created using `enum`:
+
+```C linenums="1"
+# They can also have pre-declared variables
+enum Colors {
+    green
+    blue
+    red
+    white
+    yellow
+}
+
+print(Colors.green); # Output: green
+```
 
 ## Operators
+
 Currently, all supported operators are:
 
 ### Arithmetic
@@ -173,7 +241,7 @@ Infinite loops, while loops and for loops are supported.
 !!! note "For Loops"
     For loops can only iterate over arrays.
 
-```rust linenums="1"
+```C linenums="1"
 loop {
     print("This will be printed forever!");
 }
@@ -186,6 +254,7 @@ while (value < threshold) {
     print(value);
 }
 
+# For loops work by going over an iterator
 for i in range(5) {
     print(i)
 }

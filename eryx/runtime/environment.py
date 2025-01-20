@@ -10,6 +10,8 @@ import requests
 from eryx.runtime.values import (
     ArrayValue,
     BooleanValue,
+    ClassValue,
+    EnumValue,
     FunctionValue,
     NativeFunctionValue,
     NullValue,
@@ -157,6 +159,18 @@ def get_value(value: RuntimeValue, inside_array: bool = False) -> str:
         for key, val in value.properties.items():
             result += f"{key}: {get_value(val, inside_array=True)}, "
         result = result[:-2] + " }"
+
+    elif isinstance(value, ClassValue):
+        result = f"{value.name}("
+        if value.arguments:
+            result += ", ".join(value.arguments)
+        result += "){ "
+        for key, val in value.methods.items():
+            result += f"{key}: {get_value(val, inside_array=True)}, "
+        result = result[:-2] + " }"
+
+    elif isinstance(value, EnumValue):
+        result = f"{value.name}(" + "{ " + ", ".join(value.values.keys()) + " })"
 
     else:
         result = str(value)

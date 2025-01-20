@@ -1,0 +1,132 @@
+Program(
+  body: [    
+    ClassDeclaration(
+      arguments: [        
+        "yes",
+        "a",
+        "c",
+        "g"
+      ],
+      methods: [        
+        AssignmentExpression(
+          assigne: Identifier(
+            symbol: "abc"
+          ),
+          value: NumericLiteral(
+            value: 1.0
+          )
+        ),
+        
+        FunctionDeclaration(
+          arguments: [            
+            "x",
+            "y"
+          ],
+          body: [            
+            ReturnStatement(
+              value: BinaryExpression(
+                left: Identifier(
+                  symbol: "a"
+                ),
+                operator: "+",
+                right: Identifier(
+                  symbol: "b"
+                )
+              )
+            )
+          ],
+          name: "sum"
+        )
+      ],
+      name: "Test"
+    ),
+    
+    VariableDeclaration(
+      constant: False,
+      identifier: Identifier(
+        symbol: "tst"
+      ),
+      value: CallExpression(
+        arguments: [          
+          StringLiteral(
+            value: "aaaaa"
+          ),
+          
+          NumericLiteral(
+            value: 7.0
+          ),
+          
+          Identifier(
+            symbol: "true"
+          ),
+          
+          NumericLiteral(
+            value: 999.0
+          )
+        ],
+        caller: Identifier(
+          symbol: "Test"
+        )
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        Identifier(
+          symbol: "Test"
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        Identifier(
+          symbol: "tst"
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    ),
+    
+    CallExpression(
+      arguments: [        
+        MemberExpression(
+          computed: False,
+          object: Identifier(
+            symbol: "tst"
+          ),
+          property: Identifier(
+            symbol: "a"
+          )
+        ),
+        
+        MemberExpression(
+          computed: True,
+          object: Identifier(
+            symbol: "tst"
+          ),
+          property: StringLiteral(
+            value: "a"
+          )
+        ),
+        
+        MemberExpression(
+          computed: False,
+          object: Identifier(
+            symbol: "Test"
+          ),
+          property: Identifier(
+            symbol: "abc"
+          )
+        )
+      ],
+      caller: Identifier(
+        symbol: "print"
+      )
+    )
+  ]
+)

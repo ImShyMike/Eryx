@@ -180,3 +180,20 @@ class DelStatement(Statement):
 @dataclass()
 class ContinueLiteral(Expression):
     """Continue literal class."""
+
+
+@dataclass()
+class ClassDeclaration(Statement):
+    """Class declaration class."""
+
+    name: str
+    methods: list[FunctionDeclaration | VariableDeclaration | Identifier]
+    arguments: List[str] | None = None
+
+
+@dataclass()
+class EnumDeclaration(Statement):
+    """Enum declaration class."""
+
+    name: str
+    values: list[Identifier]

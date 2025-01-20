@@ -12,7 +12,6 @@ Eryx is simple and easy to use programming language based on python/javascript t
 - [:material-console:](https://eryx-ide.shymike.tech) Online IDE
 - [:fontawesome-brands-python:](https://pypi.org/project/Eryx) PyPI Package
 
-
 ## Quick start
 
 Install the latest version of Eryx with [pip](https://pypi.org/project/pip):
@@ -25,7 +24,7 @@ pip install eryx
 
 After installing Eryx, you can use it with the following command:
 
-```
+```sh
 eryx
 
 Available commands:
@@ -44,6 +43,7 @@ Before writing your first program, you should head over to the [language feature
 You should also check out the [examples page](examples.md) as it provides a wide range of examples that cover all the features of the language.
 
 Here is a simple factorial implementation in Eryx:
+
 ```C title="factorial.eryx" linenums="1"
 # This is a comment!
 func factorial(n) {
@@ -55,6 +55,7 @@ func factorial(n) {
 
 print(factorial(5));
 ```
+
 <details>
 <summary>Output</summary>
 ```C linenums="1"
