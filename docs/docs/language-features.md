@@ -167,6 +167,9 @@ class Maths {
 print(Maths.sum(10, 5)); # Output: 15
 ```
 
+!!! note "Own property access"
+    Currently, there is no way to access properties from the class from within its own functions (like `self` (python) or `this` (javascript))
+
 ## Enums
 
 Enums can be created using `enum`:

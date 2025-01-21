@@ -98,10 +98,13 @@ def eval_class_declaration(
             )
 
         if isinstance(method, FunctionDeclaration):
+            env = Environment(
+                parent_env=environment, disable_file_io=environment.disable_file_io
+            )
             func = FunctionValue(
                 name=method.name,
                 arguments=method.arguments,
-                environment=environment,
+                environment=env,
                 body=method.body,
             )
             class_obj.methods[method.name] = func
@@ -468,7 +471,7 @@ def eval_member_expression(
     member: MemberExpression, environment: Environment
 ) -> RuntimeValue:
     """Evaluate a member expression."""
-    object_value = evaluate(member.object, environment)
+    object_value = evaluate(member.object, environment)  # if ur reading this, you are silly :3
 
     if isinstance(object_value, (ObjectValue, ClassValue, EnumValue)):
         if member.computed:

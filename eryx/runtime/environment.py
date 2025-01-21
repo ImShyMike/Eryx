@@ -51,9 +51,8 @@ class Environment:
     ) -> RuntimeValue:
         """Declare a variable in the current scope."""
         # Raise an exception if the variable is already declared
-        if variable_name in self.variables:
-            if not overwrite:
-                raise RuntimeError(f'Variable "{variable_name}" already declared')
+        if variable_name in self.variables and not overwrite:
+            raise RuntimeError(f'Variable "{variable_name}" already declared')
 
         self.variables[variable_name] = value
 
