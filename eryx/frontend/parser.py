@@ -236,7 +236,7 @@ class Parser:
                 self.next()  # Skip the semicolon
                 return Expression()
             case _:
-                syntax_error(self.source_code, token.position, "Unexpected token.")
+                syntax_error(self.source_code, token.position, f"Unexpected token. {token}")
                 return Expression()  # This will never be reached
 
     def parse_assignment_expression(self) -> Expression:

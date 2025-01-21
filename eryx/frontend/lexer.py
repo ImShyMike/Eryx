@@ -3,11 +3,9 @@
 from enum import Enum, auto
 from typing import Any, Union
 
-from colorama import Fore, init
+from colorama import Fore
 
 from eryx.utils.errors import syntax_error
-
-init(autoreset=True)
 
 
 class TokenType(Enum):
@@ -61,19 +59,40 @@ class TokenType(Enum):
     EOF = auto()
 
 
-class Token:
-    """Token class."""
+SINGLE_CHAR_TOKENS = {
+    "(": TokenType.OPEN_PAREN,
+    ")": TokenType.CLOSE_PAREN,
+    "{": TokenType.OPEN_BRACE,
+    "}": TokenType.CLOSE_BRACE,
+    "[": TokenType.OPEN_BRACKET,
+    "]": TokenType.CLOSE_BRACKET,
+    "+": TokenType.BINARY_OPERATOR,
+    "*": TokenType.BINARY_OPERATOR,
+    "/": TokenType.BINARY_OPERATOR,
+    "%": TokenType.BINARY_OPERATOR,
+    "^": TokenType.BINARY_OPERATOR,
+    ";": TokenType.SEMICOLON,
+    ",": TokenType.COMMA,
+    ":": TokenType.COLON,
+    ".": TokenType.DOT,
+    "=": TokenType.EQUALS,
+    "<": TokenType.BINARY_OPERATOR,
+    ">": TokenType.BINARY_OPERATOR,
+    "&": TokenType.BINARY_OPERATOR,
+    "|": TokenType.BINARY_OPERATOR,
+}
 
-    def __init__(
-        self, value: Any, token_type: TokenType, position: Union[int, tuple[int, int]]
-    ):
-        self.value = value
-        self.type = token_type
-        self.position = position
-
-    def __repr__(self) -> str:
-        return f'Token("{self.value}", {self.type.name}, {self.position})'
-
+DOUBLE_CHAR_TOKENS = {
+    "==": TokenType.BINARY_OPERATOR,
+    "!=": TokenType.BINARY_OPERATOR,
+    "<=": TokenType.BINARY_OPERATOR,
+    ">=": TokenType.BINARY_OPERATOR,
+    "&&": TokenType.BINARY_OPERATOR,
+    "||": TokenType.BINARY_OPERATOR,
+    "<<": TokenType.BINARY_OPERATOR,
+    ">>": TokenType.BINARY_OPERATOR,
+    "**": TokenType.BINARY_OPERATOR,
+}
 
 KEYWORDS = {
     "let": TokenType.LET,
@@ -97,6 +116,20 @@ KEYWORDS = {
 }
 
 
+class Token:
+    """Token class."""
+
+    def __init__(
+        self, value: Any, token_type: TokenType, position: Union[int, tuple[int, int]]
+    ):
+        self.value = value
+        self.type = token_type
+        self.position = position
+
+    def __repr__(self) -> str:
+        return f'Token("{self.value}", {self.type.name}, {self.position})'
+
+
 def is_skipable(char: str) -> bool:
     """Check if a character is a skipable character."""
     return char in (
@@ -109,51 +142,41 @@ def is_skipable(char: str) -> bool:
 
 def tokenize(source_code: str) -> list[Token]:
     """Tokenize the source code."""
-    tokens = []
-    source_size = len(source_code)
+    tokens = [] # Initialize the tokens list
     src = list(source_code)
+    current_pos = -1
     comment = False  # Comment flag
 
     while len(src) > 0:
-        negative_num = False  # Negative number flag
-        current_pos = source_size - len(src)  # Current position in the source code
+        negative_num = False  # Reset the negative number flag
+        current_pos += 1  # Increment the current position
 
+        # Skip comments
         if comment:
             if src[0] in ("\n", "\r", ";"):
                 comment = False
             src.pop(0)
             continue
 
-        single_char_tokens = {
-            "(": TokenType.OPEN_PAREN,
-            ")": TokenType.CLOSE_PAREN,
-            "{": TokenType.OPEN_BRACE,
-            "}": TokenType.CLOSE_BRACE,
-            "[": TokenType.OPEN_BRACKET,
-            "]": TokenType.CLOSE_BRACKET,
-            "+": TokenType.BINARY_OPERATOR,
-            "*": TokenType.BINARY_OPERATOR,
-            "/": TokenType.BINARY_OPERATOR,
-            "%": TokenType.BINARY_OPERATOR,
-            "^": TokenType.BINARY_OPERATOR,
-            ";": TokenType.SEMICOLON,
-            ",": TokenType.COMMA,
-            ":": TokenType.COLON,
-            ".": TokenType.DOT,
-        }
+        # Skip skipable characters
+        if is_skipable(src[0]):  # spaces, newlines, tabs, and carriage returns
+            src.pop(0)
+            continue
 
-        # Check for single character tokens first
-        if src[0] in single_char_tokens:
+        # Check for double character tokens first
+        if len(src) > 1 and src[0] + src[1] in DOUBLE_CHAR_TOKENS:
+            token = src.pop(0) + src.pop(0)
+            tokens.append(
+                Token(token, DOUBLE_CHAR_TOKENS[token], (current_pos, current_pos + 1))
+            )
+            continue
+
+        # Check for single character tokens
+        if src[0] in SINGLE_CHAR_TOKENS:
             token = src.pop(0)
 
-            # Power operator
-            if token == "*" and len(src) > 0 and src[0] == "*":
-                src.pop(0)
-                tokens.append(Token("**", TokenType.BINARY_OPERATOR, current_pos))
-                continue
-
             # Single character token
-            tokens.append(Token(token, single_char_tokens[token], current_pos))
+            tokens.append(Token(token, SINGLE_CHAR_TOKENS[token], current_pos))
             continue
 
         # Check for comments
@@ -162,57 +185,26 @@ def tokenize(source_code: str) -> list[Token]:
             src.pop(0)
             continue
 
-        # Bitwise operators
-        if src[0] == ">" and len(src) > 1 and src[1] == ">":
-            src.pop(0)
-            src.pop(0)
-            tokens.append(Token(">>", TokenType.BINARY_OPERATOR, current_pos))
-            continue
-
-        if src[0] == "<" and len(src) > 1 and src[1] == "<":
-            src.pop(0)
-            src.pop(0)
-            tokens.append(Token("<<", TokenType.BINARY_OPERATOR, current_pos))
-            continue
-
-        if src[0] == "&":
-            src.pop(0)
-            if len(src) > 0 and src[0] == "&":
-                src.pop(0)
-                tokens.append(Token("&&", TokenType.BINARY_OPERATOR, current_pos))
-            else:
-                tokens.append(Token("&", TokenType.BINARY_OPERATOR, current_pos))
-            continue
-
-        if src[0] == "|":
-            src.pop(0)
-            if len(src) > 0 and src[0] == "|":
-                src.pop(0)
-                tokens.append(Token("||", TokenType.BINARY_OPERATOR, current_pos))
-            else:
-                tokens.append(Token("|", TokenType.BINARY_OPERATOR, current_pos))
-            continue
-
-        # If its not a single character token, check for negative numbers
+        # If its not a single/double character token, check for negative numbers/variables
         if src[0] == "-":
             if len(src) > 0 and (src[1].isdigit() or src[1].isalpha() or src[1] == "_"):
                 negative_num = True  # Set negative number flag
+                src.pop(0) 
             else:
                 # If its not a negative number, its a "-" operator
                 tokens.append(Token(src.pop(0), TokenType.BINARY_OPERATOR, current_pos))
                 continue
 
-        # If its a negative number, remove the negative sign
-        if negative_num:
-            src.pop(0)
-
         # Check for multi character tokens
         if src[0].isdigit():  # Number
             start_pos = current_pos
-            end_pos = start_pos + (1 if negative_num else 0)
+            end_pos = start_pos
             number = src.pop(0)
+
             if negative_num:
+                end_pos += 1
                 number = "-" + number  # Add negative sign to the number
+
             dots = 0
             while len(src) > 0 and (src[0].isdigit() or src[0] == "."):
                 if src[0] == ".":
@@ -233,11 +225,12 @@ def tokenize(source_code: str) -> list[Token]:
                 end_pos += 1
                 identifier += src.pop(0)
 
-            if identifier in KEYWORDS:
+            if identifier in KEYWORDS:  # Check if the identifier is a keyword
                 tokens.append(
                     Token(identifier, KEYWORDS[identifier], (start_pos, end_pos))
                 )
-            else:
+
+            else:  # If its not a keyword, its an identifier
                 if negative_num:  # Fake a unary minus operator
                     tokens.append(
                         Token("(", TokenType.OPEN_PAREN, (start_pos, end_pos))
@@ -256,71 +249,16 @@ def tokenize(source_code: str) -> list[Token]:
                         Token(")", TokenType.CLOSE_PAREN, (start_pos, end_pos))
                     )
 
-        elif is_skipable(src[0]):  # Skip spaces, newlines, tabs, and carriage returns
-            src.pop(0)
-
         elif src[0] == '"':  # String
             start_pos = current_pos
             end_pos = start_pos
-            src.pop(0)
+            src.pop(0)  # Remove the opening quote
             string = ""
             while len(src) > 0 and src[0] != '"':
                 end_pos += 1
                 string += src.pop(0)
-            src.pop(0)
+            src.pop(0)  # Remove the closing quote
             tokens.append(Token(string, TokenType.STRING, (start_pos, end_pos + 1)))
-
-        elif src[0] in ("=", "<", ">"):  # Binary operator
-            if len(src) > 1:
-                if src[0] == "=" and src[1] == "=":
-                    tokens.append(
-                        Token(
-                            "==",
-                            TokenType.BINARY_OPERATOR,
-                            (current_pos, current_pos + 1),
-                        )
-                    )
-                    src.pop(0)
-                    src.pop(0)
-                    continue
-
-                if src[0] == "<" and src[1] == "=":
-                    tokens.append(
-                        Token(
-                            "<=",
-                            TokenType.BINARY_OPERATOR,
-                            (current_pos, current_pos + 1),
-                        )
-                    )
-                    src.pop(0)
-                    src.pop(0)
-                    continue
-
-                if src[0] == ">" and src[1] == "=":
-                    tokens.append(
-                        Token(
-                            ">=",
-                            TokenType.BINARY_OPERATOR,
-                            (current_pos, current_pos + 1),
-                        )
-                    )
-                    src.pop(0)
-                    src.pop(0)
-                    continue
-
-            if src[0] in ("<", ">"):
-                tokens.append(Token(src.pop(0), TokenType.BINARY_OPERATOR, current_pos))
-                continue
-
-            if src[0] == "=":
-                tokens.append(Token(src.pop(0), TokenType.EQUALS, current_pos))
-
-        elif src[0] == "!" and len(src) > 1 and src[1] == "=":  # Binary operator
-            tokens.append(
-                Token("!=", TokenType.BINARY_OPERATOR, (current_pos, current_pos + 1))
-            )
-            src.pop(0)
-            src.pop(0)
 
         else:
             # If this is reached, its an unknown character
@@ -330,6 +268,7 @@ def tokenize(source_code: str) -> list[Token]:
                 f"Unknown character found in source '{Fore.MAGENTA}{src.pop(0)}{Fore.RESET}'",
             )
 
-    tokens.append(Token("EOF", TokenType.EOF, source_size - len(src)))
+    # Add the final EOF token
+    tokens.append(Token("EOF", TokenType.EOF, current_pos + 1))
 
     return tokens

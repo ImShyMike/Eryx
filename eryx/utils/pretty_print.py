@@ -2,12 +2,7 @@
 Module to pretty print a class instance for debugging. (the code is actual garbage but it works)
 """
 
-import os
-
-from colorama import Fore, init
-
-if os.name == "nt":
-    init(autoreset=True)
+from colorama import Fore
 
 
 # https://stackoverflow.com/questions/395735/how-to-check-whether-a-variable-is-a-class-or-not
@@ -54,17 +49,17 @@ def handle_array(
     """Helper function to handle lists, tuples and sets."""
     string = "{" if is_set else "[" if not is_tuple else "("
     if use_newlines:
-        string += f"{' '*(indent*(_tabs+1))}"
+        string += f"{' ' * (indent * (_tabs + 1))}"
 
     for i, item in enumerate(val):
         if isclass(item):
             if i > 0:
                 string += ","
                 if use_newlines:
-                    string += f"\n{' '*(indent*(_tabs+1))}"
+                    string += f"\n{' ' * (indent * (_tabs + 1))}"
 
             if use_newlines:
-                string += f"\n{' '*(indent*(_tabs+1))}"
+                string += f"\n{' ' * (indent * (_tabs + 1))}"
 
             string += str(
                 pprint(
@@ -83,7 +78,7 @@ def handle_array(
                     string += " "
 
             if use_newlines:
-                string += f"\n{' '*(indent*(_tabs+1))}"
+                string += f"\n{' ' * (indent * (_tabs + 1))}"
 
             if isinstance(item, (list, tuple, set)):
                 # If list, set or tuple, call handle_array
@@ -117,7 +112,7 @@ def handle_array(
                     + (Fore.RESET if use_color else "")
                 )
     if use_newlines:
-        string += f"\n{' '*(indent*(_tabs))}"
+        string += f"\n{' ' * (indent * (_tabs))}"
     string += "}" if is_set else "]" if not is_tuple else ")"
     return string
 
@@ -126,11 +121,11 @@ def handle_dict(val, use_color, use_newlines, indent, _tabs):
     """Helper function to handle dictionaries."""
     string = "{"
     if use_newlines:
-        string += f"{' '*(indent*(_tabs+1))}"
+        string += f"{' ' * (indent * (_tabs + 1))}"
 
     for i, (key, value) in enumerate(val.items()):
         if use_newlines:
-            string += f"\n{' '*(indent*(_tabs+1))}"
+            string += f"\n{' ' * (indent * (_tabs + 1))}"
         if use_color:
             string += COLOR_DICT["key"]
         string += f"{key}"
@@ -193,7 +188,7 @@ def handle_dict(val, use_color, use_newlines, indent, _tabs):
             if not use_newlines:
                 string += " "
 
-    string += f"\n{' '*(indent*(_tabs))}" + "}"
+    string += f"\n{' ' * (indent * (_tabs))}" + "}"
     return string
 
 
@@ -240,7 +235,7 @@ def pprint(
 
         # Add newlines and indentation
         if use_newlines:
-            string += f'\n{" "*(indent*(_tabs+1))}'
+            string += f"\n{' ' * (indent * (_tabs + 1))}"
 
         # Add color
         if use_color:
@@ -313,7 +308,7 @@ def pprint(
 
     # Add newlines and indentation and close the class
     if use_newlines:
-        string += f"\n{' '*(indent*_tabs)})"
+        string += f"\n{' ' * (indent * _tabs)})"
     else:
         string += ")"
 

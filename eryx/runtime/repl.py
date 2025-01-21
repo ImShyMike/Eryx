@@ -2,14 +2,10 @@
 
 import sys
 
-from colorama import init
-
 from eryx.__init__ import CURRENT_VERSION
 from eryx.frontend.parser import Parser
 from eryx.runtime.environment import Environment
 from eryx.runtime.runner import run_code
-
-init(autoreset=True)
 
 
 def start_repl(
