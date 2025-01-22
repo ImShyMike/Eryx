@@ -189,7 +189,7 @@ def tokenize(source_code: str) -> list[Token]:
         if src[0] == "-":
             if len(src) > 0 and (src[1].isdigit() or src[1].isalpha() or src[1] == "_"):
                 negative_num = True  # Set negative number flag
-                src.pop(0) 
+                src.pop(0)
             else:
                 # If its not a negative number, its a "-" operator
                 tokens.append(Token(src.pop(0), TokenType.BINARY_OPERATOR, current_pos))

@@ -1,3 +1,3 @@
 """Version of the package."""
 
-CURRENT_VERSION = "0.3.13"
+CURRENT_VERSION = "0.4.0"

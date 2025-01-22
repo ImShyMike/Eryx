@@ -1,5 +1,7 @@
 """Module for lexer based syntax highlighting code."""
 
+# This file is obsolete for now (may be used in the future)
+
 from colorama import Fore, init
 
 from eryx.frontend.lexer import TokenType, tokenize

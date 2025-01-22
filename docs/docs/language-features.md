@@ -89,43 +89,96 @@ func add(x, y) {
 print(add(1, 2)); # Output: 3
 ```
 
-There are also many builtin functions:
+## Builtin functions
+
+* **print(** ... **)**: Print all values passed to it.
+* **input(** text? **)**: Get user input as a string, optionally prompt with a message.
+* **len(** item **)**: Get the length of a string, array, or object.
+* **exit(** code? **)**: Exit the program, optionally with a status code.
+* **str(** value? **)**: Convert a value to its string representation.
+* **int(** value? **)**: Convert a value to an integer.
+* **bool(** value? **)**: Convert a value to a boolean.
+* **array(** ... or string **)**: Create a new array from the given values or turn a string into an array.
+* **type(** value **)**: Get the type of the given value.
+* **range(** start, end?, step? **)**: Generates an array from start to end with step.
 
 !!! note "Values"
     Values containing '?' are optional and '...' refers to any amount of arguments.
 
-* **print(** ... **)**: Print all values passed to it
-* **input(** text? **)**: Get user input as a string, optionally prompt with a message
-* **len(** item **)**: Get the length of a string, array, or object
-* **exit(** code? **)**: Exit the program, optionally with a status code
-* **str(** value? **)**: Convert a value to its string representation
-* **int(** value? **)**: Convert a value to an integer
-* **bool(** value? **)**: Convert a value to a boolean
-* **array(** ... or string **)**: Create a new array from the given values or turn a string into an array
-* **type(** value **)**: Get the type of the given value
-* **range(** start, end?, step? **)**: Generates an array from start to end with step
+## Builtin modules
 
-There are also many builtin modules.
-They can be imported using `import` (without ".eryx")
+Builtin modules can be imported using `import` (without ".eryx")
 
-Full list:
+### math
 
-* **time**:
-  * **time()**: Get the current time in seconds since the Epoch
-* **math**:
-  * **sum(** array **)**: Get the sum of an array of numbers
-  * **round(** number, n? **)**: Round a number to the n'th decimal place (default 0)
-  * **min(** array **)**: Get the minimum value from an array of numbers
-  * **max(** array **)**: Get the maximum value from an array of numbers
-  * **random()**: Get a random number between 0 and 1
-  * **pi**: The value for pi
-* **file**:
-  * **read(** filename **)**: Read the contents of a file as a string
-  * **write(** filename, text **)**: Write to a file
-  * **append(** filename, text **)**: Append to the contents of a file
-* **http**: (WIP)
-  * **get(** url **)**: Send a get request to a URL
-  * **post(** url, data **)**: Send a post request with JSON data as a string to a URL
+* **log(** x, base? **)**: Get the logarithm of a number with the specified base.
+* **sqrt(** x **)**: Get the square root of a number.
+* **random()**: Get a random number between 0 and 1.
+* **round(** x, digits? **)**: Round a number to the specified number of digits.
+* **sum(** array **)**: Get the sum of an array of numbers.
+* **min(** array **)**: Get the minimum value in an array of numbers.
+* **max(** array **)**: Get the maximum value in an array of numbers.
+* **abs(** x **)**: Get the absolute value of a number.
+* **pow(** base, exponent **)**: Get the result of raising a base to an exponent.
+* **log10(** x **)**: Get the base-10 logarithm of a number.
+* **sin(** x **)**: Get the sine of a number.
+* **cos(** x **)**: Get the cosine of a number.
+* **tan(** x **)**: Get the tangent of a number.
+* **asin(** x **)**: Get the arcsine of a number.
+* **acos(** x **)**: Get the arccosine of a number.
+* **atan(** x **)**: Get the arctangent of a number.
+* **floor(** x **)**: Get the largest integer less than or equal to a number.
+* **ceil(** x **)**: Get the smallest integer greater than or equal to a number.
+* **factorial(** x **)**: Get the factorial of a number.
+
+### file
+
+* **read(** filename **)**: Read the contents of a file.
+* **write(** filename, content **)**: Write content to a file.
+* **append(** filename, content **)**: Append content to a file.
+* **exists(** filename **)**: Check if a file exists.
+* **delete(** filename **)**: Delete a file.
+* **copy(** source, destination **)**: Copy a file.
+* **move(** source, destination **)**: Move a file.
+* **list(** directory **)**: List files in a directory.
+* **size(** filename **)**: Get the size of a file.
+
+### http
+
+* **get(** url **)**: Make a GET request to a URL.
+* **post(** url, data **)**: Make a POST request to a URL with data.
+* **put(** url, data **)**: Make a PUT request to a URL with data.
+* **delete(** url **)**: Make a DELETE request to a URL.
+* **urlencode(** data **)**: URL-encode a string.
+* **urldecode(** data **)**: URL-decode a string.
+
+### time
+
+* **time()**: Get the current time in seconds since the epoch.
+* **sleep(** seconds **)**: Sleep for a specified number of seconds.
+* **format(** time **)**: Format a time value as a string.
+* **timezone_offset()**: Get the timezone offset in seconds.
+
+### string
+
+* **split(** string, separator **)**: Split a string by a separator.
+* **join(** array, separator **)**: Join an array of strings with a separator.
+* **replace(** string, search, replace **)**: Replace occurrences of a substring in a string.
+* **contains(** string, search **)**: Check if a string contains a substring.
+
+### array
+
+* **push(** array, value **)**: Add a value to the end of an array.
+* **pop(** array **)**: Remove and return the last value from an array.
+* **shift(** array **)**: Remove and return the first value from an array.
+* **unshift(** array, value **)**: Add a value to the beginning of an array.
+* **sort(** array **)**: Sort an array of numbers.
+
+### os
+
+* **cwd()**: Get the current working directory.
+* **chdir(** directory **)**: Change the current working directory.
+* **env(** variable? **)**: Get the value of an environment variable or all environment variables if no variable is specified.
 
 ## Classes
 

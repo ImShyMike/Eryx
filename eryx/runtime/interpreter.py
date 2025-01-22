@@ -200,8 +200,8 @@ def eval_import_statement(
     module_name = import_statement.module
 
     if module_name in BUILTINS:
-        if module_name in ("file") and environment.disable_file_io:
-            raise RuntimeError("File I/O is disabled, unable to import 'file'.")
+        if module_name in ("file", "os") and environment.disable_file_io:
+            raise RuntimeError(f"File I/O is disabled, unable to import '{module_name}'.")
 
         module = BUILTINS.get(module_name)
         if module:
@@ -471,7 +471,9 @@ def eval_member_expression(
     member: MemberExpression, environment: Environment
 ) -> RuntimeValue:
     """Evaluate a member expression."""
-    object_value = evaluate(member.object, environment)  # if ur reading this, you are silly :3
+    object_value = evaluate(
+        member.object, environment
+    )  # if ur reading this, you are silly :3
 
     if isinstance(object_value, (ObjectValue, ClassValue, EnumValue)):
         if member.computed:
@@ -706,7 +708,8 @@ def eval_call_expression(
         if arg_names:
             if len(arg_names) != len(arguments):
                 raise RuntimeError(
-                    f"Expected {len(arg_names)} arguments, got {len(arguments)}."
+                    f"Expected {len(arg_names)} arguments, got {len(arguments)}. " \
+                        f"({', '.join(arg_names)})"
                 )
             new_args = dict(zip(arg_names, arguments))
             return ObjectValue(properties=new_args | methods)

@@ -14,8 +14,8 @@
 
  Eryx is a decently fast and simple dynamically typed programming language similar to javascript/python.
 
-> Why the name "Eryx"?
-> The language was made using python which is [a family of snake](https://en.wikipedia.org/wiki/Pythonidae) and the name eryx is [a snake genus](https://en.wikipedia.org/wiki/Eryx_(snake)).
+> Why the name "**Eryx**"?
+> <br>The language was made using python which is [a family of snake](https://en.wikipedia.org/wiki/Pythonidae) and the name eryx is [a snake genus](https://en.wikipedia.org/wiki/Eryx_(snake)).
 
 ## Documentation
 
@@ -23,7 +23,7 @@ Full documentation is available at [https://ImShyMike.github.io/Eryx](https://Im
 
 ## Online IDE
 
-An online IDE is hosted at [https://eryx-ide.shymike.tech](https://eryx-ide.shymike.tech). It utilizes the `eryx server` command but has file I/O, input(), exit() and importing disabled (using `--no-file-io`).
+An online IDE is hosted at [https://eryx-ide.shymike.tech](https://eryx-ide.shymike.tech). It utilizes the `eryx server` command but has the `os` and `file` modules and `input()` and `exit()` functions disabled (using `--no-file-io`).
 
 ## Package Index
 

@@ -1,9 +1,12 @@
 """Environment class for storing variables (also called scope)."""
 
 import math
+import os
 import random
 import sys
 import time
+from pathlib import Path
+from urllib.parse import quote, unquote
 
 import requests
 
@@ -186,22 +189,6 @@ def _print(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return NullValue()
 
 
-def _sqrt(args: list[RuntimeValue], _: Environment):
-    if not args:
-        raise RuntimeError("Missing number value")
-    if not isinstance(args[0], NumberValue):
-        raise RuntimeError("Input type must be a number")
-    return NumberValue(args[0].value ** 0.5)
-
-
-def _random(_: list[RuntimeValue], __: Environment):
-    return NumberValue(random.random())
-
-
-def _time(_: list[RuntimeValue], __: Environment) -> RuntimeValue:
-    return NumberValue(time.time())
-
-
 def _range(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     if len(args) == 1:
         if isinstance(args[0], NumberValue):
@@ -240,96 +227,6 @@ def _input(args: list[RuntimeValue], env: Environment) -> RuntimeValue:
     else:
         result = input()
     return StringValue(result)
-
-
-def _getRequest(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
-    if not args:
-        raise RuntimeError("Missing URL argument")
-    if not isinstance(args[0], StringValue):
-        raise RuntimeError("URL must be a string")
-    try:
-        response = requests.get(args[0].value, timeout=10)
-        return ObjectValue(
-            {
-                "data": StringValue(response.content.decode("utf-8")),
-                "status": NumberValue(response.status_code),
-            }
-        )
-    except Exception as e:
-        raise RuntimeError(f"Error fetching URL '{args[0].value}'") from e
-
-
-def _postRequest(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
-    if len(args) < 2:
-        raise RuntimeError("Missing URL or data argument")
-    if not isinstance(args[0], StringValue):
-        raise RuntimeError("URL must be a string")
-    if not isinstance(args[1], StringValue):
-        raise RuntimeError("Data must be a string")
-    try:
-        response = requests.post(args[0].value, data=args[1].value, timeout=10)
-        return ObjectValue(
-            {
-                "data": StringValue(response.content.decode("utf-8")),
-                "status": NumberValue(response.status_code),
-            }
-        )
-    except Exception as e:
-        raise RuntimeError(f"Error fetching URL '{args[0].value}'") from e
-
-
-def _readFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
-    if not args:
-        raise RuntimeError("Missing filename argument")
-    if not isinstance(args[0], StringValue):
-        raise RuntimeError("Filename must be a string")
-    try:
-        with open(args[0].value, "r", encoding="utf8") as file:
-            return StringValue(file.read())
-    except FileNotFoundError as e:
-        raise RuntimeError(f"File '{args[0].value}' not found") from e
-
-
-def _writeFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
-    if len(args) < 2:
-        raise RuntimeError("Missing filename or content argument")
-    if not isinstance(args[0], StringValue):
-        raise RuntimeError("Filename must be a string")
-    if not isinstance(args[1], StringValue):
-        raise RuntimeError("Content must be a string")
-    try:
-        with open(args[0].value, "w", encoding="utf8") as file:
-            file.write(args[1].value)
-    except FileNotFoundError as e:
-        raise RuntimeError(f"File '{args[0].value}' not found") from e
-    return NullValue()
-
-
-def _appendFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
-    if len(args) < 2:
-        raise RuntimeError("Missing filename or content argument")
-    if not isinstance(args[0], StringValue):
-        raise RuntimeError("Filename must be a string")
-    if not isinstance(args[1], StringValue):
-        raise RuntimeError("Content must be a string")
-    try:
-        with open(args[0].value, "a", encoding="utf8") as file:
-            file.write(args[1].value)
-    except FileNotFoundError as e:
-        raise RuntimeError(f"File '{args[0].value}' not found") from e
-    return NullValue()
-
-
-def _round(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
-    if len(args) == 0:
-        return NumberValue(0)
-    if len(args) == 1:
-        if isinstance(args[0], NumberValue):
-            return NumberValue(round(args[0].value))
-    elif len(args) == 2:
-        if isinstance(args[0], NumberValue) and isinstance(args[1], NumberValue):
-            return NumberValue(round(args[0].value, int(args[1].value)))
-    raise RuntimeError(f"Cannot round {args[0]}")
 
 
 def _len(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
@@ -392,6 +289,271 @@ def _type(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return StringValue(type(args[0]).__name__)
 
 
+# TIME FUNCTIONS
+
+
+def _time(_: list[RuntimeValue], __: Environment) -> RuntimeValue:
+    return NumberValue(time.time())
+
+
+def _sleep(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing time argument")
+    if not isinstance(args[0], NumberValue):
+        raise RuntimeError("Time must be a number")
+    time.sleep(args[0].value)
+    return NullValue()
+
+
+def _formatTime(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing time argument")
+    if not isinstance(args[0], NumberValue):
+        raise RuntimeError("Time must be a number")
+    return StringValue(
+        time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(args[0].value))
+    )
+
+
+def _getTimezoneOffset(_: list[RuntimeValue], __: Environment) -> RuntimeValue:
+    return NumberValue(time.timezone)
+
+
+# FILE FUNCTIONS
+
+
+def _readFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing filename argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Filename must be a string")
+    try:
+        with open(args[0].value, "r", encoding="utf8") as file:
+            return StringValue(file.read())
+    except FileNotFoundError as e:
+        raise RuntimeError(f"File '{args[0].value}' not found") from e
+
+
+def _writeFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) < 2:
+        raise RuntimeError("Missing filename or content argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Filename must be a string")
+    if not isinstance(args[1], StringValue):
+        raise RuntimeError("Content must be a string")
+    try:
+        with open(args[0].value, "w", encoding="utf8") as file:
+            file.write(args[1].value)
+    except FileNotFoundError as e:
+        raise RuntimeError(f"File '{args[0].value}' not found") from e
+    return NullValue()
+
+
+def _appendFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) < 2:
+        raise RuntimeError("Missing filename or content argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Filename must be a string")
+    if not isinstance(args[1], StringValue):
+        raise RuntimeError("Content must be a string")
+    try:
+        with open(args[0].value, "a", encoding="utf8") as file:
+            file.write(args[1].value)
+    except FileNotFoundError as e:
+        raise RuntimeError(f"File '{args[0].value}' not found") from e
+    return NullValue()
+
+
+def _fileExists(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing filename argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Filename must be a string")
+    return BooleanValue(Path(args[0].value).exists())
+
+
+def _deleteFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing filename argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Filename must be a string")
+    try:
+        Path(args[0].value).unlink()
+    except FileNotFoundError as e:
+        raise RuntimeError(f"File '{args[0].value}' not found") from e
+    return NullValue()
+
+
+def _copyFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) < 2:
+        raise RuntimeError("Missing source or destination argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Source must be a string")
+    if not isinstance(args[1], StringValue):
+        raise RuntimeError("Destination must be a string")
+    try:
+        Path(args[0].value).write_bytes(Path(args[1].value).read_bytes())
+    except FileNotFoundError as e:
+        raise RuntimeError(f"File '{args[0].value}' not found") from e
+    return NullValue()
+
+
+def _moveFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) < 2:
+        raise RuntimeError("Missing source or destination argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Source must be a string")
+    if not isinstance(args[1], StringValue):
+        raise RuntimeError("Destination must be a string")
+    try:
+        Path(args[0].value).replace(Path(args[1].value))
+    except FileNotFoundError as e:
+        raise RuntimeError(f"File '{args[0].value}' not found") from e
+    return NullValue()
+
+
+def _listFiles(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing directory argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Directory must be a string")
+    try:
+        return ArrayValue(
+            [StringValue(str(file)) for file in Path(args[0].value).iterdir()]
+        )
+    except FileNotFoundError as e:
+        raise RuntimeError(f"Directory '{args[0].value}' not found") from e
+
+
+def _fileSize(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing filename argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Filename must be a string")
+    try:
+        return NumberValue(Path(args[0].value).stat().st_size)
+    except FileNotFoundError as e:
+        raise RuntimeError(f"File '{args[0].value}' not found") from e
+
+
+# HTTP FUNCTIONS
+
+
+def _getRequest(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing URL argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("URL must be a string")
+    try:
+        response = requests.get(args[0].value, timeout=10)
+        return ObjectValue(
+            {
+                "data": StringValue(response.content.decode("utf-8")),
+                "status": NumberValue(response.status_code),
+            }
+        )
+    except Exception as e:
+        raise RuntimeError(f"Error fetching URL '{args[0].value}'") from e
+
+
+def _postRequest(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) < 2:
+        raise RuntimeError("Missing URL or data argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("URL must be a string")
+    if not isinstance(args[1], StringValue):
+        raise RuntimeError("Data must be a string")
+    try:
+        response = requests.post(args[0].value, data=args[1].value, timeout=10)
+        return ObjectValue(
+            {
+                "data": StringValue(response.content.decode("utf-8")),
+                "status": NumberValue(response.status_code),
+            }
+        )
+    except Exception as e:
+        raise RuntimeError(f"Error fetching URL '{args[0].value}'") from e
+
+
+def _putRequest(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) < 2:
+        raise RuntimeError("Missing URL or data argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("URL must be a string")
+    if not isinstance(args[1], StringValue):
+        raise RuntimeError("Data must be a string")
+    try:
+        response = requests.put(args[0].value, data=args[1].value, timeout=10)
+        return ObjectValue(
+            {
+                "data": StringValue(response.content.decode("utf-8")),
+                "status": NumberValue(response.status_code),
+            }
+        )
+    except Exception as e:
+        raise RuntimeError(f"Error fetching URL '{args[0].value}'") from e
+
+
+def _deleteRequest(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing URL argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("URL must be a string")
+    try:
+        response = requests.delete(args[0].value, timeout=10)
+        return ObjectValue(
+            {
+                "data": StringValue(response.content.decode("utf-8")),
+                "status": NumberValue(response.status_code),
+            }
+        )
+    except Exception as e:
+        raise RuntimeError(f"Error fetching URL '{args[0].value}'") from e
+
+
+def _urlEncode(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing data argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Data must be a string")
+    return StringValue(quote(args[0].value))
+
+
+def _urlDecode(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing data argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Data must be a string")
+    return StringValue(unquote(args[0].value))
+
+
+# MATH FUNCTIONS
+
+
+def _sqrt(args: list[RuntimeValue], _: Environment):
+    if not args:
+        raise RuntimeError("Missing number value")
+    if not isinstance(args[0], NumberValue):
+        raise RuntimeError("Input type must be a number")
+    return NumberValue(args[0].value ** 0.5)
+
+
+def _random(_: list[RuntimeValue], __: Environment):
+    return NumberValue(random.random())
+
+
+def _round(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) == 0:
+        return NumberValue(0)
+    if len(args) == 1:
+        if isinstance(args[0], NumberValue):
+            return NumberValue(round(args[0].value))
+    elif len(args) == 2:
+        if isinstance(args[0], NumberValue) and isinstance(args[1], NumberValue):
+            return NumberValue(round(args[0].value, int(args[1].value)))
+    raise RuntimeError(f"Cannot round {args[0]}")
+
+
 def _sum(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     if len(args) == 0:
         return NumberValue(0)
@@ -419,12 +581,243 @@ def _max(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot get max for {args[0]}")
 
 
+def _abs(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) == 0:
+        return NumberValue(0)
+    if isinstance(args[0], NumberValue):
+        return NumberValue(abs(args[0].value))
+    raise RuntimeError(f"Cannot get abs for {args[0]}")
+
+
+def _pow(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) < 2:
+        raise RuntimeError("Missing base or exponent argument")
+    if all(isinstance(i, NumberValue) for i in args):
+        return NumberValue(args[0].value ** args[1].value)  # type: ignore
+    raise RuntimeError(f"Cannot get pow for {args}")
+
+
+def _log(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) < 2:
+        raise RuntimeError("Missing base or value argument")
+    if all(isinstance(i, NumberValue) for i in args):
+        return NumberValue(math.log(args[0].value, args[1].value))  # type: ignore
+    raise RuntimeError(f"Cannot get log for {args}")
+
+
+def _log10(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing value argument")
+    if isinstance(args[0], NumberValue):
+        return NumberValue(math.log10(args[0].value))
+    raise RuntimeError(f"Cannot get log10 for {args[0]}")
+
+
+def _sin(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing value argument")
+    if isinstance(args[0], NumberValue):
+        return NumberValue(math.sin(args[0].value))
+    raise RuntimeError(f"Cannot get sin for {args[0]}")
+
+
+def _cos(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing value argument")
+    if isinstance(args[0], NumberValue):
+        return NumberValue(math.sin(args[0].value))
+    raise RuntimeError(f"Cannot get cos for {args[0]}")
+
+
+def _tan(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing value argument")
+    if isinstance(args[0], NumberValue):
+        return NumberValue(math.sin(args[0].value))
+    raise RuntimeError(f"Cannot get tan for {args[0]}")
+
+
+def _asin(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing value argument")
+    if isinstance(args[0], NumberValue):
+        return NumberValue(math.asin(args[0].value))
+    raise RuntimeError(f"Cannot get asin for {args[0]}")
+
+
+def _acos(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing value argument")
+    if isinstance(args[0], NumberValue):
+        return NumberValue(math.asin(args[0].value))
+    raise RuntimeError(f"Cannot get acos for {args[0]}")
+
+
+def _atan(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing value argument")
+    if isinstance(args[0], NumberValue):
+        return NumberValue(math.asin(args[0].value))
+    raise RuntimeError(f"Cannot get atan for {args[0]}")
+
+
+def _floor(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing value argument")
+    if isinstance(args[0], NumberValue):
+        return NumberValue(math.floor(args[0].value))
+    raise RuntimeError(f"Cannot get floor for {args[0]}")
+
+
+def _ceil(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing value argument")
+    if isinstance(args[0], NumberValue):
+        return NumberValue(math.ceil(args[0].value))
+    raise RuntimeError(f"Cannot get ceil for {args[0]}")
+
+
+def _factorial(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing value argument")
+    if isinstance(args[0], NumberValue):
+        return NumberValue(math.factorial(int(args[0].value)))
+    raise RuntimeError(f"Cannot get factorial for {args[0]}")
+
+
+# STRING FUNCTIONS
+
+
+def _splitString(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) < 2:
+        raise RuntimeError("Missing string or separator argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("String must be a string")
+    if not isinstance(args[1], StringValue):
+        raise RuntimeError("Separator must be a string")
+    return ArrayValue([StringValue(s) for s in args[0].value.split(args[1].value)])
+
+
+def _joinStrings(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) < 2:
+        raise RuntimeError("Missing array or separator argument")
+    if not isinstance(args[0], ArrayValue):
+        raise RuntimeError("Array must be an array")
+    if not isinstance(args[1], StringValue):
+        raise RuntimeError("Separator must be a string")
+    if not all(isinstance(s, StringValue) for s in args[0].elements):
+        raise RuntimeError("Array must contain only strings")
+    return StringValue(args[1].value.join([s.value for s in args[0].elements]))  # type: ignore
+
+
+def _replaceString(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) < 3:
+        raise RuntimeError("Missing string, search or replace argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("String must be a string")
+    if not isinstance(args[1], StringValue):
+        raise RuntimeError("Search must be a string")
+    if not isinstance(args[2], StringValue):
+        raise RuntimeError("Replace must be a string")
+    return StringValue(args[0].value.replace(args[1].value, args[2].value))
+
+
+def _stringContains(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) < 2:
+        raise RuntimeError("Missing string or search argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("String must be a string")
+    if not isinstance(args[1], StringValue):
+        raise RuntimeError("Search must be a string")
+    return BooleanValue(args[1].value in args[0].value)
+
+
+# ARRAY FUNCTIONS
+
+
+def _push(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) < 2:
+        raise RuntimeError("Missing array or value argument")
+    if not isinstance(args[0], ArrayValue):
+        raise RuntimeError("First argument must be an array")
+    args[0].elements.append(args[1])
+    return NullValue()
+
+
+def _pop(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing array argument")
+    if not isinstance(args[0], ArrayValue):
+        raise RuntimeError("Argument must be an array")
+    return args[0].elements.pop()
+
+
+def _shift(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing array argument")
+    if not isinstance(args[0], ArrayValue):
+        raise RuntimeError("Argument must be an array")
+    return args[0].elements.pop(0)
+
+
+def _unshift(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if len(args) < 2:
+        raise RuntimeError("Missing array or value argument")
+    if not isinstance(args[0], ArrayValue):
+        raise RuntimeError("First argument must be an array")
+    args[0].elements.insert(0, args[1])
+    return NullValue()
+
+
+def _sort(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing array argument")
+    if not isinstance(args[0], ArrayValue):
+        raise RuntimeError("Argument must be an array")
+    if not all(isinstance(i, NumberValue) for i in args[0].elements):
+        raise RuntimeError("Array must contain only numbers")
+    args[0].elements.sort(key=lambda x: x.value)  # type: ignore
+    return NullValue()
+
+
+# OS FUNCTIONS
+
+
+def _getCwd(_: list[RuntimeValue], __: Environment) -> RuntimeValue:
+    return StringValue(str(Path.cwd()))
+
+
+def _changeDir(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing directory argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Directory must be a string")
+    os.chdir(args[0].value)
+    return NullValue()
+
+
+def _getEnv(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        return ObjectValue(
+            {key: StringValue(value) for key, value in os.environ.items()}
+        )
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Variable name must be a string")
+    return StringValue(os.environ.get(args[0].value, ""))
+
+
 # Declare builtin modules
 BUILTINS["file"] = ObjectValue(
     {
         "read": NativeFunctionValue(_readFile),
         "write": NativeFunctionValue(_writeFile),
         "append": NativeFunctionValue(_appendFile),
+        "exists": NativeFunctionValue(_fileExists),
+        "delete": NativeFunctionValue(_deleteFile),
+        "copy": NativeFunctionValue(_copyFile),
+        "move": NativeFunctionValue(_moveFile),
+        "list": NativeFunctionValue(_listFiles),
+        "size": NativeFunctionValue(_fileSize),
     },
     immutable=True,
 )
@@ -433,6 +826,10 @@ BUILTINS["http"] = ObjectValue(
     {
         "get": NativeFunctionValue(_getRequest),
         "post": NativeFunctionValue(_postRequest),
+        "put": NativeFunctionValue(_putRequest),
+        "delete": NativeFunctionValue(_deleteRequest),
+        "urlencode": NativeFunctionValue(_urlEncode),
+        "urldecode": NativeFunctionValue(_urlDecode),
     },
     immutable=True,
 )
@@ -446,8 +843,60 @@ BUILTINS["math"] = ObjectValue(
         "pi": NumberValue(math.pi),
         "sqrt": NativeFunctionValue(_sqrt),
         "random": NativeFunctionValue(_random),
+        "abs": NativeFunctionValue(_abs),
+        "pow": NativeFunctionValue(_pow),
+        "log": NativeFunctionValue(_log),
+        "log10": NativeFunctionValue(_log10),
+        "sin": NativeFunctionValue(_sin),
+        "cos": NativeFunctionValue(_cos),
+        "tan": NativeFunctionValue(_tan),
+        "asin": NativeFunctionValue(_asin),
+        "acos": NativeFunctionValue(_acos),
+        "atan": NativeFunctionValue(_atan),
+        "floor": NativeFunctionValue(_floor),
+        "ceil": NativeFunctionValue(_ceil),
+        "e": NumberValue(math.e),
+        "factorial": NativeFunctionValue(_factorial),
     },
     immutable=True,
 )
 
-BUILTINS["time"] = ObjectValue({"time": NativeFunctionValue(_time)}, immutable=True)
+BUILTINS["time"] = ObjectValue(
+    {
+        "time": NativeFunctionValue(_time),
+        "sleep": NativeFunctionValue(_sleep),
+        "format": NativeFunctionValue(_formatTime),
+        "timezone_offset": NativeFunctionValue(_getTimezoneOffset),
+    },
+    immutable=True,
+)
+
+BUILTINS["string"] = ObjectValue(
+    {
+        "split": NativeFunctionValue(_splitString),
+        "join": NativeFunctionValue(_joinStrings),
+        "replace": NativeFunctionValue(_replaceString),
+        "contains": NativeFunctionValue(_stringContains),
+    },
+    immutable=True,
+)
+
+BUILTINS["array"] = ObjectValue(
+    {
+        "push": NativeFunctionValue(_push),
+        "pop": NativeFunctionValue(_pop),
+        "shift": NativeFunctionValue(_shift),
+        "unshift": NativeFunctionValue(_unshift),
+        "sort": NativeFunctionValue(_sort),
+    },
+    immutable=True,
+)
+
+BUILTINS["os"] = ObjectValue(
+    {
+        "cwd": NativeFunctionValue(_getCwd),
+        "chdir": NativeFunctionValue(_changeDir),
+        "env": NativeFunctionValue(_getEnv),
+    },
+    immutable=True,
+)
