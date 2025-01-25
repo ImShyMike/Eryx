@@ -2,6 +2,7 @@
 
 from eryx.frontend.ast import (
     ArrayLiteral,
+    AssertStatement,
     AssignmentExpression,
     BinaryExpression,
     BreakLiteral,
@@ -80,7 +81,7 @@ class Parser:
         while self.at().value in ("+", "-"):
             operator = self.next().value
             right = self.parse_multiplicative_expression()
-            left = BinaryExpression(left, operator, right)
+            left = BinaryExpression(left.position, left, operator, right)
 
         return left
 
@@ -95,7 +96,9 @@ class Parser:
 
     def parse_call_expression(self, caller: Expression) -> Expression:
         """Parse a call expression."""
-        call_expression = CallExpression(self.parse_arguments(), caller)
+        call_expression = CallExpression(
+            caller.position, self.parse_arguments(), caller
+        )
 
         if self.at().type == TokenType.OPEN_PAREN:
             call_expression = self.parse_call_expression(call_expression)
@@ -156,7 +159,7 @@ class Parser:
                 proprty = self.parse_expression()
                 self.assert_next(TokenType.CLOSE_BRACKET, "Expected a closing bracket.")
 
-            obj = MemberExpression(obj, proprty, computed)
+            obj = MemberExpression(obj.position, obj, proprty, computed)
 
         return obj
 
@@ -167,7 +170,7 @@ class Parser:
         while self.at().value in ("/", "*", "%"):
             operator = self.next().value
             right = self.parse_exponentiation_expression()
-            left = BinaryExpression(left, operator, right)
+            left = BinaryExpression(left.position, left, operator, right)
 
         return left
 
@@ -178,13 +181,13 @@ class Parser:
         while self.at().value == "**":
             operator = self.next().value
             right = self.parse_call_member_expression()
-            left = BinaryExpression(left, operator, right)
+            left = BinaryExpression(left.position, left, operator, right)
 
         return left
 
     def parse_array_expression(self) -> Expression:
         """Parse an array expression."""
-        self.assert_next(
+        start_token = self.assert_next(
             TokenType.OPEN_BRACKET, "Expected an opening bracket '[' for array."
         )
 
@@ -200,7 +203,7 @@ class Parser:
         self.assert_next(
             TokenType.CLOSE_BRACKET, "Expected a closing bracket ']' for array."
         )
-        return ArrayLiteral(elements)
+        return ArrayLiteral(start_token.position, elements)
 
     def parse_primary_expression(self) -> Expression:
         """Parse a primary expression."""
@@ -208,17 +211,33 @@ class Parser:
 
         match token.type:
             case TokenType.IDENTIFIER:
-                return Identifier(self.next().value)
+                return Identifier(token.position, self.next().value)
             case TokenType.NUMBER:
-                return NumericLiteral(float(self.next().value))
+                return NumericLiteral(token.position, float(self.next().value))
             case TokenType.STRING:
-                return StringLiteral(self.next().value)
+                return StringLiteral(token.position, self.next().value)
             case TokenType.BREAK:
-                self.next()
-                return BreakLiteral()
+                new_token = self.next()
+                return BreakLiteral(new_token.position)
             case TokenType.CONTINUE:
-                self.next()
-                return ContinueLiteral()
+                new_token = self.next()
+                return ContinueLiteral(new_token.position)
+            case TokenType.BINARY_OPERATOR:
+                if token.value in ("++", "--"):
+                    self.next()  # Skip the operator
+                    if self.at().type == TokenType.IDENTIFIER:
+                        return AssignmentExpression(
+                            self.at().position,
+                            Identifier(self.at().position, self.next().value),
+                            NumericLiteral(self.at().position, 1),
+                            token.value[0] + "=",
+                        )
+                syntax_error(
+                    self.source_code,
+                    token.position,
+                    "Unexpected binary operator found.",
+                )
+                return Expression(token.position)  # This will never be reached
             case TokenType.OPEN_BRACKET:
                 return self.parse_array_expression()
             case TokenType.OPEN_BRACE:
@@ -234,10 +253,12 @@ class Parser:
                 return expression
             case TokenType.SEMICOLON:
                 self.next()  # Skip the semicolon
-                return Expression()
+                return Expression((0, 0, 0))
             case _:
-                syntax_error(self.source_code, token.position, f"Unexpected token. {token}")
-                return Expression()  # This will never be reached
+                syntax_error(
+                    self.source_code, token.position, f"Unexpected token. {token}"
+                )
+                return Expression((0, 0, 0))  # This will never be reached
 
     def parse_assignment_expression(self) -> Expression:
         """Parse an assignment expression."""
@@ -254,7 +275,11 @@ class Parser:
             self.next()  # Skip the equals sign
 
             value = self.parse_assignment_expression()
-            return AssignmentExpression(left, value)
+            return AssignmentExpression(left.position, left, value)
+        elif self.at().type == TokenType.ASSIGNMENT_OPERATOR:
+            operator = self.next().value
+            value = self.parse_assignment_expression()
+            return AssignmentExpression(left.position, left, value, operator)
 
         return left
 
@@ -265,7 +290,7 @@ class Parser:
     def parse_object_expression(self) -> Expression:
         """Parse an object expression."""
 
-        self.next()  # Skip the open brace
+        start_token = self.next()  # Skip the open brace
 
         properties = []
         while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
@@ -275,17 +300,17 @@ class Parser:
 
             if self.at().type == TokenType.COMMA:
                 self.next()  # Skip the comma
-                properties.append(Property(key.value))
+                properties.append(Property(self.at().position, key.value))
                 continue
 
             if self.at().type == TokenType.CLOSE_BRACE:
-                properties.append(Property(key.value))
+                properties.append(Property(self.at().position, key.value))
                 continue
 
             self.assert_next(TokenType.COLON, "Expected a colon after the key.")
 
             value = self.parse_expression()
-            properties.append(Property(key.value, value))
+            properties.append(Property(self.at().position, key.value, value))
 
             if self.at().type != TokenType.CLOSE_BRACE:
                 self.assert_next(
@@ -296,7 +321,7 @@ class Parser:
         self.assert_next(
             TokenType.CLOSE_BRACE, "Expected a closing brace after the object."
         )
-        return ObjectLiteral(properties)
+        return ObjectLiteral(start_token.position, properties)
 
     def parse_comparison_expression(self) -> Expression:
         """Parse a comparison expression."""
@@ -305,7 +330,7 @@ class Parser:
         while self.at().value in ("==", "!=", ">", ">=", "<", "<="):
             operator = self.next().value
             right = self.parse_logical_expression()
-            left = BinaryExpression(left, operator, right)
+            left = BinaryExpression(left.position, left, operator, right)
 
         return left
 
@@ -316,7 +341,7 @@ class Parser:
         while self.at().value in ("&", "|", "^", "<<", ">>"):
             operator = self.next().value
             right = self.parse_additive_expression()
-            left = BinaryExpression(left, operator, right)
+            left = BinaryExpression(left.position, left, operator, right)
 
         return left
 
@@ -327,13 +352,25 @@ class Parser:
         while self.at().value in ("&&", "||"):
             operator = self.next().value
             right = self.parse_bitwise_expression()
-            left = BinaryExpression(left, operator, right)
+            left = BinaryExpression(left.position, left, operator, right)
 
         return left
 
+    def parse_assert_statement(self) -> Statement:
+        """Parse an assert statement."""
+        self.next()  # Skip the assert keyword
+
+        condition = self.parse_expression()
+
+        self.assert_next(
+            TokenType.SEMICOLON, "Expected a semicolon after the assert statement."
+        )
+
+        return AssertStatement(condition.position, condition)
+
     def parse_if_statement(self) -> Statement:
         """Parse an if statement."""
-        self.next()  # Skip the if keyword
+        start_token = self.next()  # Skip the if keyword
         self.assert_next(
             TokenType.OPEN_PAREN,
             "Expected an opening parenthesis for the if condition.",
@@ -353,7 +390,7 @@ class Parser:
         body = []
         while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
             statement = self.parse_statement()
-            if statement != Expression():
+            if statement != Expression((0, 0, 0)):
                 body.append(statement)
 
         self.assert_next(
@@ -369,34 +406,36 @@ class Parser:
             else_body = []
             while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
                 statement = self.parse_statement()
-                if statement != Expression():
+                if statement != Expression((0, 0, 0)):
                     else_body.append(statement)
 
             self.assert_next(
                 TokenType.CLOSE_BRACE, "Expected a closing brace after the else body."
             )
 
-            return IfStatement(condition, then=body, else_=else_body)
+            return IfStatement(
+                start_token.position, condition, then=body, else_=else_body
+            )
 
-        return IfStatement(condition, then=body)
+        return IfStatement(start_token.position, condition, then=body)
 
     def parse_return_statement(self) -> Statement:
         """Parse a return statement."""
-        self.next()  # Skip the return keyword
+        start_token = self.next()  # Skip the return keyword
 
         if self.at().type == TokenType.SEMICOLON:
             self.next()
-            return ReturnStatement()
+            return ReturnStatement(start_token.position)
 
         value = self.parse_expression()
 
         self.assert_next(TokenType.SEMICOLON, "Expected a semicolon after the return.")
 
-        return ReturnStatement(value)
+        return ReturnStatement(start_token.position, value)
 
     def parse_function_declaration(self) -> Statement:
         """Parse a function declaration."""
-        self.next()  # Skip the func keyword
+        start_token = self.next()  # Skip the func keyword
 
         name = self.assert_next(
             TokenType.IDENTIFIER,
@@ -420,7 +459,7 @@ class Parser:
         body = []
         while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
             statement = self.parse_statement()
-            if statement != Expression():
+            if statement != Expression((0, 0, 0)):
                 body.append(statement)
 
         self.assert_next(
@@ -428,11 +467,11 @@ class Parser:
             "Expected a closing brace after the function body.",
         )
 
-        return FunctionDeclaration(name, parameters, body)
+        return FunctionDeclaration(start_token.position, name, parameters, body)
 
     def parse_enum_declaration(self) -> Statement:
         """Parse an enum declaration."""
-        self.next()  # Skip the enum declaration
+        start_token = self.next()  # Skip the enum declaration
 
         name = self.assert_next(
             TokenType.IDENTIFIER,
@@ -447,9 +486,9 @@ class Parser:
         values = []
         while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
             statement = self.parse_statement()
-            if statement != Expression():
+            if statement != Expression((0, 0, 0)):
                 if isinstance(statement, Identifier):
-                    values.append(Identifier(statement.symbol))
+                    values.append(Identifier(statement.position, statement.symbol))
                 else:
                     syntax_error(
                         self.source_code,
@@ -462,11 +501,11 @@ class Parser:
             "Expected a closing brace after the class body.",
         )
 
-        return EnumDeclaration(name, values)
+        return EnumDeclaration(start_token.position, name, values)
 
     def parse_class_declaration(self) -> Statement:
         """Parse a class declaration."""
-        self.next()  # Skip the class keyword
+        start_token = self.next()  # Skip the class keyword
 
         name = self.assert_next(
             TokenType.IDENTIFIER,
@@ -482,7 +521,7 @@ class Parser:
         parameters = []
         while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
             statement = self.parse_statement()
-            if statement != Expression():
+            if statement != Expression((0, 0, 0)):
                 if isinstance(statement, AssignmentExpression):
                     body.append(statement)
                 elif isinstance(statement, FunctionDeclaration):
@@ -501,14 +540,15 @@ class Parser:
             "Expected a closing brace after the class body.",
         )
 
-        return ClassDeclaration(name, body, parameters)
+        return ClassDeclaration(start_token.position, name, body, parameters)
 
     def parse_variable_declaration(self) -> Statement:
         """Parse a variable declaration."""
+        start_token = self.at()
         is_constant = self.next().type == TokenType.CONST
         identifier = self.assert_next(
             TokenType.IDENTIFIER, "Expected an identifier after a declaration."
-        ).value
+        )
 
         if self.at().type == TokenType.SEMICOLON:
             self.next()  # Skip the semicolon
@@ -519,14 +559,21 @@ class Parser:
                     "Constant declaration must have an initial value.",
                 )
 
-            return VariableDeclaration(is_constant, Identifier(identifier))
+            return VariableDeclaration(
+                start_token.position,
+                is_constant,
+                Identifier(identifier.position, identifier.value),
+            )
 
         self.assert_next(
             TokenType.EQUALS, "Expected an equals sign after the identifier."
         )
 
         declaration = VariableDeclaration(
-            is_constant, Identifier(identifier), self.parse_expression()
+            start_token.position,
+            is_constant,
+            Identifier(identifier.position, identifier.value),
+            self.parse_expression(),
         )
 
         self.assert_next(
@@ -537,7 +584,7 @@ class Parser:
 
     def parse_import_statement(self) -> Statement:
         """Parse an import statement."""
-        self.next()  # Skip the import keyword
+        start_token = self.next()  # Skip the import keyword
 
         value = self.assert_next(
             TokenType.STRING, "Expected a string after the import keyword."
@@ -550,13 +597,13 @@ class Parser:
                 TokenType.STRING, "Expected a string for the import alias."
             )
 
-            return ImportStatement(value.value, alias=alias.value)
+            return ImportStatement(start_token.position, value.value, alias=alias.value)
 
-        return ImportStatement(value.value)
+        return ImportStatement(start_token.position, value.value)
 
     def parse_from_statement(self) -> Statement:
         """Parse a from statement."""
-        self.next()  # Skip the from keyword
+        start_token = self.next()  # Skip the from keyword
 
         from_value = self.assert_next(
             TokenType.STRING, "Expected a string after the from keyword."
@@ -580,7 +627,7 @@ class Parser:
                 "Import properties must be an array.",
             )
             return ImportStatement(
-                from_value.value, None
+                start_token.position, from_value.value, None
             )  # Type checker stuff, will never happen
 
         if not import_value.elements:
@@ -598,6 +645,7 @@ class Parser:
             )
 
         return ImportStatement(
+            start_token.position,
             from_value.value,
             [
                 item.value
@@ -608,7 +656,7 @@ class Parser:
 
     def parse_loop_statement(self) -> Statement:
         """Parse a loop statement."""
-        self.next()  # Skip the loop keyword
+        start_token = self.next()  # Skip the loop keyword
 
         self.assert_next(
             TokenType.OPEN_BRACE, "Expected opening brace for the loop statement."
@@ -617,18 +665,18 @@ class Parser:
         body = []
         while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
             statement = self.parse_statement()
-            if statement != Expression():
+            if statement != Expression((0, 0, 0)):
                 body.append(statement)
 
         self.assert_next(
             TokenType.CLOSE_BRACE, "Expected closing brace for the loop statement."
         )
 
-        return LoopStatement(body)
+        return LoopStatement(start_token.position, body)
 
     def parse_for_statement(self) -> Statement:
         """Parse a for statement."""
-        self.next()  # Skip the for keyword
+        start_token = self.next()  # Skip the for keyword
 
         variable = self.assert_next(
             TokenType.IDENTIFIER, "Expected an identifier for the loop variable."
@@ -645,28 +693,35 @@ class Parser:
         body = []
         while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
             statement = self.parse_statement()
-            if statement != Expression():
+            if statement != Expression((0, 0, 0)):
                 body.append(statement)
 
         self.assert_next(
             TokenType.CLOSE_BRACE, "Expected closing brace for the for statement."
         )
 
-        return ForStatement(Identifier(variable.value), iterator, body)
+        return ForStatement(
+            start_token.position,
+            Identifier(variable.position, variable.value),
+            iterator,
+            body,
+        )
 
     def parse_del_statement(self) -> Statement:
         """Parse a del statement."""
-        self.next()  # Skip the del keyword
+        start_token = self.next()  # Skip the del keyword
 
         variable = self.assert_next(
             TokenType.IDENTIFIER, "Expected an identifier after the del keyword."
         )
 
-        return DelStatement(Identifier(variable.value))
+        return DelStatement(
+            start_token.position, Identifier(variable.position, variable.value)
+        )
 
     def parse_while_statement(self) -> Statement:
         """Parse a while statement."""
-        self.next()  # Skip the while keyword
+        start_token = self.next()  # Skip the while keyword
 
         self.assert_next(
             TokenType.OPEN_PAREN,
@@ -687,14 +742,14 @@ class Parser:
         body = []
         while self.not_eof() and self.at().type != TokenType.CLOSE_BRACE:
             statement = self.parse_statement()
-            if statement != Expression():
+            if statement != Expression((0, 0, 0)):
                 body.append(statement)
 
         self.assert_next(
             TokenType.CLOSE_BRACE, "Expected closing brace for the while statement."
         )
 
-        return WhileStatement(condition, body)
+        return WhileStatement(start_token.position, condition, body)
 
     def parse_statement(self) -> Statement:
         """Parse a statement."""
@@ -707,6 +762,8 @@ class Parser:
                 return self.parse_function_declaration()
             case TokenType.IF:
                 return self.parse_if_statement()
+            case TokenType.ASSERT:
+                return self.parse_assert_statement()
             case TokenType.RETURN:
                 return self.parse_return_statement()
             case TokenType.IMPORT:
@@ -732,12 +789,12 @@ class Parser:
         """Produce an abstract syntax tree (AST) from source code."""
         self.source_code = source_code
         self.tokens = tokenize(source_code)
-        program = Program(body=[])
+        program = Program((0, 0, 0), body=[])
 
         # Parse all statements in the program until the EOF
         while self.not_eof():
             statement = self.parse_statement()
-            if statement != Expression():
+            if statement != Expression((0, 0, 0)):
                 program.body.append(statement)
 
         return program

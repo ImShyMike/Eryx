@@ -6,6 +6,7 @@ from typing import Tuple
 
 from eryx.frontend.ast import (
     ArrayLiteral,
+    AssertStatement,
     AssignmentExpression,
     BinaryExpression,
     BreakLiteral,
@@ -171,6 +172,21 @@ def eval_program(program: Program, environment: Environment) -> RuntimeValue:
     return last_evaluated
 
 
+def eval_assert_statement(
+    assert_statement: AssertStatement, environment: Environment
+) -> RuntimeValue:
+    """Evaluate an assert statement."""
+    condition = evaluate(assert_statement.condition, environment)
+
+    if not isinstance(condition, BooleanValue):
+        raise RuntimeError("Expected a boolean value in an assert statement.")
+
+    if not condition.value:
+        raise RuntimeError("Assertion failed.")
+
+    return NullValue()
+
+
 def eval_if_statement(
     if_statement: IfStatement, environment: Environment
 ) -> RuntimeValue:
@@ -201,7 +217,9 @@ def eval_import_statement(
 
     if module_name in BUILTINS:
         if module_name in ("file", "os") and environment.disable_file_io:
-            raise RuntimeError(f"File I/O is disabled, unable to import '{module_name}'.")
+            raise RuntimeError(
+                f"File I/O is disabled, unable to import '{module_name}'."
+            )
 
         module = BUILTINS.get(module_name)
         if module:
@@ -623,11 +641,102 @@ def eval_identifier(identifier: Identifier, environment: Environment) -> Runtime
     return environment.lookup_variable(identifier.symbol)
 
 
+def assignment_helper(
+    value: Identifier | RuntimeValue,
+    node: AssignmentExpression,
+    environment: Environment,
+) -> NumberValue:
+    """Helper function for assignment expressions."""
+    evaluated = evaluate(node.value, environment)
+    if isinstance(value, Identifier):
+        assigne_value = environment.lookup_variable(value.symbol)
+    elif isinstance(value, NumberValue):
+        assigne_value = value
+    else:
+        raise RuntimeError("Expected an identifier or number value for an assignment.")
+
+    if not isinstance(assigne_value, NumberValue):
+        raise RuntimeError("Expected a number value (assigne) for an assignment.")
+    if not isinstance(evaluated, NumberValue):
+        raise RuntimeError("Expected a number value for an assignment.")
+
+    if node.operator == "+=":
+        return NumberValue(assigne_value.value + evaluated.value)
+    if node.operator == "-=":
+        return NumberValue(assigne_value.value - evaluated.value)
+    if node.operator == "*=":
+        return NumberValue(assigne_value.value * evaluated.value)
+    if node.operator == "/=":
+        return NumberValue(assigne_value.value / evaluated.value)
+    if node.operator == "%=":
+        return NumberValue(assigne_value.value % evaluated.value)
+    if node.operator == "^=":
+        return NumberValue(assigne_value.value**evaluated.value)
+    if node.operator == "&=":
+        return NumberValue(int(assigne_value.value) & int(evaluated.value))
+    if node.operator == "|=":
+        return NumberValue(int(assigne_value.value) | int(evaluated.value))
+    if node.operator == "<<=":
+        return NumberValue(int(assigne_value.value) << int(evaluated.value))
+    if node.operator == ">>=":
+        return NumberValue(int(assigne_value.value) >> int(evaluated.value))
+    raise RuntimeError(f"Unknown assignment operator: {node.operator}")
+
+
 def eval_assignment_expression(
     node: AssignmentExpression, environment: Environment
 ) -> RuntimeValue:
     """Evaluate an assignment expression."""
     value = evaluate(node.value, environment)
+
+    if node.operator:
+        if node.operator not in [
+            "+=",
+            "-=",
+            "*=",
+            "/=",
+            "%=",
+            "^=",
+            "&=",
+            "|=",
+            "<<=",
+            ">>=",
+        ]:
+            raise RuntimeError(f"Unknown assignment operator: {node.operator}")
+
+        if isinstance(node.assigne, Identifier):
+            value = assignment_helper(node.assigne, node, environment)
+            environment.assign_variable(
+                node.assigne.symbol, value
+            )
+            return value
+
+        if isinstance(node.assigne, MemberExpression):
+            obj, prop = resolve_member_expression(
+                node.assigne, environment, create_path=True
+            )
+
+            if not isinstance(obj, (ObjectValue, ClassValue)):
+                raise RuntimeError(
+                    f"Cannot assign to a non-object value: {type(obj).__name__}"
+                )
+
+            if isinstance(node.assigne.object, Identifier):
+                symbol = node.assigne.object.symbol
+                env = environment.resolve(symbol)
+                if symbol in env.constants:
+                    raise RuntimeError(f'Cannot assign to constant object "{symbol}"')
+
+            if isinstance(obj, ObjectValue):
+                if obj.immutable:
+                    raise RuntimeError(f'Cannot assign to immutable object "{prop}"')
+
+                value = assignment_helper(obj.properties[prop], node, environment)
+                obj.properties[prop] = value
+            else:
+                value = assignment_helper(obj.methods[prop], node, environment)
+                obj.methods[prop] = value
+            return value
 
     if isinstance(node.assigne, Identifier):
         environment.assign_variable(node.assigne.symbol, value)
@@ -638,7 +747,7 @@ def eval_assignment_expression(
             node.assigne, environment, create_path=True
         )
 
-        if not isinstance(obj, ObjectValue):
+        if not isinstance(obj, (ObjectValue, ClassValue)):
             raise RuntimeError(
                 f"Cannot assign to a non-object value: {type(obj).__name__}"
             )
@@ -649,10 +758,13 @@ def eval_assignment_expression(
             if symbol in env.constants:
                 raise RuntimeError(f'Cannot assign to constant object "{symbol}"')
 
-        if obj.immutable:
-            raise RuntimeError(f'Cannot assign to immutable object "{prop}"')
+        if isinstance(obj, ObjectValue):
+            if obj.immutable:
+                raise RuntimeError(f'Cannot assign to immutable object "{prop}"')
 
-        obj.properties[prop] = value
+            obj.properties[prop] = value
+        else:
+            obj.methods[prop] = value
         return value
 
     raise RuntimeError(
@@ -708,8 +820,8 @@ def eval_call_expression(
         if arg_names:
             if len(arg_names) != len(arguments):
                 raise RuntimeError(
-                    f"Expected {len(arg_names)} arguments, got {len(arguments)}. " \
-                        f"({', '.join(arg_names)})"
+                    f"Expected {len(arg_names)} arguments, got {len(arguments)}. "
+                    f"({', '.join(arg_names)})"
                 )
             new_args = dict(zip(arg_names, arguments))
             return ObjectValue(properties=new_args | methods)
@@ -780,6 +892,8 @@ def evaluate(ast_node: Statement | None, environment: Environment) -> RuntimeVal
             return eval_object_expression(ast_node, environment)
         case IfStatement():
             return eval_if_statement(ast_node, environment)
+        case AssertStatement():
+            return eval_assert_statement(ast_node, environment)
         case DelStatement():
             return eval_del_statement(ast_node, environment)
         case LoopStatement():

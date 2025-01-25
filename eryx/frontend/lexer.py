@@ -1,7 +1,7 @@
 """Lexer for the fronted."""
 
 from enum import Enum, auto
-from typing import Any, Union
+from typing import Any, Tuple
 
 from colorama import Fore
 
@@ -14,6 +14,8 @@ class TokenType(Enum):
     NUMBER = auto()
     IDENTIFIER = auto()
     STRING = auto()
+
+    ASSIGNMENT_OPERATOR = auto()
 
     OPEN_PAREN = auto()
     CLOSE_PAREN = auto()
@@ -32,6 +34,7 @@ class TokenType(Enum):
     IF = auto()
     ELSE = auto()
     RETURN = auto()
+    ASSERT = auto()
 
     CLASS = auto()
     ENUM = auto()
@@ -92,6 +95,16 @@ DOUBLE_CHAR_TOKENS = {
     "<<": TokenType.BINARY_OPERATOR,
     ">>": TokenType.BINARY_OPERATOR,
     "**": TokenType.BINARY_OPERATOR,
+    "+=": TokenType.ASSIGNMENT_OPERATOR,
+    "-=": TokenType.ASSIGNMENT_OPERATOR,
+    "*=": TokenType.ASSIGNMENT_OPERATOR,
+    "/=": TokenType.ASSIGNMENT_OPERATOR,
+    "%=": TokenType.ASSIGNMENT_OPERATOR,
+    "^=": TokenType.ASSIGNMENT_OPERATOR,
+    "&=": TokenType.ASSIGNMENT_OPERATOR,
+    "|=": TokenType.ASSIGNMENT_OPERATOR,
+    "++": TokenType.BINARY_OPERATOR,
+    "--": TokenType.BINARY_OPERATOR,
 }
 
 KEYWORDS = {
@@ -113,6 +126,7 @@ KEYWORDS = {
     "del": TokenType.DEL,
     "class": TokenType.CLASS,
     "enum": TokenType.ENUM,
+    "assert": TokenType.ASSERT,
 }
 
 
@@ -120,8 +134,8 @@ class Token:
     """Token class."""
 
     def __init__(
-        self, value: Any, token_type: TokenType, position: Union[int, tuple[int, int]]
-    ):
+        self, value: Any, token_type: TokenType, position: tuple[int, int, int]
+    ):  # position = (line, col, length)
         self.value = value
         self.type = token_type
         self.position = position
@@ -130,36 +144,49 @@ class Token:
         return f'Token("{self.value}", {self.type.name}, {self.position})'
 
 
-def is_skipable(char: str) -> bool:
+def is_skipable(char: str, current_line: int) -> Tuple[bool, int]:
     """Check if a character is a skipable character."""
-    return char in (
-        " ",
-        "\n",
-        "\t",
-        "\r",
-    )  # Skip spaces, newlines, tabs, and carriage returns
+    if char in ("\n", "\r"):
+        current_line += 1
+        return (True, current_line)  # Skip newlines and carriage returns
+
+    return (
+        char
+        in (
+            " ",
+            "\t",
+        ),
+        current_line,
+    )  # Skip spaces and tabs
 
 
 def tokenize(source_code: str) -> list[Token]:
     """Tokenize the source code."""
-    tokens = [] # Initialize the tokens list
+    tokens = []  # Initialize the tokens list
     src = list(source_code)
-    current_pos = -1
     comment = False  # Comment flag
+    current_line = 1
+    current_col = 0
 
     while len(src) > 0:
         negative_num = False  # Reset the negative number flag
-        current_pos += 1  # Increment the current position
 
         # Skip comments
         if comment:
-            if src[0] in ("\n", "\r", ";"):
+            if src[0] in ("\n", "\r"):
+                current_line += 1  # Increment the line count
+                current_col = 0  # Reset the column count
+                comment = False
+            elif src[0] == ";":
                 comment = False
             src.pop(0)
             continue
 
         # Skip skipable characters
-        if is_skipable(src[0]):  # spaces, newlines, tabs, and carriage returns
+        current_col += 1  # Increment the column count
+        skipable, current_line = is_skipable(src[0], current_line)
+        if skipable:  # spaces, newlines, tabs, and carriage returns
+            current_col = 0  # Reset the column count
             src.pop(0)
             continue
 
@@ -167,7 +194,7 @@ def tokenize(source_code: str) -> list[Token]:
         if len(src) > 1 and src[0] + src[1] in DOUBLE_CHAR_TOKENS:
             token = src.pop(0) + src.pop(0)
             tokens.append(
-                Token(token, DOUBLE_CHAR_TOKENS[token], (current_pos, current_pos + 1))
+                Token(token, DOUBLE_CHAR_TOKENS[token], (current_line, current_col, 2))
             )
             continue
 
@@ -176,7 +203,9 @@ def tokenize(source_code: str) -> list[Token]:
             token = src.pop(0)
 
             # Single character token
-            tokens.append(Token(token, SINGLE_CHAR_TOKENS[token], current_pos))
+            tokens.append(
+                Token(token, SINGLE_CHAR_TOKENS[token], (current_line, current_col, 1))
+            )
             continue
 
         # Check for comments
@@ -192,17 +221,20 @@ def tokenize(source_code: str) -> list[Token]:
                 src.pop(0)
             else:
                 # If its not a negative number, its a "-" operator
-                tokens.append(Token(src.pop(0), TokenType.BINARY_OPERATOR, current_pos))
+                tokens.append(
+                    Token(
+                        src.pop(0),
+                        TokenType.BINARY_OPERATOR,
+                        (current_line, current_col, 1),
+                    )
+                )
                 continue
 
         # Check for multi character tokens
         if src[0].isdigit():  # Number
-            start_pos = current_pos
-            end_pos = start_pos
             number = src.pop(0)
 
             if negative_num:
-                end_pos += 1
                 number = "-" + number  # Add negative sign to the number
 
             dots = 0
@@ -211,64 +243,89 @@ def tokenize(source_code: str) -> list[Token]:
                     dots += 1
                     if dots > 1:
                         break  # Only one dot is allowed in a number
-                end_pos += 1
                 number += src.pop(0)
-            tokens.append(Token(number, TokenType.NUMBER, (start_pos, end_pos)))
+            tokens.append(
+                Token(
+                    number,
+                    TokenType.NUMBER,
+                    (
+                        current_line,
+                        current_col,
+                        (len(number) + 1) if negative_num else len(number),
+                    ),
+                )
+            )
 
         elif src[0].isalpha() or src[0] == "_":  # Identifier
-            start_pos = current_pos
-            end_pos = start_pos
             identifier = src.pop(0)
             while len(src) > 0 and (
                 src[0].isalpha() or src[0].isdigit() or src[0] == "_"
             ):
-                end_pos += 1
                 identifier += src.pop(0)
 
             if identifier in KEYWORDS:  # Check if the identifier is a keyword
                 tokens.append(
-                    Token(identifier, KEYWORDS[identifier], (start_pos, end_pos))
+                    Token(
+                        identifier,
+                        KEYWORDS[identifier],
+                        (current_line, current_col, len(identifier)),
+                    )
                 )
 
             else:  # If its not a keyword, its an identifier
                 if negative_num:  # Fake a unary minus operator
                     tokens.append(
-                        Token("(", TokenType.OPEN_PAREN, (start_pos, end_pos))
+                        Token("(", TokenType.OPEN_PAREN, (current_line, current_col, 1))
                     )
-                    tokens.append(Token("0", TokenType.NUMBER, (start_pos, end_pos)))
                     tokens.append(
-                        Token("-", TokenType.BINARY_OPERATOR, (start_pos, end_pos))
+                        Token("0", TokenType.NUMBER, (current_line, current_col, 1))
+                    )
+                    tokens.append(
+                        Token(
+                            "-",
+                            TokenType.BINARY_OPERATOR,
+                            (current_line, current_col, 1),
+                        )
                     )
 
                 tokens.append(
-                    Token(identifier, TokenType.IDENTIFIER, (start_pos, end_pos))
+                    Token(
+                        identifier,
+                        TokenType.IDENTIFIER,
+                        (current_line, current_col, len(identifier)),
+                    )
                 )
 
                 if negative_num:  # Finish the unary minus operator
                     tokens.append(
-                        Token(")", TokenType.CLOSE_PAREN, (start_pos, end_pos))
+                        Token(
+                            ")", TokenType.CLOSE_PAREN, (current_line, current_col, 1)
+                        )
                     )
 
         elif src[0] == '"':  # String
-            start_pos = current_pos
-            end_pos = start_pos
             src.pop(0)  # Remove the opening quote
             string = ""
             while len(src) > 0 and src[0] != '"':
-                end_pos += 1
                 string += src.pop(0)
             src.pop(0)  # Remove the closing quote
-            tokens.append(Token(string, TokenType.STRING, (start_pos, end_pos + 1)))
+            tokens.append(
+                Token(
+                    string,
+                    TokenType.STRING,
+                    (current_line, current_col, len(string) + 2),
+                )
+            )
 
         else:
             # If this is reached, its an unknown character
             syntax_error(
                 source_code,
-                current_pos,
+                (current_line, current_col, 1),
                 f"Unknown character found in source '{Fore.MAGENTA}{src.pop(0)}{Fore.RESET}'",
             )
 
     # Add the final EOF token
-    tokens.append(Token("EOF", TokenType.EOF, current_pos + 1))
+    tokens.append(Token("EOF", TokenType.EOF, (current_line, current_col, 1)))
 
     return tokens

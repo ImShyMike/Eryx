@@ -8,6 +8,8 @@ from typing import List, Union
 class Statement:
     """Base class for all statements in the AST."""
 
+    position: tuple[int, int, int]
+
 
 @dataclass()
 class Program(Statement):
@@ -27,6 +29,7 @@ class AssignmentExpression(Expression):
 
     assigne: Expression
     value: Expression
+    operator: str | None = None
 
 
 @dataclass()
@@ -197,3 +200,10 @@ class EnumDeclaration(Statement):
 
     name: str
     values: list[Identifier]
+
+
+@dataclass()
+class AssertStatement(Statement):
+    """Assert statement class."""
+
+    condition: Expression
