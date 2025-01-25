@@ -3,28 +3,83 @@ Program(
     VariableDeclaration(
       constant: True,
       identifier: Identifier(
+        position: (          
+          1,
+          1,
+          3
+        ),
         symbol: "obj"
       ),
+      position: (        
+        1,
+        1,
+        5
+      ),
       value: ObjectLiteral(
+        position: (          
+          1,
+          1,
+          1
+        ),
         properties: [          
           Property(
             key: "nested",
+            position: (              
+              8,
+              1,
+              1
+            ),
             value: ObjectLiteral(
+              position: (                
+                2,
+                1,
+                1
+              ),
               properties: [                
                 Property(
                   key: "nested_val",
+                  position: (                    
+                    3,
+                    2,
+                    1
+                  ),
                   value: NumericLiteral(
+                    position: (                      
+                      3,
+                      1,
+                      3
+                    ),
                     value: 100.0
                   )
                 ),
                 
                 Property(
                   key: "nest_squared",
+                  position: (                    
+                    7,
+                    1,
+                    1
+                  ),
                   value: ObjectLiteral(
+                    position: (                      
+                      4,
+                      1,
+                      1
+                    ),
                     properties: [                      
                       Property(
                         key: "maybe",
+                        position: (                          
+                          6,
+                          1,
+                          1
+                        ),
                         value: StringLiteral(
+                          position: (                            
+                            5,
+                            1,
+                            7
+                          ),
                           value: "works"
                         )
                       )
@@ -41,9 +96,24 @@ Program(
     VariableDeclaration(
       constant: False,
       identifier: Identifier(
+        position: (          
+          10,
+          1,
+          3
+        ),
         symbol: "key"
       ),
+      position: (        
+        10,
+        1,
+        3
+      ),
       value: StringLiteral(
+        position: (          
+          10,
+          1,
+          8
+        ),
         value: "nested"
       )
     ),
@@ -53,9 +123,24 @@ Program(
         MemberExpression(
           computed: False,
           object: Identifier(
+            position: (              
+              12,
+              3,
+              3
+            ),
             symbol: "obj"
           ),
+          position: (            
+            12,
+            3,
+            3
+          ),
           property: Identifier(
+            position: (              
+              12,
+              5,
+              6
+            ),
             symbol: "nested"
           )
         ),
@@ -63,9 +148,24 @@ Program(
         MemberExpression(
           computed: True,
           object: Identifier(
+            position: (              
+              12,
+              1,
+              3
+            ),
             symbol: "obj"
           ),
+          position: (            
+            12,
+            1,
+            3
+          ),
           property: Identifier(
+            position: (              
+              12,
+              3,
+              3
+            ),
             symbol: "key"
           )
         ),
@@ -77,17 +177,52 @@ Program(
             object: MemberExpression(
               computed: False,
               object: Identifier(
+                position: (                  
+                  12,
+                  1,
+                  3
+                ),
                 symbol: "obj"
               ),
+              position: (                
+                12,
+                1,
+                3
+              ),
               property: Identifier(
+                position: (                  
+                  12,
+                  3,
+                  6
+                ),
                 symbol: "nested"
               )
             ),
+            position: (              
+              12,
+              1,
+              3
+            ),
             property: Identifier(
+              position: (                
+                12,
+                5,
+                12
+              ),
               symbol: "nest_squared"
             )
           ),
+          position: (            
+            12,
+            1,
+            3
+          ),
           property: Identifier(
+            position: (              
+              12,
+              7,
+              5
+            ),
             symbol: "maybe"
           )
         ),
@@ -99,17 +234,52 @@ Program(
             object: MemberExpression(
               computed: True,
               object: Identifier(
+                position: (                  
+                  12,
+                  1,
+                  3
+                ),
                 symbol: "obj"
               ),
+              position: (                
+                12,
+                1,
+                3
+              ),
               property: StringLiteral(
+                position: (                  
+                  12,
+                  3,
+                  8
+                ),
                 value: "nested"
               )
             ),
+            position: (              
+              12,
+              1,
+              3
+            ),
             property: Identifier(
+              position: (                
+                12,
+                6,
+                12
+              ),
               symbol: "nest_squared"
             )
           ),
+          position: (            
+            12,
+            1,
+            3
+          ),
           property: Identifier(
+            position: (              
+              12,
+              8,
+              5
+            ),
             symbol: "maybe"
           )
         ),
@@ -121,24 +291,74 @@ Program(
             object: MemberExpression(
               computed: False,
               object: Identifier(
+                position: (                  
+                  12,
+                  1,
+                  3
+                ),
                 symbol: "obj"
               ),
+              position: (                
+                12,
+                1,
+                3
+              ),
               property: Identifier(
+                position: (                  
+                  12,
+                  3,
+                  6
+                ),
                 symbol: "nested"
               )
             ),
+            position: (              
+              12,
+              1,
+              3
+            ),
             property: StringLiteral(
+              position: (                
+                12,
+                5,
+                14
+              ),
               value: "nest_squared"
             )
           ),
+          position: (            
+            12,
+            1,
+            3
+          ),
           property: Identifier(
+            position: (              
+              12,
+              8,
+              5
+            ),
             symbol: "maybe"
           )
         )
       ],
       caller: Identifier(
+        position: (          
+          12,
+          1,
+          5
+        ),
         symbol: "print"
+      ),
+      position: (        
+        12,
+        1,
+        5
       )
     )
-  ]
+  ],
+  position: (    
+    0,
+    0,
+    0
+  )
 )

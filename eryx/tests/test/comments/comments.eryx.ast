@@ -3,12 +3,32 @@ Program(
     CallExpression(
       arguments: [        
         StringLiteral(
+          position: (            
+            2,
+            3,
+            22
+          ),
           value: "this will be printed"
         )
       ],
       caller: Identifier(
+        position: (          
+          2,
+          1,
+          5
+        ),
         symbol: "print"
+      ),
+      position: (        
+        2,
+        1,
+        5
       )
     )
-  ]
+  ],
+  position: (    
+    0,
+    0,
+    0
+  )
 )

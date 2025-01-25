@@ -2,20 +2,45 @@ Program(
   body: [    
     EnumDeclaration(
       name: "Colors",
+      position: (        
+        1,
+        1,
+        4
+      ),
       values: [        
         Identifier(
+          position: (            
+            2,
+            1,
+            5
+          ),
           symbol: "green"
         ),
         
         Identifier(
+          position: (            
+            3,
+            1,
+            5
+          ),
           symbol: "black"
         ),
         
         Identifier(
+          position: (            
+            4,
+            1,
+            4
+          ),
           symbol: "cyan"
         ),
         
         Identifier(
+          position: (            
+            5,
+            1,
+            7
+          ),
           symbol: "magenta"
         )
       ]
@@ -24,11 +49,26 @@ Program(
     CallExpression(
       arguments: [        
         Identifier(
+          position: (            
+            8,
+            3,
+            6
+          ),
           symbol: "Colors"
         )
       ],
       caller: Identifier(
+        position: (          
+          8,
+          1,
+          5
+        ),
         symbol: "print"
+      ),
+      position: (        
+        8,
+        1,
+        5
       )
     ),
     
@@ -37,16 +77,46 @@ Program(
         MemberExpression(
           computed: False,
           object: Identifier(
+            position: (              
+              10,
+              3,
+              6
+            ),
             symbol: "Colors"
           ),
+          position: (            
+            10,
+            3,
+            6
+          ),
           property: Identifier(
+            position: (              
+              10,
+              5,
+              5
+            ),
             symbol: "green"
           )
         )
       ],
       caller: Identifier(
+        position: (          
+          10,
+          1,
+          5
+        ),
         symbol: "print"
+      ),
+      position: (        
+        10,
+        1,
+        5
       )
     )
-  ]
+  ],
+  position: (    
+    0,
+    0,
+    0
+  )
 )

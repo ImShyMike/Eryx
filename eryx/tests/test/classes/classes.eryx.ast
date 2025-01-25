@@ -10,9 +10,25 @@ Program(
       methods: [        
         AssignmentExpression(
           assigne: Identifier(
+            position: (              
+              7,
+              1,
+              3
+            ),
             symbol: "abc"
           ),
+          operator: None,
+          position: (            
+            7,
+            1,
+            3
+          ),
           value: NumericLiteral(
+            position: (              
+              7,
+              1,
+              1
+            ),
             value: 1.0
           )
         ),
@@ -24,48 +40,118 @@ Program(
           ],
           body: [            
             ReturnStatement(
+              position: (                
+                10,
+                1,
+                6
+              ),
               value: BinaryExpression(
                 left: Identifier(
+                  position: (                    
+                    10,
+                    1,
+                    1
+                  ),
                   symbol: "a"
                 ),
                 operator: "+",
+                position: (                  
+                  10,
+                  1,
+                  1
+                ),
                 right: Identifier(
+                  position: (                    
+                    10,
+                    1,
+                    1
+                  ),
                   symbol: "b"
                 )
               )
             )
           ],
-          name: "sum"
+          name: "sum",
+          position: (            
+            9,
+            1,
+            4
+          )
         )
       ],
-      name: "Test"
+      name: "Test",
+      position: (        
+        1,
+        1,
+        5
+      )
     ),
     
     VariableDeclaration(
       constant: False,
       identifier: Identifier(
+        position: (          
+          14,
+          1,
+          3
+        ),
         symbol: "tst"
+      ),
+      position: (        
+        14,
+        1,
+        3
       ),
       value: CallExpression(
         arguments: [          
           StringLiteral(
+            position: (              
+              14,
+              3,
+              7
+            ),
             value: "aaaaa"
           ),
           
           NumericLiteral(
+            position: (              
+              14,
+              1,
+              1
+            ),
             value: 7.0
           ),
           
           Identifier(
+            position: (              
+              14,
+              1,
+              4
+            ),
             symbol: "true"
           ),
           
           NumericLiteral(
+            position: (              
+              14,
+              1,
+              3
+            ),
             value: 999.0
           )
         ],
         caller: Identifier(
+          position: (            
+            14,
+            1,
+            4
+          ),
           symbol: "Test"
+        ),
+        position: (          
+          14,
+          1,
+          4
         )
       )
     ),
@@ -73,22 +159,52 @@ Program(
     CallExpression(
       arguments: [        
         Identifier(
+          position: (            
+            16,
+            3,
+            4
+          ),
           symbol: "Test"
         )
       ],
       caller: Identifier(
+        position: (          
+          16,
+          1,
+          5
+        ),
         symbol: "print"
+      ),
+      position: (        
+        16,
+        1,
+        5
       )
     ),
     
     CallExpression(
       arguments: [        
         Identifier(
+          position: (            
+            18,
+            3,
+            3
+          ),
           symbol: "tst"
         )
       ],
       caller: Identifier(
+        position: (          
+          18,
+          1,
+          5
+        ),
         symbol: "print"
+      ),
+      position: (        
+        18,
+        1,
+        5
       )
     ),
     
@@ -97,9 +213,24 @@ Program(
         MemberExpression(
           computed: False,
           object: Identifier(
+            position: (              
+              20,
+              3,
+              3
+            ),
             symbol: "tst"
           ),
+          position: (            
+            20,
+            3,
+            3
+          ),
           property: Identifier(
+            position: (              
+              20,
+              5,
+              1
+            ),
             symbol: "a"
           )
         ),
@@ -107,9 +238,24 @@ Program(
         MemberExpression(
           computed: True,
           object: Identifier(
+            position: (              
+              20,
+              1,
+              3
+            ),
             symbol: "tst"
           ),
+          position: (            
+            20,
+            1,
+            3
+          ),
           property: StringLiteral(
+            position: (              
+              20,
+              3,
+              3
+            ),
             value: "a"
           )
         ),
@@ -117,16 +263,46 @@ Program(
         MemberExpression(
           computed: False,
           object: Identifier(
+            position: (              
+              20,
+              1,
+              4
+            ),
             symbol: "Test"
           ),
+          position: (            
+            20,
+            1,
+            4
+          ),
           property: Identifier(
+            position: (              
+              20,
+              3,
+              3
+            ),
             symbol: "abc"
           )
         )
       ],
       caller: Identifier(
+        position: (          
+          20,
+          1,
+          5
+        ),
         symbol: "print"
+      ),
+      position: (        
+        20,
+        1,
+        5
       )
     )
-  ]
+  ],
+  position: (    
+    0,
+    0,
+    0
+  )
 )

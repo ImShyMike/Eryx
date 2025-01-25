@@ -3,10 +3,25 @@ Program(
     IfStatement(
       condition: BinaryExpression(
         left: NumericLiteral(
+          position: (            
+            1,
+            2,
+            1
+          ),
           value: 1.0
         ),
         operator: "==",
+        position: (          
+          1,
+          2,
+          1
+        ),
         right: NumericLiteral(
+          position: (            
+            1,
+            1,
+            1
+          ),
           value: 1.0
         )
       ),
@@ -14,23 +29,58 @@ Program(
         CallExpression(
           arguments: [            
             StringLiteral(
+              position: (                
+                4,
+                3,
+                7
+              ),
               value: "wrong"
             )
           ],
           caller: Identifier(
+            position: (              
+              4,
+              1,
+              5
+            ),
             symbol: "print"
+          ),
+          position: (            
+            4,
+            1,
+            5
           )
         )
       ],
+      position: (        
+        1,
+        1,
+        2
+      ),
       then: [        
         CallExpression(
           arguments: [            
             StringLiteral(
+              position: (                
+                2,
+                3,
+                3
+              ),
               value: "1"
             )
           ],
           caller: Identifier(
+            position: (              
+              2,
+              1,
+              5
+            ),
             symbol: "print"
+          ),
+          position: (            
+            2,
+            1,
+            5
           )
         )
       ]
@@ -38,19 +88,44 @@ Program(
     
     IfStatement(
       condition: Identifier(
+        position: (          
+          7,
+          2,
+          4
+        ),
         symbol: "true"
       ),
       else_: [        
       ],
+      position: (        
+        7,
+        1,
+        2
+      ),
       then: [        
         CallExpression(
           arguments: [            
             StringLiteral(
+              position: (                
+                8,
+                3,
+                18
+              ),
               value: "direct var works"
             )
           ],
           caller: Identifier(
+            position: (              
+              8,
+              1,
+              5
+            ),
             symbol: "print"
+          ),
+          position: (            
+            8,
+            1,
+            5
           )
         )
       ]
@@ -61,46 +136,111 @@ Program(
         left: ArrayLiteral(
           elements: [            
             NumericLiteral(
+              position: (                
+                11,
+                3,
+                1
+              ),
               value: 1.0
             ),
             
             NumericLiteral(
+              position: (                
+                11,
+                1,
+                1
+              ),
               value: 2.0
             ),
             
             NumericLiteral(
+              position: (                
+                11,
+                1,
+                1
+              ),
               value: 3.0
             )
-          ]
+          ],
+          position: (            
+            11,
+            2,
+            1
+          )
         ),
         operator: "!=",
+        position: (          
+          11,
+          2,
+          1
+        ),
         right: ArrayLiteral(
           elements: [            
             NumericLiteral(
+              position: (                
+                11,
+                2,
+                1
+              ),
               value: 1.0
             ),
             
             NumericLiteral(
+              position: (                
+                11,
+                1,
+                1
+              ),
               value: 2.0
             ),
             
             NumericLiteral(
+              position: (                
+                11,
+                1,
+                1
+              ),
               value: 3.0
             )
-          ]
+          ],
+          position: (            
+            11,
+            1,
+            1
+          )
         )
       ),
       else_: [        
       ],
+      position: (        
+        11,
+        1,
+        2
+      ),
       then: [        
         CallExpression(
           arguments: [            
             StringLiteral(
+              position: (                
+                12,
+                3,
+                24
+              ),
               value: "this should not happen"
             )
           ],
           caller: Identifier(
+            position: (              
+              12,
+              1,
+              5
+            ),
             symbol: "print"
+          ),
+          position: (            
+            12,
+            1,
+            5
           )
         )
       ]
@@ -109,35 +249,90 @@ Program(
     IfStatement(
       condition: BinaryExpression(
         left: ObjectLiteral(
+          position: (            
+            15,
+            2,
+            1
+          ),
           properties: [            
             Property(
               key: "a",
+              position: (                
+                15,
+                6,
+                1
+              ),
               value: NumericLiteral(
+                position: (                  
+                  15,
+                  5,
+                  1
+                ),
                 value: 1.0
               )
             ),
             
             Property(
               key: "b",
+              position: (                
+                15,
+                4,
+                1
+              ),
               value: NumericLiteral(
+                position: (                  
+                  15,
+                  3,
+                  1
+                ),
                 value: 6.0
               )
             )
           ]
         ),
         operator: "==",
+        position: (          
+          15,
+          2,
+          1
+        ),
         right: ObjectLiteral(
+          position: (            
+            15,
+            1,
+            1
+          ),
           properties: [            
             Property(
               key: "a",
+              position: (                
+                15,
+                2,
+                1
+              ),
               value: NumericLiteral(
+                position: (                  
+                  15,
+                  1,
+                  1
+                ),
                 value: 1.0
               )
             ),
             
             Property(
               key: "b",
+              position: (                
+                15,
+                2,
+                1
+              ),
               value: NumericLiteral(
+                position: (                  
+                  15,
+                  1,
+                  1
+                ),
                 value: 6.0
               )
             )
@@ -146,15 +341,35 @@ Program(
       ),
       else_: [        
       ],
+      position: (        
+        15,
+        1,
+        2
+      ),
       then: [        
         CallExpression(
           arguments: [            
             StringLiteral(
+              position: (                
+                16,
+                3,
+                15
+              ),
               value: "dicts working"
             )
           ],
           caller: Identifier(
+            position: (              
+              16,
+              1,
+              5
+            ),
             symbol: "print"
+          ),
+          position: (            
+            16,
+            1,
+            5
           )
         )
       ]
@@ -162,19 +377,44 @@ Program(
     
     IfStatement(
       condition: Identifier(
+        position: (          
+          19,
+          2,
+          4
+        ),
         symbol: "null"
       ),
       else_: [        
       ],
+      position: (        
+        19,
+        1,
+        2
+      ),
       then: [        
         CallExpression(
           arguments: [            
             StringLiteral(
+              position: (                
+                20,
+                3,
+                8
+              ),
               value: "broken"
             )
           ],
           caller: Identifier(
+            position: (              
+              20,
+              1,
+              5
+            ),
             symbol: "print"
+          ),
+          position: (            
+            20,
+            1,
+            5
           )
         )
       ]
@@ -183,24 +423,59 @@ Program(
     IfStatement(
       condition: BinaryExpression(
         left: Identifier(
+          position: (            
+            23,
+            2,
+            5
+          ),
           symbol: "print"
         ),
         operator: "==",
+        position: (          
+          23,
+          2,
+          5
+        ),
         right: Identifier(
+          position: (            
+            23,
+            1,
+            5
+          ),
           symbol: "print"
         )
       ),
       else_: [        
       ],
+      position: (        
+        23,
+        1,
+        2
+      ),
       then: [        
         CallExpression(
           arguments: [            
             StringLiteral(
+              position: (                
+                24,
+                3,
+                19
+              ),
               value: "native funcs work"
             )
           ],
           caller: Identifier(
+            position: (              
+              24,
+              1,
+              5
+            ),
             symbol: "print"
+          ),
+          position: (            
+            24,
+            1,
+            5
           )
         )
       ]
@@ -213,44 +488,109 @@ Program(
       ],
       body: [        
         ReturnStatement(
+          position: (            
+            27,
+            1,
+            6
+          ),
           value: BinaryExpression(
             left: Identifier(
+              position: (                
+                27,
+                1,
+                1
+              ),
               symbol: "a"
             ),
             operator: "+",
+            position: (              
+              27,
+              1,
+              1
+            ),
             right: Identifier(
+              position: (                
+                27,
+                1,
+                1
+              ),
               symbol: "b"
             )
           )
         )
       ],
-      name: "add"
+      name: "add",
+      position: (        
+        27,
+        1,
+        4
+      )
     ),
     
     IfStatement(
       condition: BinaryExpression(
         left: Identifier(
+          position: (            
+            29,
+            2,
+            3
+          ),
           symbol: "add"
         ),
         operator: "==",
+        position: (          
+          29,
+          2,
+          3
+        ),
         right: Identifier(
+          position: (            
+            29,
+            1,
+            3
+          ),
           symbol: "add"
         )
       ),
       else_: [        
       ],
+      position: (        
+        29,
+        1,
+        2
+      ),
       then: [        
         CallExpression(
           arguments: [            
             StringLiteral(
+              position: (                
+                30,
+                3,
+                12
+              ),
               value: "funcs work"
             )
           ],
           caller: Identifier(
+            position: (              
+              30,
+              1,
+              5
+            ),
             symbol: "print"
+          ),
+          position: (            
+            30,
+            1,
+            5
           )
         )
       ]
     )
-  ]
+  ],
+  position: (    
+    0,
+    0,
+    0
+  )
 )

@@ -3,13 +3,23 @@ Program(
     ImportStatement(
       alias: None,
       module: "math",
-      names: None
+      names: None,
+      position: (        
+        1,
+        1,
+        6
+      )
     ),
     
     ImportStatement(
       alias: None,
       module: "time",
-      names: None
+      names: None,
+      position: (        
+        2,
+        1,
+        6
+      )
     ),
     
     ImportStatement(
@@ -17,13 +27,23 @@ Program(
       module: "file",
       names: [        
         "read"
-      ]
+      ],
+      position: (        
+        3,
+        1,
+        4
+      )
     ),
     
     ImportStatement(
       alias: "client",
       module: "http",
-      names: None
+      names: None,
+      position: (        
+        4,
+        1,
+        6
+      )
     ),
     
     CallExpression(
@@ -33,29 +53,79 @@ Program(
             ArrayLiteral(
               elements: [                
                 NumericLiteral(
+                  position: (                    
+                    6,
+                    8,
+                    1
+                  ),
                   value: 1.0
                 ),
                 
                 NumericLiteral(
+                  position: (                    
+                    6,
+                    1,
+                    1
+                  ),
                   value: 2.0
                 )
-              ]
+              ],
+              position: (                
+                6,
+                7,
+                1
+              )
             )
           ],
           caller: MemberExpression(
             computed: False,
             object: Identifier(
+              position: (                
+                6,
+                3,
+                4
+              ),
               symbol: "math"
             ),
+            position: (              
+              6,
+              3,
+              4
+            ),
             property: Identifier(
+              position: (                
+                6,
+                5,
+                3
+              ),
               symbol: "min"
             )
+          ),
+          position: (            
+            6,
+            3,
+            4
           )
         )
       ],
       caller: Identifier(
+        position: (          
+          6,
+          1,
+          5
+        ),
         symbol: "print"
+      ),
+      position: (        
+        6,
+        1,
+        5
       )
     )
-  ]
+  ],
+  position: (    
+    0,
+    0,
+    0
+  )
 )

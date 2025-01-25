@@ -3,23 +3,64 @@ Program(
     VariableDeclaration(
       constant: False,
       identifier: Identifier(
+        position: (          
+          1,
+          1,
+          1
+        ),
         symbol: "x"
       ),
+      position: (        
+        1,
+        1,
+        3
+      ),
       value: NumericLiteral(
+        position: (          
+          1,
+          1,
+          3
+        ),
         value: 100.0
       )
     ),
     
     AssignmentExpression(
       assigne: Identifier(
+        position: (          
+          3,
+          1,
+          1
+        ),
         symbol: "x"
+      ),
+      operator: None,
+      position: (        
+        3,
+        1,
+        1
       ),
       value: BinaryExpression(
         left: Identifier(
+          position: (            
+            3,
+            1,
+            1
+          ),
           symbol: "x"
         ),
         operator: "+",
+        position: (          
+          3,
+          1,
+          1
+        ),
         right: Identifier(
+          position: (            
+            3,
+            1,
+            1
+          ),
           symbol: "x"
         )
       )
@@ -28,24 +69,65 @@ Program(
     CallExpression(
       arguments: [        
         Identifier(
+          position: (            
+            4,
+            3,
+            1
+          ),
           symbol: "x"
         )
       ],
       caller: Identifier(
+        position: (          
+          4,
+          1,
+          5
+        ),
         symbol: "print"
+      ),
+      position: (        
+        4,
+        1,
+        5
       )
     ),
     
     AssignmentExpression(
       assigne: Identifier(
+        position: (          
+          5,
+          1,
+          1
+        ),
         symbol: "x"
+      ),
+      operator: None,
+      position: (        
+        5,
+        1,
+        1
       ),
       value: BinaryExpression(
         left: Identifier(
+          position: (            
+            5,
+            1,
+            1
+          ),
           symbol: "x"
         ),
         operator: "-",
+        position: (          
+          5,
+          1,
+          1
+        ),
         right: NumericLiteral(
+          position: (            
+            5,
+            1,
+            1
+          ),
           value: 5.0
         )
       )
@@ -54,24 +136,65 @@ Program(
     CallExpression(
       arguments: [        
         Identifier(
+          position: (            
+            6,
+            3,
+            1
+          ),
           symbol: "x"
         )
       ],
       caller: Identifier(
+        position: (          
+          6,
+          1,
+          5
+        ),
         symbol: "print"
+      ),
+      position: (        
+        6,
+        1,
+        5
       )
     ),
     
     AssignmentExpression(
       assigne: Identifier(
+        position: (          
+          7,
+          1,
+          1
+        ),
         symbol: "x"
+      ),
+      operator: None,
+      position: (        
+        7,
+        1,
+        1
       ),
       value: BinaryExpression(
         left: Identifier(
+          position: (            
+            7,
+            1,
+            1
+          ),
           symbol: "x"
         ),
         operator: "/",
+        position: (          
+          7,
+          1,
+          1
+        ),
         right: NumericLiteral(
+          position: (            
+            7,
+            1,
+            1
+          ),
           value: 2.0
         )
       )
@@ -80,24 +203,65 @@ Program(
     CallExpression(
       arguments: [        
         Identifier(
+          position: (            
+            8,
+            3,
+            1
+          ),
           symbol: "x"
         )
       ],
       caller: Identifier(
+        position: (          
+          8,
+          1,
+          5
+        ),
         symbol: "print"
+      ),
+      position: (        
+        8,
+        1,
+        5
       )
     ),
     
     AssignmentExpression(
       assigne: Identifier(
+        position: (          
+          9,
+          1,
+          1
+        ),
         symbol: "x"
+      ),
+      operator: None,
+      position: (        
+        9,
+        1,
+        1
       ),
       value: BinaryExpression(
         left: Identifier(
+          position: (            
+            9,
+            1,
+            1
+          ),
           symbol: "x"
         ),
         operator: "*",
+        position: (          
+          9,
+          1,
+          1
+        ),
         right: Identifier(
+          position: (            
+            9,
+            1,
+            1
+          ),
           symbol: "x"
         )
       )
@@ -106,24 +270,65 @@ Program(
     CallExpression(
       arguments: [        
         Identifier(
+          position: (            
+            10,
+            3,
+            1
+          ),
           symbol: "x"
         )
       ],
       caller: Identifier(
+        position: (          
+          10,
+          1,
+          5
+        ),
         symbol: "print"
+      ),
+      position: (        
+        10,
+        1,
+        5
       )
     ),
     
     AssignmentExpression(
       assigne: Identifier(
+        position: (          
+          11,
+          1,
+          1
+        ),
         symbol: "x"
+      ),
+      operator: None,
+      position: (        
+        11,
+        1,
+        1
       ),
       value: BinaryExpression(
         left: Identifier(
+          position: (            
+            11,
+            1,
+            1
+          ),
           symbol: "x"
         ),
         operator: "**",
+        position: (          
+          11,
+          1,
+          1
+        ),
         right: NumericLiteral(
+          position: (            
+            11,
+            1,
+            1
+          ),
           value: 2.0
         )
       )
@@ -132,24 +337,65 @@ Program(
     CallExpression(
       arguments: [        
         Identifier(
+          position: (            
+            12,
+            3,
+            1
+          ),
           symbol: "x"
         )
       ],
       caller: Identifier(
+        position: (          
+          12,
+          1,
+          5
+        ),
         symbol: "print"
+      ),
+      position: (        
+        12,
+        1,
+        5
       )
     ),
     
     AssignmentExpression(
       assigne: Identifier(
+        position: (          
+          13,
+          1,
+          1
+        ),
         symbol: "x"
+      ),
+      operator: None,
+      position: (        
+        13,
+        1,
+        1
       ),
       value: BinaryExpression(
         left: Identifier(
+          position: (            
+            13,
+            1,
+            1
+          ),
           symbol: "x"
         ),
         operator: "**",
+        position: (          
+          13,
+          1,
+          1
+        ),
         right: NumericLiteral(
+          position: (            
+            13,
+            1,
+            3
+          ),
           value: 0.5
         )
       )
@@ -158,24 +404,65 @@ Program(
     CallExpression(
       arguments: [        
         Identifier(
+          position: (            
+            14,
+            3,
+            1
+          ),
           symbol: "x"
         )
       ],
       caller: Identifier(
+        position: (          
+          14,
+          1,
+          5
+        ),
         symbol: "print"
+      ),
+      position: (        
+        14,
+        1,
+        5
       )
     ),
     
     AssignmentExpression(
       assigne: Identifier(
+        position: (          
+          15,
+          1,
+          1
+        ),
         symbol: "x"
+      ),
+      operator: None,
+      position: (        
+        15,
+        1,
+        1
       ),
       value: BinaryExpression(
         left: Identifier(
+          position: (            
+            15,
+            1,
+            1
+          ),
           symbol: "x"
         ),
         operator: "%",
+        position: (          
+          15,
+          1,
+          1
+        ),
         right: NumericLiteral(
+          position: (            
+            15,
+            1,
+            2
+          ),
           value: 45.0
         )
       )
@@ -184,12 +471,32 @@ Program(
     CallExpression(
       arguments: [        
         Identifier(
+          position: (            
+            16,
+            3,
+            1
+          ),
           symbol: "x"
         )
       ],
       caller: Identifier(
+        position: (          
+          16,
+          1,
+          5
+        ),
         symbol: "print"
+      ),
+      position: (        
+        16,
+        1,
+        5
       )
     )
-  ]
+  ],
+  position: (    
+    0,
+    0,
+    0
+  )
 )

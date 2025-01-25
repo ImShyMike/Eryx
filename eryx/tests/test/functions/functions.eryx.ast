@@ -12,48 +12,123 @@ Program(
           ],
           body: [            
             ReturnStatement(
+              position: (                
+                3,
+                1,
+                6
+              ),
               value: BinaryExpression(
                 left: BinaryExpression(
                   left: Identifier(
+                    position: (                      
+                      3,
+                      1,
+                      1
+                    ),
                     symbol: "x"
                   ),
                   operator: "+",
+                  position: (                    
+                    3,
+                    1,
+                    1
+                  ),
                   right: Identifier(
+                    position: (                      
+                      3,
+                      1,
+                      1
+                    ),
                     symbol: "y"
                   )
                 ),
                 operator: "+",
+                position: (                  
+                  3,
+                  1,
+                  1
+                ),
                 right: Identifier(
+                  position: (                    
+                    3,
+                    1,
+                    6
+                  ),
                   symbol: "offset"
                 )
               )
             )
           ],
-          name: "add"
+          name: "add",
+          position: (            
+            2,
+            1,
+            4
+          )
         ),
         
         ReturnStatement(
+          position: (            
+            6,
+            1,
+            6
+          ),
           value: Identifier(
+            position: (              
+              6,
+              1,
+              3
+            ),
             symbol: "add"
           )
         )
       ],
-      name: "makeAdder"
+      name: "makeAdder",
+      position: (        
+        1,
+        1,
+        4
+      )
     ),
     
     VariableDeclaration(
       constant: False,
       identifier: Identifier(
+        position: (          
+          9,
+          1,
+          5
+        ),
         symbol: "adder"
+      ),
+      position: (        
+        9,
+        1,
+        3
       ),
       value: CallExpression(
         arguments: [          
           NumericLiteral(
+            position: (              
+              9,
+              3,
+              2
+            ),
             value: 10.0
           )
         ],
         caller: Identifier(
+          position: (            
+            9,
+            1,
+            9
+          ),
           symbol: "makeAdder"
+        ),
+        position: (          
+          9,
+          1,
+          9
         )
       )
     ),
@@ -63,21 +138,56 @@ Program(
         CallExpression(
           arguments: [            
             NumericLiteral(
+              position: (                
+                10,
+                5,
+                2
+              ),
               value: 10.0
             ),
             
             NumericLiteral(
+              position: (                
+                10,
+                1,
+                1
+              ),
               value: 5.0
             )
           ],
           caller: Identifier(
+            position: (              
+              10,
+              3,
+              5
+            ),
             symbol: "adder"
+          ),
+          position: (            
+            10,
+            3,
+            5
           )
         )
       ],
       caller: Identifier(
+        position: (          
+          10,
+          1,
+          5
+        ),
         symbol: "print"
+      ),
+      position: (        
+        10,
+        1,
+        5
       )
     )
-  ]
+  ],
+  position: (    
+    0,
+    0,
+    0
+  )
 )

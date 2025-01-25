@@ -110,6 +110,34 @@ def on_create_test():
     create_test_files(code, description, test_name)
 
 
+def on_remake_all_tests():
+    """Handle remaking of all tests."""
+    for test_folder in os.listdir(os.path.join(current_path, "test")):
+        try:
+            info = read_info(
+                os.path.join(current_path, "test", test_folder, "test.info")
+            )
+
+            # Get the code from the .eryx file
+            with open(
+                os.path.join(current_path, "test", test_folder, f"{info['name']}.eryx"),
+                "r",
+                encoding="utf8",
+            ) as f:
+                code = f.read()
+
+            write_files(
+                os.path.join(current_path, "test", test_folder),
+                code,
+                info["name"],
+                info["description"],
+            )
+        except Exception as e:  # pylint: disable=broad-except
+            print(f"{test_folder}: {e}")
+
+    messagebox.showinfo("Success", "All test files have been regenerated.")
+
+
 def on_remake_test():
     """Handle remaking of a test."""
     test_folder = askdirectory(
@@ -130,7 +158,9 @@ def on_remake_test():
 
     write_files(test_folder, code, info["name"], info["description"])
 
-    messagebox.showinfo("Success", f"Test files for {info["name"]} have been regenerated.")
+    messagebox.showinfo(
+        "Success", f"Test files for {info['name']} have been regenerated."
+    )
 
 
 def on_make_test():
@@ -152,6 +182,7 @@ def on_make_test():
 
     create_test_files(code, description, test_name)
 
+
 # Set up the Tkinter GUI
 root = tk.Tk()
 root.title("Test File Generator")
@@ -160,6 +191,12 @@ root.resizable(False, False)
 # Remake test
 remake_button = tk.Button(root, text="Remake Test", command=on_remake_test)
 remake_button.pack()
+
+# Remake test
+remake_all_button = tk.Button(
+    root, text="Remake All Tests", command=on_remake_all_tests
+)
+remake_all_button.pack()
 
 # Make test from file
 make_test_button = tk.Button(root, text="From File", command=on_make_test)

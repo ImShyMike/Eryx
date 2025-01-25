@@ -3,42 +3,107 @@ Program(
     VariableDeclaration(
       constant: False,
       identifier: Identifier(
+        position: (          
+          1,
+          1,
+          3
+        ),
         symbol: "lst"
+      ),
+      position: (        
+        1,
+        1,
+        3
       ),
       value: ArrayLiteral(
         elements: [          
           NumericLiteral(
+            position: (              
+              1,
+              2,
+              1
+            ),
             value: 1.0
           ),
           
           NumericLiteral(
+            position: (              
+              1,
+              1,
+              1
+            ),
             value: 2.0
           ),
           
           NumericLiteral(
+            position: (              
+              1,
+              1,
+              1
+            ),
             value: 3.0
           )
-        ]
+        ],
+        position: (          
+          1,
+          1,
+          1
+        )
       )
     ),
     
     VariableDeclaration(
       constant: False,
       identifier: Identifier(
+        position: (          
+          3,
+          1,
+          3
+        ),
         symbol: "obj"
       ),
+      position: (        
+        3,
+        1,
+        3
+      ),
       value: ObjectLiteral(
+        position: (          
+          3,
+          1,
+          1
+        ),
         properties: [          
           Property(
             key: "a",
+            position: (              
+              3,
+              2,
+              1
+            ),
             value: NumericLiteral(
+              position: (                
+                3,
+                1,
+                1
+              ),
               value: 1.0
             )
           ),
           
           Property(
             key: "b",
+            position: (              
+              3,
+              2,
+              1
+            ),
             value: NumericLiteral(
+              position: (                
+                3,
+                1,
+                1
+              ),
               value: 3.0
             )
           )
@@ -49,9 +114,24 @@ Program(
     VariableDeclaration(
       constant: False,
       identifier: Identifier(
+        position: (          
+          5,
+          1,
+          6
+        ),
         symbol: "string"
       ),
+      position: (        
+        5,
+        1,
+        3
+      ),
       value: StringLiteral(
+        position: (          
+          5,
+          1,
+          8
+        ),
         value: "Hello,"
       )
     ),
@@ -60,24 +140,59 @@ Program(
       arguments: [        
         BinaryExpression(
           left: Identifier(
+            position: (              
+              7,
+              3,
+              3
+            ),
             symbol: "lst"
           ),
           operator: "+",
+          position: (            
+            7,
+            3,
+            3
+          ),
           right: ArrayLiteral(
             elements: [              
               NumericLiteral(
+                position: (                  
+                  7,
+                  2,
+                  1
+                ),
                 value: 4.0
               ),
               
               NumericLiteral(
+                position: (                  
+                  7,
+                  1,
+                  1
+                ),
                 value: 5.0
               )
-            ]
+            ],
+            position: (              
+              7,
+              1,
+              1
+            )
           )
         )
       ],
       caller: Identifier(
+        position: (          
+          7,
+          1,
+          5
+        ),
         symbol: "print"
+      ),
+      position: (        
+        7,
+        1,
+        5
       )
     ),
     
@@ -85,14 +200,39 @@ Program(
       arguments: [        
         BinaryExpression(
           left: Identifier(
+            position: (              
+              8,
+              3,
+              3
+            ),
             symbol: "obj"
           ),
           operator: "+",
+          position: (            
+            8,
+            3,
+            3
+          ),
           right: ObjectLiteral(
+            position: (              
+              8,
+              1,
+              1
+            ),
             properties: [              
               Property(
                 key: "c",
+                position: (                  
+                  8,
+                  2,
+                  1
+                ),
                 value: NumericLiteral(
+                  position: (                    
+                    8,
+                    1,
+                    1
+                  ),
                   value: 6.0
                 )
               )
@@ -101,7 +241,17 @@ Program(
         )
       ],
       caller: Identifier(
+        position: (          
+          8,
+          1,
+          5
+        ),
         symbol: "print"
+      ),
+      position: (        
+        8,
+        1,
+        5
       )
     ),
     
@@ -109,16 +259,41 @@ Program(
       arguments: [        
         BinaryExpression(
           left: Identifier(
+            position: (              
+              9,
+              3,
+              6
+            ),
             symbol: "string"
           ),
           operator: "+",
+          position: (            
+            9,
+            3,
+            6
+          ),
           right: StringLiteral(
+            position: (              
+              9,
+              1,
+              9
+            ),
             value: " World!"
           )
         )
       ],
       caller: Identifier(
+        position: (          
+          9,
+          1,
+          5
+        ),
         symbol: "print"
+      ),
+      position: (        
+        9,
+        1,
+        5
       )
     ),
     
@@ -126,14 +301,39 @@ Program(
       arguments: [        
         BinaryExpression(
           left: Identifier(
+            position: (              
+              10,
+              3,
+              3
+            ),
             symbol: "obj"
           ),
           operator: "+",
+          position: (            
+            10,
+            3,
+            3
+          ),
           right: ObjectLiteral(
+            position: (              
+              10,
+              1,
+              1
+            ),
             properties: [              
               Property(
                 key: "a",
+                position: (                  
+                  10,
+                  2,
+                  1
+                ),
                 value: NumericLiteral(
+                  position: (                    
+                    10,
+                    1,
+                    1
+                  ),
                   value: 6.0
                 )
               )
@@ -142,8 +342,23 @@ Program(
         )
       ],
       caller: Identifier(
+        position: (          
+          10,
+          1,
+          5
+        ),
         symbol: "print"
+      ),
+      position: (        
+        10,
+        1,
+        5
       )
     )
-  ]
+  ],
+  position: (    
+    0,
+    0,
+    0
+  )
 )
