@@ -362,9 +362,21 @@ class Parser:
 
         condition = self.parse_expression()
 
-        self.assert_next(
-            TokenType.SEMICOLON, "Expected a semicolon after the assert statement."
-        )
+        if self.at().type == TokenType.COMMA:
+            self.next()  # Skip the comma
+
+            message = self.parse_expression()
+
+            if isinstance(message, StringLiteral):
+                return AssertStatement(condition.position, condition, message.value)
+
+            syntax_error(
+                self.source_code,
+                self.at().position,
+                "Assert message must be a string.",
+            )
+
+        self.assert_next(TokenType.SEMICOLON, "Expected a semicolon after the assert.")
 
         return AssertStatement(condition.position, condition)
 

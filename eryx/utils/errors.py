@@ -15,10 +15,15 @@ def syntax_error(
 ) -> None:
     """Handle a syntax error."""
     line, col, length = pos  # Unpack the position tuple
+    col -= length - 1  # Subtract the length of the error from the column
+    print(pos)
 
     line_text = get_line_strings(source_code, line)  # Get a snippet of the code
 
-    error_line = f"{Fore.CYAN}{str(line).rjust(3)}:{Fore.RESET} {line_text}"  # Format the error line
+    error_line = (
+        f"{Fore.CYAN}{str(line).rjust(3)}"
+        f" |{Fore.RESET} {line_text}"
+    )  # Format the error line
 
     marker = (
         "^" * length
@@ -27,7 +32,7 @@ def syntax_error(
     line_number_size = len(str(line).rjust(3))  # Get the size of the line number
 
     positioned_marker = marker.rjust(
-        col + line_number_size + 1 + len(marker)
+        col + line_number_size + 2 + len(marker)
     )  # Position the marker
 
     formatted_marker = (

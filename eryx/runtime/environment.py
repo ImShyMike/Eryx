@@ -1,5 +1,6 @@
 """Environment class for storing variables (also called scope)."""
 
+import json
 import math
 import os
 import random
@@ -282,6 +283,8 @@ def _array(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
             return ArrayValue([StringValue(char) for char in args[0].value])
         if isinstance(args[0], ObjectValue):
             return ArrayValue(list(args[0].properties.values()))
+        if isinstance(args[0], ArrayValue):
+            return args[0]
     return ArrayValue(args)
 
 
@@ -806,6 +809,73 @@ def _getEnv(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return StringValue(os.environ.get(args[0].value, ""))
 
 
+def _exec(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing command argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Command must be a string")
+    command = os.popen(args[0].value)
+    return ObjectValue(
+        {
+            "output": StringValue(command.read()),
+            "status": NumberValue(command.close() or 0),
+        }
+    )
+
+
+# JSON FUNCTIONS
+
+
+def json_to_value(data: dict) -> RuntimeValue:
+    """Convert a JSON object to a RuntimeValue."""
+    if isinstance(data, list):
+        return ArrayValue([json_to_value(value) for value in data])
+    if isinstance(data, str):
+        return StringValue(data)
+    if isinstance(data, (int, float)):
+        return NumberValue(data)
+    if isinstance(data, bool):
+        return BooleanValue(data)
+    if data is None:
+        return NullValue()
+    return ObjectValue({key: json_to_value(value) for key, value in data.items()})
+
+
+def value_to_json(value: RuntimeValue) -> dict | list | str | int | float | bool | None:
+    """Convert a RuntimeValue to a JSON object."""
+    if isinstance(value, ObjectValue):
+        return {key: value_to_json(val) for key, val in value.properties.items()}
+    if isinstance(value, ArrayValue):
+        return [value_to_json(val) for val in value.elements]
+    if isinstance(value, (StringValue, NumberValue, BooleanValue)):
+        return value.value
+    if isinstance(value, NullValue):
+        return None
+    raise RuntimeError("Invalid value")
+
+
+def _jsonParse(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing JSON string argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Argument must be a string")
+    try:
+        val = json_to_value(json.loads(args[0].value))
+        print(val)
+        return val
+    except Exception as e:
+        raise RuntimeError("Invalid JSON string") from e
+
+
+def _jsonStringify(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing JSON object argument")
+    try:
+        return StringValue(json.dumps(value_to_json(args[0])))
+    except Exception as e:
+        raise RuntimeError("Invalid JSON object") from e
+
+
 # Declare builtin modules
 BUILTINS["file"] = ObjectValue(
     {
@@ -897,6 +967,15 @@ BUILTINS["os"] = ObjectValue(
         "cwd": NativeFunctionValue(_getCwd),
         "chdir": NativeFunctionValue(_changeDir),
         "env": NativeFunctionValue(_getEnv),
+        "exec": NativeFunctionValue(_exec),
+    },
+    immutable=True,
+)
+
+BUILTINS["json"] = ObjectValue(
+    {
+        "parse": NativeFunctionValue(_jsonParse),
+        "stringify": NativeFunctionValue(_jsonStringify),
     },
     immutable=True,
 )

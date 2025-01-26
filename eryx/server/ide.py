@@ -5,12 +5,14 @@ import re
 import time
 import uuid
 from contextlib import redirect_stdout
+from dataclasses import dataclass
+from typing import List
 
 from colorama import Fore
 from flask import Flask, abort, jsonify, render_template, request
 
 from eryx.__init__ import CURRENT_VERSION
-from eryx.frontend.lexer import tokenize
+from eryx.frontend.lexer import Token, tokenize
 from eryx.frontend.parser import Parser
 from eryx.runtime.environment import Environment, get_value
 from eryx.runtime.interpreter import evaluate
@@ -22,11 +24,11 @@ parser = Parser()
 environments = {}
 
 
+@dataclass()
 class Config:
     """Web IDE configuration class."""
 
-    def __init__(self):
-        self.disable_file_io = False
+    disable_file_io: bool = False
 
 
 config = Config()
@@ -42,7 +44,7 @@ COLOR_DICT = {
     "37": ["white"],
 }
 
-COLOR_REGEX = re.compile(r"\[(?P<arg_1>\d+)(;(?P<arg_2>\d+)(;(?P<arg_3>\d+))?)?m")
+COLOR_REGEX = re.compile(r"\[(?P<arg>\d+)m")
 
 TEMPLATE = '<span style="color: {}">'
 
@@ -53,14 +55,7 @@ def ansi_to_html(text):
     text = escape_html(text)
 
     def single_sub(match):
-        argsdict = match.groupdict()
-        if argsdict["arg_3"] is None:
-            if argsdict["arg_2"] is None:
-                color = argsdict["arg_1"]
-            else:
-                color = argsdict["arg_1"]
-        else:
-            color = argsdict["arg_2"]
+        color = match.groupdict().get("arg", "39")
 
         if color == "39":
             return "</span>"
@@ -74,11 +69,11 @@ def ansi_to_html(text):
 # ========
 
 
+@dataclass()
 class TokenList:
     """List of tokens to use with the pretty printer."""
 
-    def __init__(self, tokens: list):
-        self.tokens = tokens
+    tokens: List[Token]
 
 
 def escape_html(text):

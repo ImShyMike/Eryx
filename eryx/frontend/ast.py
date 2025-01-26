@@ -207,3 +207,4 @@ class AssertStatement(Statement):
     """Assert statement class."""
 
     condition: Expression
+    message: str | None = None

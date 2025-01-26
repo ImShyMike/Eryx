@@ -75,7 +75,7 @@ def test_eryx_code(test_folder: str, capfd: pytest.CaptureFixture):
 
     expected_ast = read_file(ast_expected_path)
     assert pprint(test_ast, use_color=False, print_output=False) == expected_ast, (
-        f"AST for {test_folder} does not match expected result."
+        f"AST mismatch for {test_folder}"
     )
 
     # Step 2: Evaluate the AST
@@ -84,9 +84,7 @@ def test_eryx_code(test_folder: str, capfd: pytest.CaptureFixture):
     # Step 3: Check printed output
     captured = capfd.readouterr()
     expected_output = read_file(output_expected_path)
-    assert captured.out.strip() == expected_output, (
-        f"Printed output for {test_folder} does not match expected output."
-    )
+    assert captured.out.strip() == expected_output, f"Output mismatch for {test_folder}"
 
 
 if __name__ == "__main__":

@@ -72,6 +72,11 @@ class ContinueException(Exception):
         pass
 
 
+def fmt_pos(node: Statement) -> str:
+    """Format position."""
+    return f" (Ln {node.position[0]}, Col {node.position[1] - node.position[2]})"
+
+
 # STATEMENTS
 def eval_variable_declaration(
     declaration: VariableDeclaration, environment: Environment
@@ -96,6 +101,7 @@ def eval_class_declaration(
         if not isinstance(method, (FunctionDeclaration, AssignmentExpression)):
             raise RuntimeError(
                 "Expected a function or variable declaration inside a class."
+                + fmt_pos(method)
             )
 
         if isinstance(method, FunctionDeclaration):
@@ -113,7 +119,9 @@ def eval_class_declaration(
         if isinstance(method, AssignmentExpression):
             value = evaluate(method.value, environment) if method.value else NullValue()
             if not isinstance(method.assigne, Identifier):
-                raise RuntimeError("Expected an identifier as a property.")
+                raise RuntimeError(
+                    "Expected an identifier as a property." + fmt_pos(ast_node)
+                )
             class_obj.methods[method.assigne.symbol] = value
 
     environment.declare_variable(ast_node.name, class_obj)
@@ -130,7 +138,9 @@ def eval_enum_declaration(
 
     for value in ast_node.values:
         if not isinstance(value, Identifier):
-            raise RuntimeError("Expected only identifiers inside an enum")
+            raise RuntimeError(
+                "Expected only identifiers inside an enum." + fmt_pos(ast_node)
+            )
 
         enum_obj.values[value.symbol] = StringValue(value.symbol)
 
@@ -163,11 +173,17 @@ def eval_program(program: Program, environment: Environment) -> RuntimeValue:
             last_evaluated = evaluate(statement, environment)
     except (ReturnException, BreakException, ContinueException) as e:
         if isinstance(e, ReturnException):
-            raise RuntimeError("Return statement found outside of a function.") from e
+            raise RuntimeError(
+                "Return statement found outside of a function." + fmt_pos(program)
+            ) from e
         if isinstance(e, BreakException):
-            raise RuntimeError("Break keyword found outside of a loop.") from e
+            raise RuntimeError(
+                "Break keyword found outside of a loop." + fmt_pos(program)
+            ) from e
         if isinstance(e, ContinueException):
-            raise RuntimeError("Continue keyword found outside of a loop.") from e
+            raise RuntimeError(
+                "Continue keyword found outside of a loop." + fmt_pos(program)
+            ) from e
 
     return last_evaluated
 
@@ -179,10 +195,15 @@ def eval_assert_statement(
     condition = evaluate(assert_statement.condition, environment)
 
     if not isinstance(condition, BooleanValue):
-        raise RuntimeError("Expected a boolean value in an assert statement.")
+        raise RuntimeError(
+            "Expected a boolean value in an assert statement."
+            + fmt_pos(assert_statement)
+        )
 
     if not condition.value:
-        raise RuntimeError("Assertion failed.")
+        raise RuntimeError(
+            f"Assertion failed: {assert_statement.message}" + fmt_pos(assert_statement)
+        )
 
     return NullValue()
 
@@ -219,6 +240,7 @@ def eval_import_statement(
         if module_name in ("file", "os") and environment.disable_file_io:
             raise RuntimeError(
                 f"File I/O is disabled, unable to import '{module_name}'."
+                + fmt_pos(import_statement)
             )
 
         module = BUILTINS.get(module_name)
@@ -232,16 +254,22 @@ def eval_import_statement(
                     else:
                         raise RuntimeError(
                             f"Variable/function '{name}' not found in module '{module_name}'."
+                            + fmt_pos(import_statement)
                         )
             else:
                 name = import_statement.alias or module_name
                 environment.declare_variable(name, module, True)
         else:
-            raise RuntimeError(f"Error importing builtin '{module_name}'")
+            raise RuntimeError(
+                f"Error importing builtin '{module_name}'." + fmt_pos(import_statement)
+            )
     else:
         if module_name.endswith(".eryx"):
             if not os.path.exists(module_name):
-                raise RuntimeError(f"File '{module_name}.eryx' does not exist.")
+                raise RuntimeError(
+                    f"File '{module_name}.eryx' does not exist."
+                    + fmt_pos(import_statement)
+                )
 
             # Import the file
             file_path = module_name
@@ -253,23 +281,30 @@ def eval_import_statement(
                 with open(cfg_file_path, "r", encoding="utf8") as file:
                     cfg = json.load(file)
             except (FileNotFoundError, json.JSONDecodeError) as e:
-                raise RuntimeError(f"Package '{module_name}' not found.") from e
+                raise RuntimeError(
+                    f"Package '{module_name}' not found." + fmt_pos(import_statement)
+                ) from e
 
             installed_packages = cfg.get("installed_packages", {})
             if not installed_packages or module_name not in installed_packages:
-                raise RuntimeError(f"Package '{module_name}' not found.")
+                raise RuntimeError(
+                    f"Package '{module_name}' not found." + fmt_pos(import_statement)
+                )
 
             package_path = os.path.join(
                 packages_dir, INSTALLED_PACKAGES_LOC, module_name
             )
             if not os.path.exists(package_path):
-                raise RuntimeError(f"Installed package '{module_name}' not found.")
+                raise RuntimeError(
+                    f"Installed package '{module_name}' not found."
+                    + fmt_pos(import_statement)
+                )
 
             entrypoint = os.path.join(package_path, "main.eryx")
             if not os.path.exists(entrypoint):
                 raise RuntimeError(
                     "Entrypoint 'main.eryx' not found in "
-                    f"installed package '{module_name}'."
+                    f"installed package '{module_name}'." + fmt_pos(import_statement)
                 )
 
             with open(entrypoint, "r", encoding="utf8") as file:
@@ -297,6 +332,7 @@ def eval_import_statement(
                 else:
                     raise RuntimeError(
                         f"Variable/function '{name}' not found in module '{module_name}'."
+                        + fmt_pos(import_statement)
                     )
 
     return NullValue()
@@ -307,7 +343,9 @@ def eval_del_statement(
 ) -> RuntimeValue:
     """Evaluate a del statement."""
     if not isinstance(del_statement.identifier, Identifier):
-        raise RuntimeError("Expected an identifier (variable) to delete.")
+        raise RuntimeError(
+            "Expected an identifier (variable) to delete." + fmt_pos(del_statement)
+        )
 
     environment.delete_variable(del_statement.identifier.symbol)
 
@@ -336,11 +374,15 @@ def eval_for_statement(
 ) -> RuntimeValue:
     """Evaluate a for statement."""
     if not isinstance(for_statement.variable, Identifier):
-        raise RuntimeError("Expected an identifier as a variable.")
+        raise RuntimeError(
+            "Expected an identifier as a variable." + fmt_pos(for_statement)
+        )
     try:
         iterator = evaluate(for_statement.iterator, environment)
         if not isinstance(iterator, ArrayValue):
-            raise RuntimeError("Expected an array as an iterator.")
+            raise RuntimeError(
+                "Expected an array as an iterator." + fmt_pos(for_statement)
+            )
 
         variable_value = None
         try:
@@ -405,7 +447,10 @@ def eval_binary_expression(
 
     if isinstance(left, NumberValue) and isinstance(right, NumberValue):
         if binop.operator in ["+", "-", "*", "/", "%"]:
-            return eval_numeric_binary_expression(left, right, binop.operator)
+            try:
+                return eval_numeric_binary_expression(left, right, binop.operator)
+            except ZeroDivisionError as e:
+                raise RuntimeError("Division by zero." + fmt_pos(binop)) from e
 
         if binop.operator in ["==", "!=", "<", ">", "<=", ">="]:
             return BooleanValue(
@@ -421,7 +466,9 @@ def eval_binary_expression(
         if binop.operator in ["&&", "||"]:
             return eval_logical_expression(left, right, binop.operator)
 
-        raise RuntimeError(f"Unknown binary operator {binop.operator}.")
+        raise RuntimeError(
+            f"Unknown binary operator {binop.operator}." + fmt_pos(binop)
+        )
 
     if binop.operator in ["&&", "||"]:
         if isinstance(left, (BooleanValue, StringValue)) and isinstance(
@@ -430,6 +477,7 @@ def eval_binary_expression(
             return eval_logical_expression(left, right, binop.operator)
         raise RuntimeError(
             "Expected boolean, string or number values for logical operators."
+            + fmt_pos(binop)
         )
 
     if binop.operator == "+":
@@ -497,11 +545,13 @@ def eval_member_expression(
         if member.computed:
             property_value = evaluate(member.property, environment)
             if not isinstance(property_value, StringValue):
-                raise RuntimeError("Expected a string as a property.")
+                raise RuntimeError("Expected a string as a property." + fmt_pos(member))
             property_value = property_value.value
         else:
             if not isinstance(member.property, Identifier):
-                raise RuntimeError("Expected an identifier as a property.")
+                raise RuntimeError(
+                    "Expected an identifier as a property." + fmt_pos(member)
+                )
             property_value = member.property.symbol
 
         if isinstance(object_value, ClassValue):
@@ -516,7 +566,7 @@ def eval_member_expression(
         if member.computed:
             property_value = evaluate(member.property, environment)
             if not isinstance(property_value, NumberValue):
-                raise RuntimeError("Expected a number as an index.")
+                raise RuntimeError("Expected a number as an index." + fmt_pos(member))
 
             return (
                 object_value.elements[int(property_value.value)]
@@ -524,13 +574,16 @@ def eval_member_expression(
                 else NullValue()
             )
 
-        raise RuntimeError("Expected a computed property for an array: string[number].")
+        raise RuntimeError(
+            "Expected a computed property for an array: string[number]."
+            + fmt_pos(member)
+        )
 
     if isinstance(object_value, StringValue):
         if member.computed:
             property_value = evaluate(member.property, environment)
             if not isinstance(property_value, NumberValue):
-                raise RuntimeError("Expected a number as an index.")
+                raise RuntimeError("Expected a number as an index." + fmt_pos(member))
 
             return (
                 StringValue(object_value.value[int(property_value.value)])
@@ -538,9 +591,12 @@ def eval_member_expression(
                 else NullValue()
             )
 
-        raise RuntimeError("Expected a computed property for a string: string[number].")
+        raise RuntimeError(
+            "Expected a computed property for a string: string[number]."
+            + fmt_pos(member)
+        )
 
-    raise RuntimeError("Unsupported value type in member expression.")
+    raise RuntimeError("Unsupported value type in member expression." + fmt_pos(member))
 
 
 def eval_numeric_binary_expression(
@@ -556,7 +612,7 @@ def eval_numeric_binary_expression(
             return NumberValue(left.value * right.value)
         case "/":
             if right.value == 0:
-                raise RuntimeError("Division by zero.")
+                raise ZeroDivisionError()
             return NumberValue(left.value / right.value)
         case "%":
             return NumberValue(left.value % right.value)
@@ -653,12 +709,16 @@ def assignment_helper(
     elif isinstance(value, NumberValue):
         assigne_value = value
     else:
-        raise RuntimeError("Expected an identifier or number value for an assignment.")
+        raise RuntimeError(
+            "Expected an identifier or number value for an assignment." + fmt_pos(node)
+        )
 
     if not isinstance(assigne_value, NumberValue):
-        raise RuntimeError("Expected a number value (assigne) for an assignment.")
+        raise RuntimeError(
+            "Expected a number value (assigne) for an assignment." + fmt_pos(node)
+        )
     if not isinstance(evaluated, NumberValue):
-        raise RuntimeError("Expected a number value for an assignment.")
+        raise RuntimeError("Expected a number value for an assignment." + fmt_pos(node))
 
     if node.operator == "+=":
         return NumberValue(assigne_value.value + evaluated.value)
@@ -680,7 +740,7 @@ def assignment_helper(
         return NumberValue(int(assigne_value.value) << int(evaluated.value))
     if node.operator == ">>=":
         return NumberValue(int(assigne_value.value) >> int(evaluated.value))
-    raise RuntimeError(f"Unknown assignment operator: {node.operator}")
+    raise RuntimeError(f"Unknown assignment operator: {node.operator}" + fmt_pos(node))
 
 
 def eval_assignment_expression(
@@ -702,7 +762,9 @@ def eval_assignment_expression(
             "<<=",
             ">>=",
         ]:
-            raise RuntimeError(f"Unknown assignment operator: {node.operator}")
+            raise RuntimeError(
+                f"Unknown assignment operator: '{node.operator}'" + fmt_pos(node)
+            )
 
         if isinstance(node.assigne, Identifier):
             value = assignment_helper(node.assigne, node, environment)
@@ -717,17 +779,22 @@ def eval_assignment_expression(
             if not isinstance(obj, (ObjectValue, ClassValue)):
                 raise RuntimeError(
                     f"Cannot assign to a non-object value: {type(obj).__name__}"
+                    + fmt_pos(node)
                 )
 
             if isinstance(node.assigne.object, Identifier):
                 symbol = node.assigne.object.symbol
                 env = environment.resolve(symbol)
                 if symbol in env.constants:
-                    raise RuntimeError(f'Cannot assign to constant object "{symbol}"')
+                    raise RuntimeError(
+                        f'Cannot assign to constant object "{symbol}"' + fmt_pos(node)
+                    )
 
             if isinstance(obj, ObjectValue):
                 if obj.immutable:
-                    raise RuntimeError(f'Cannot assign to immutable object "{prop}"')
+                    raise RuntimeError(
+                        f'Cannot assign to immutable object "{prop}"' + fmt_pos(node)
+                    )
 
                 value = assignment_helper(obj.properties[prop], node, environment)
                 obj.properties[prop] = value
@@ -748,17 +815,22 @@ def eval_assignment_expression(
         if not isinstance(obj, (ObjectValue, ClassValue)):
             raise RuntimeError(
                 f"Cannot assign to a non-object value: {type(obj).__name__}"
+                + fmt_pos(node)
             )
 
         if isinstance(node.assigne.object, Identifier):
             symbol = node.assigne.object.symbol
             env = environment.resolve(symbol)
             if symbol in env.constants:
-                raise RuntimeError(f'Cannot assign to constant object "{symbol}"')
+                raise RuntimeError(
+                    f'Cannot assign to constant object "{symbol}"' + fmt_pos(node)
+                )
 
         if isinstance(obj, ObjectValue):
             if obj.immutable:
-                raise RuntimeError(f'Cannot assign to immutable object "{prop}"')
+                raise RuntimeError(
+                    f'Cannot assign to immutable object "{prop}"' + fmt_pos(node)
+                )
 
             obj.properties[prop] = value
         else:
@@ -767,6 +839,7 @@ def eval_assignment_expression(
 
     raise RuntimeError(
         "Expected an identifier or member expression on the left side of an assignment."
+        + fmt_pos(node)
     )
 
 
@@ -819,7 +892,7 @@ def eval_call_expression(
             if len(arg_names) != len(arguments):
                 raise RuntimeError(
                     f"Expected {len(arg_names)} arguments, got {len(arguments)}. "
-                    f"({', '.join(arg_names)})"
+                    f"({', '.join(arg_names)})" + fmt_pos(expression)
                 )
             new_args = dict(zip(arg_names, arguments))
             return ObjectValue(properties=new_args | methods)
@@ -848,7 +921,7 @@ def eval_call_expression(
 
         return NullValue()
 
-    raise RuntimeError("Cannot call a non-function value.")
+    raise RuntimeError("Cannot call a non-function value." + fmt_pos(expression))
 
 
 # MAIN
@@ -913,4 +986,4 @@ def evaluate(ast_node: Statement | None, environment: Environment) -> RuntimeVal
         case _:
             print("=== AST node ERROR ===")
             pprint(ast_node)
-            raise RuntimeError("Unknown AST node.")
+            raise RuntimeError("Unknown AST node." + fmt_pos(ast_node))
