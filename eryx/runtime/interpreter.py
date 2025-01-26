@@ -706,9 +706,7 @@ def eval_assignment_expression(
 
         if isinstance(node.assigne, Identifier):
             value = assignment_helper(node.assigne, node, environment)
-            environment.assign_variable(
-                node.assigne.symbol, value
-            )
+            environment.assign_variable(node.assigne.symbol, value)
             return value
 
         if isinstance(node.assigne, MemberExpression):

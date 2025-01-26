@@ -8,6 +8,7 @@ from colorama import init
 
 from eryx.__init__ import CURRENT_VERSION
 from eryx.packages.packages import (
+    DEFAULT_SERVER,
     delete_package,
     install,
     list_packages,
@@ -17,7 +18,6 @@ from eryx.packages.packages import (
 from eryx.runtime.repl import start_repl
 from eryx.runtime.runner import run_code
 from eryx.server.ide import start_ide
-from eryx.packages.packages import DEFAULT_SERVER
 
 init(autoreset=True)
 current_path = os.path.dirname(os.path.abspath(__file__))
@@ -106,7 +106,9 @@ def main():
     )
 
     # 'package uninstall' subcommand
-    uninstall_parser = package_subparsers.add_parser("uninstall", help="Uninstall a package")
+    uninstall_parser = package_subparsers.add_parser(
+        "uninstall", help="Uninstall a package"
+    )
     uninstall_parser.add_argument("package", type=str, help="Package to uninstall")
 
     # 'package list' subcommand
@@ -114,7 +116,9 @@ def main():
 
     # 'package upload' subcommand
     upload_parser = package_subparsers.add_parser("upload", help="Upload a package")
-    upload_parser.add_argument("package_folder", type=str, help="Package folder to upload")
+    upload_parser.add_argument(
+        "package_folder", type=str, help="Package folder to upload"
+    )
     upload_parser.add_argument(
         "--server",
         type=str,
