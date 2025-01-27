@@ -176,7 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
             !(
                 window.localStorage.getItem("hasSeenHelp") &&
                 window.localStorage.getItem("hasSeenHelp") >
-                    Date.now() - 7 * 24 * 60 * 60 * 1000
+                    Date.now() - 7 * 24 * 60 * 60 * 1000 // 7 days
             )
         ) {
             topBar.style.display = "flex";
