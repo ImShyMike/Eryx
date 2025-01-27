@@ -14,7 +14,7 @@ Program(
             ReturnStatement(
               position: (                
                 3,
-                1,
+                15,
                 6
               ),
               value: BinaryExpression(
@@ -22,7 +22,7 @@ Program(
                   left: Identifier(
                     position: (                      
                       3,
-                      1,
+                      17,
                       1
                     ),
                     symbol: "x"
@@ -30,13 +30,13 @@ Program(
                   operator: "+",
                   position: (                    
                     3,
-                    1,
+                    17,
                     1
                   ),
                   right: Identifier(
                     position: (                      
                       3,
-                      1,
+                      21,
                       1
                     ),
                     symbol: "y"
@@ -45,13 +45,13 @@ Program(
                 operator: "+",
                 position: (                  
                   3,
-                  1,
+                  17,
                   1
                 ),
                 right: Identifier(
                   position: (                    
                     3,
-                    1,
+                    30,
                     6
                   ),
                   symbol: "offset"
@@ -62,7 +62,7 @@ Program(
           name: "add",
           position: (            
             2,
-            1,
+            9,
             4
           )
         ),
@@ -70,13 +70,13 @@ Program(
         ReturnStatement(
           position: (            
             6,
-            1,
+            11,
             6
           ),
           value: Identifier(
             position: (              
               6,
-              1,
+              15,
               3
             ),
             symbol: "add"
@@ -86,7 +86,7 @@ Program(
       name: "makeAdder",
       position: (        
         1,
-        1,
+        4,
         4
       )
     ),
@@ -96,14 +96,14 @@ Program(
       identifier: Identifier(
         position: (          
           9,
-          1,
+          10,
           5
         ),
         symbol: "adder"
       ),
       position: (        
         9,
-        1,
+        4,
         3
       ),
       value: CallExpression(
@@ -111,7 +111,7 @@ Program(
           NumericLiteral(
             position: (              
               9,
-              3,
+              25,
               2
             ),
             value: 10.0
@@ -120,14 +120,14 @@ Program(
         caller: Identifier(
           position: (            
             9,
-            1,
+            22,
             9
           ),
           symbol: "makeAdder"
         ),
         position: (          
           9,
-          1,
+          22,
           9
         )
       )
@@ -140,7 +140,7 @@ Program(
             NumericLiteral(
               position: (                
                 10,
-                5,
+                15,
                 2
               ),
               value: 10.0
@@ -149,7 +149,7 @@ Program(
             NumericLiteral(
               position: (                
                 10,
-                1,
+                18,
                 1
               ),
               value: 5.0
@@ -158,14 +158,14 @@ Program(
           caller: Identifier(
             position: (              
               10,
-              3,
+              12,
               5
             ),
             symbol: "adder"
           ),
           position: (            
             10,
-            3,
+            12,
             5
           )
         )
@@ -173,14 +173,14 @@ Program(
       caller: Identifier(
         position: (          
           10,
-          1,
+          6,
           5
         ),
         symbol: "print"
       ),
       position: (        
         10,
-        1,
+        6,
         5
       )
     )

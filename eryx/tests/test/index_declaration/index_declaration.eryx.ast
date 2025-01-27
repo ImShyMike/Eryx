@@ -5,20 +5,20 @@ Program(
       identifier: Identifier(
         position: (          
           1,
-          1,
+          7,
           3
         ),
         symbol: "obj"
       ),
       position: (        
         1,
-        1,
+        3,
         3
       ),
       value: ObjectLiteral(
         position: (          
           1,
-          1,
+          11,
           1
         ),
         properties: [          
@@ -26,13 +26,13 @@ Program(
             key: "nested",
             position: (              
               8,
-              1,
+              2,
               1
             ),
             value: ObjectLiteral(
               position: (                
                 2,
-                1,
+                14,
                 1
               ),
               properties: [                
@@ -40,13 +40,13 @@ Program(
                   key: "nested_val",
                   position: (                    
                     3,
-                    2,
+                    25,
                     1
                   ),
                   value: NumericLiteral(
                     position: (                      
                       3,
-                      1,
+                      24,
                       3
                     ),
                     value: 100.0
@@ -57,13 +57,13 @@ Program(
                   key: "nest_squared",
                   position: (                    
                     7,
-                    1,
+                    6,
                     1
                   ),
                   value: ObjectLiteral(
                     position: (                      
                       4,
-                      1,
+                      24,
                       1
                     ),
                     properties: [                      
@@ -71,13 +71,13 @@ Program(
                         key: "maybe",
                         position: (                          
                           6,
-                          1,
+                          10,
                           1
                         ),
                         value: StringLiteral(
                           position: (                            
                             5,
-                            1,
+                            27,
                             7
                           ),
                           value: "works"
@@ -98,14 +98,14 @@ Program(
       identifier: Identifier(
         position: (          
           10,
-          1,
+          8,
           3
         ),
         symbol: "lst"
       ),
       position: (        
         10,
-        1,
+        4,
         3
       ),
       value: ArrayLiteral(
@@ -113,7 +113,7 @@ Program(
           NumericLiteral(
             position: (              
               10,
-              2,
+              13,
               1
             ),
             value: 1.0
@@ -122,7 +122,7 @@ Program(
           NumericLiteral(
             position: (              
               10,
-              1,
+              16,
               1
             ),
             value: 2.0
@@ -131,7 +131,7 @@ Program(
           NumericLiteral(
             position: (              
               10,
-              1,
+              19,
               1
             ),
             value: 3.0
@@ -139,7 +139,7 @@ Program(
         ],
         position: (          
           10,
-          1,
+          12,
           1
         )
       )
@@ -153,20 +153,20 @@ Program(
           object: Identifier(
             position: (              
               12,
-              1,
+              4,
               3
             ),
             symbol: "obj"
           ),
           position: (            
             12,
-            1,
+            4,
             3
           ),
           property: Identifier(
             position: (              
               12,
-              3,
+              11,
               6
             ),
             symbol: "nested"
@@ -174,13 +174,13 @@ Program(
         ),
         position: (          
           12,
-          1,
+          4,
           3
         ),
         property: Identifier(
           position: (            
             12,
-            5,
+            22,
             10
           ),
           symbol: "nested_val"
@@ -189,13 +189,13 @@ Program(
       operator: None,
       position: (        
         12,
-        1,
+        4,
         3
       ),
       value: NumericLiteral(
         position: (          
           12,
-          1,
+          27,
           2
         ),
         value: 80.0
@@ -212,20 +212,20 @@ Program(
             object: Identifier(
               position: (                
                 13,
-                1,
+                4,
                 3
               ),
               symbol: "obj"
             ),
             position: (              
               13,
-              1,
+              4,
               3
             ),
             property: Identifier(
               position: (                
                 13,
-                3,
+                11,
                 6
               ),
               symbol: "nested"
@@ -233,13 +233,13 @@ Program(
           ),
           position: (            
             13,
-            1,
+            4,
             3
           ),
           property: Identifier(
             position: (              
               13,
-              5,
+              24,
               12
             ),
             symbol: "nest_squared"
@@ -247,13 +247,13 @@ Program(
         ),
         position: (          
           13,
-          1,
+          4,
           3
         ),
         property: Identifier(
           position: (            
             13,
-            7,
+            30,
             5
           ),
           symbol: "maybe"
@@ -262,13 +262,13 @@ Program(
       operator: None,
       position: (        
         13,
-        1,
+        4,
         3
       ),
       value: StringLiteral(
         position: (          
           13,
-          1,
+          38,
           5
         ),
         value: "yep"
@@ -281,20 +281,20 @@ Program(
         object: Identifier(
           position: (            
             15,
-            1,
+            4,
             3
           ),
           symbol: "lst"
         ),
         position: (          
           15,
-          1,
+          4,
           3
         ),
         property: NumericLiteral(
           position: (            
             15,
-            3,
+            6,
             1
           ),
           value: 0.0
@@ -303,13 +303,13 @@ Program(
       operator: None,
       position: (        
         15,
-        1,
+        4,
         3
       ),
       value: NumericLiteral(
         position: (          
           15,
-          1,
+          12,
           2
         ),
         value: 10.0
@@ -321,7 +321,7 @@ Program(
         Identifier(
           position: (            
             17,
-            3,
+            10,
             3
           ),
           symbol: "obj"
@@ -330,14 +330,14 @@ Program(
       caller: Identifier(
         position: (          
           17,
-          1,
+          6,
           5
         ),
         symbol: "print"
       ),
       position: (        
         17,
-        1,
+        6,
         5
       )
     ),
@@ -347,7 +347,7 @@ Program(
         Identifier(
           position: (            
             18,
-            3,
+            10,
             3
           ),
           symbol: "lst"
@@ -356,14 +356,14 @@ Program(
       caller: Identifier(
         position: (          
           18,
-          1,
+          6,
           5
         ),
         symbol: "print"
       ),
       position: (        
         18,
-        1,
+        6,
         5
       )
     )

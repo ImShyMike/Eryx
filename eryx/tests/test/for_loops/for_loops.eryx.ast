@@ -5,20 +5,20 @@ Program(
       identifier: Identifier(
         position: (          
           1,
-          1,
+          10,
           4
         ),
         symbol: "item"
       ),
       position: (        
         1,
-        1,
+        5,
         5
       ),
       value: NumericLiteral(
         position: (          
           1,
-          1,
+          17,
           4
         ),
         value: 4000.0
@@ -32,7 +32,7 @@ Program(
             Identifier(
               position: (                
                 4,
-                3,
+                15,
                 4
               ),
               symbol: "item"
@@ -41,14 +41,14 @@ Program(
           caller: Identifier(
             position: (              
               4,
-              1,
+              10,
               5
             ),
             symbol: "print"
           ),
           position: (            
             4,
-            1,
+            10,
             5
           )
         )
@@ -58,7 +58,7 @@ Program(
           NumericLiteral(
             position: (              
               3,
-              2,
+              15,
               1
             ),
             value: 1.0
@@ -67,7 +67,7 @@ Program(
           NumericLiteral(
             position: (              
               3,
-              1,
+              18,
               1
             ),
             value: 2.0
@@ -76,7 +76,7 @@ Program(
           NumericLiteral(
             position: (              
               3,
-              1,
+              21,
               1
             ),
             value: 3.0
@@ -85,7 +85,7 @@ Program(
           NumericLiteral(
             position: (              
               3,
-              1,
+              24,
               1
             ),
             value: 4.0
@@ -94,7 +94,7 @@ Program(
           NumericLiteral(
             position: (              
               3,
-              1,
+              27,
               1
             ),
             value: 5.0
@@ -102,19 +102,19 @@ Program(
         ],
         position: (          
           3,
-          1,
+          14,
           1
         )
       ),
       position: (        
         3,
-        1,
+        4,
         3
       ),
       variable: Identifier(
         position: (          
           3,
-          1,
+          9,
           4
         ),
         symbol: "item"
@@ -128,7 +128,7 @@ Program(
             Identifier(
               position: (                
                 8,
-                3,
+                15,
                 4
               ),
               symbol: "item"
@@ -137,14 +137,14 @@ Program(
           caller: Identifier(
             position: (              
               8,
-              1,
+              10,
               5
             ),
             symbol: "print"
           ),
           position: (            
             8,
-            1,
+            10,
             5
           )
         )
@@ -154,7 +154,7 @@ Program(
           NumericLiteral(
             position: (              
               7,
-              3,
+              20,
               1
             ),
             value: 1.0
@@ -163,7 +163,7 @@ Program(
           NumericLiteral(
             position: (              
               7,
-              1,
+              23,
               1
             ),
             value: 6.0
@@ -172,26 +172,26 @@ Program(
         caller: Identifier(
           position: (            
             7,
-            1,
+            18,
             5
           ),
           symbol: "range"
         ),
         position: (          
           7,
-          1,
+          18,
           5
         )
       ),
       position: (        
         7,
-        1,
+        4,
         3
       ),
       variable: Identifier(
         position: (          
           7,
-          1,
+          9,
           4
         ),
         symbol: "item"
@@ -203,14 +203,14 @@ Program(
       identifier: Identifier(
         position: (          
           11,
-          1,
+          10,
           3
         ),
         symbol: "lst"
       ),
       position: (        
         11,
-        1,
+        6,
         5
       ),
       value: ArrayLiteral(
@@ -218,7 +218,7 @@ Program(
           NumericLiteral(
             position: (              
               11,
-              2,
+              15,
               1
             ),
             value: 1.0
@@ -227,7 +227,7 @@ Program(
           NumericLiteral(
             position: (              
               11,
-              1,
+              18,
               1
             ),
             value: 2.0
@@ -236,7 +236,7 @@ Program(
           NumericLiteral(
             position: (              
               11,
-              1,
+              21,
               1
             ),
             value: 3.0
@@ -245,7 +245,7 @@ Program(
           NumericLiteral(
             position: (              
               11,
-              1,
+              24,
               1
             ),
             value: 4.0
@@ -254,7 +254,7 @@ Program(
           NumericLiteral(
             position: (              
               11,
-              1,
+              27,
               1
             ),
             value: 5.0
@@ -262,7 +262,7 @@ Program(
         ],
         position: (          
           11,
-          1,
+          14,
           1
         )
       )
@@ -275,7 +275,7 @@ Program(
             Identifier(
               position: (                
                 13,
-                3,
+                15,
                 4
               ),
               symbol: "item"
@@ -284,14 +284,14 @@ Program(
           caller: Identifier(
             position: (              
               13,
-              1,
+              10,
               5
             ),
             symbol: "print"
           ),
           position: (            
             13,
-            1,
+            10,
             5
           )
         )
@@ -299,20 +299,20 @@ Program(
       iterator: Identifier(
         position: (          
           12,
-          1,
+          16,
           3
         ),
         symbol: "lst"
       ),
       position: (        
         12,
-        1,
+        4,
         3
       ),
       variable: Identifier(
         position: (          
           12,
-          1,
+          9,
           4
         ),
         symbol: "item"
@@ -324,7 +324,7 @@ Program(
         Identifier(
           position: (            
             16,
-            3,
+            11,
             4
           ),
           symbol: "item"
@@ -333,14 +333,14 @@ Program(
       caller: Identifier(
         position: (          
           16,
-          1,
+          6,
           5
         ),
         symbol: "print"
       ),
       position: (        
         16,
-        1,
+        6,
         5
       )
     )

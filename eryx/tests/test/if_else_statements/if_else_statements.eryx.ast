@@ -5,7 +5,7 @@ Program(
         left: NumericLiteral(
           position: (            
             1,
-            2,
+            5,
             1
           ),
           value: 1.0
@@ -13,13 +13,13 @@ Program(
         operator: "==",
         position: (          
           1,
-          2,
+          5,
           1
         ),
         right: NumericLiteral(
           position: (            
             1,
-            1,
+            10,
             1
           ),
           value: 1.0
@@ -31,7 +31,7 @@ Program(
             StringLiteral(
               position: (                
                 4,
-                3,
+                18,
                 7
               ),
               value: "wrong"
@@ -40,21 +40,21 @@ Program(
           caller: Identifier(
             position: (              
               4,
-              1,
+              10,
               5
             ),
             symbol: "print"
           ),
           position: (            
             4,
-            1,
+            10,
             5
           )
         )
       ],
       position: (        
         1,
-        1,
+        2,
         2
       ),
       then: [        
@@ -63,7 +63,7 @@ Program(
             StringLiteral(
               position: (                
                 2,
-                3,
+                14,
                 3
               ),
               value: "1"
@@ -72,14 +72,14 @@ Program(
           caller: Identifier(
             position: (              
               2,
-              1,
+              10,
               5
             ),
             symbol: "print"
           ),
           position: (            
             2,
-            1,
+            10,
             5
           )
         )
@@ -90,7 +90,7 @@ Program(
       condition: Identifier(
         position: (          
           7,
-          2,
+          9,
           4
         ),
         symbol: "true"
@@ -99,7 +99,7 @@ Program(
       ],
       position: (        
         7,
-        1,
+        3,
         2
       ),
       then: [        
@@ -108,7 +108,7 @@ Program(
             StringLiteral(
               position: (                
                 8,
-                3,
+                29,
                 18
               ),
               value: "direct var works"
@@ -117,14 +117,14 @@ Program(
           caller: Identifier(
             position: (              
               8,
-              1,
+              10,
               5
             ),
             symbol: "print"
           ),
           position: (            
             8,
-            1,
+            10,
             5
           )
         )
@@ -138,7 +138,7 @@ Program(
             NumericLiteral(
               position: (                
                 11,
-                3,
+                7,
                 1
               ),
               value: 1.0
@@ -147,7 +147,7 @@ Program(
             NumericLiteral(
               position: (                
                 11,
-                1,
+                10,
                 1
               ),
               value: 2.0
@@ -156,7 +156,7 @@ Program(
             NumericLiteral(
               position: (                
                 11,
-                1,
+                13,
                 1
               ),
               value: 3.0
@@ -164,14 +164,14 @@ Program(
           ],
           position: (            
             11,
-            2,
+            6,
             1
           )
         ),
         operator: "!=",
         position: (          
           11,
-          2,
+          6,
           1
         ),
         right: ArrayLiteral(
@@ -179,7 +179,7 @@ Program(
             NumericLiteral(
               position: (                
                 11,
-                2,
+                20,
                 1
               ),
               value: 1.0
@@ -188,7 +188,7 @@ Program(
             NumericLiteral(
               position: (                
                 11,
-                1,
+                23,
                 1
               ),
               value: 2.0
@@ -197,7 +197,7 @@ Program(
             NumericLiteral(
               position: (                
                 11,
-                1,
+                26,
                 1
               ),
               value: 3.0
@@ -205,7 +205,7 @@ Program(
           ],
           position: (            
             11,
-            1,
+            19,
             1
           )
         )
@@ -214,7 +214,7 @@ Program(
       ],
       position: (        
         11,
-        1,
+        3,
         2
       ),
       then: [        
@@ -223,7 +223,7 @@ Program(
             StringLiteral(
               position: (                
                 12,
-                3,
+                35,
                 24
               ),
               value: "this should not happen"
@@ -232,14 +232,14 @@ Program(
           caller: Identifier(
             position: (              
               12,
-              1,
+              10,
               5
             ),
             symbol: "print"
           ),
           position: (            
             12,
-            1,
+            10,
             5
           )
         )
@@ -251,7 +251,7 @@ Program(
         left: ObjectLiteral(
           position: (            
             15,
-            2,
+            6,
             1
           ),
           properties: [            
@@ -259,13 +259,13 @@ Program(
               key: "a",
               position: (                
                 15,
-                6,
+                10,
                 1
               ),
               value: NumericLiteral(
                 position: (                  
                   15,
-                  5,
+                  9,
                   1
                 ),
                 value: 1.0
@@ -276,13 +276,13 @@ Program(
               key: "b",
               position: (                
                 15,
-                4,
+                15,
                 1
               ),
               value: NumericLiteral(
                 position: (                  
                   15,
-                  3,
+                  14,
                   1
                 ),
                 value: 6.0
@@ -293,13 +293,13 @@ Program(
         operator: "==",
         position: (          
           15,
-          2,
+          6,
           1
         ),
         right: ObjectLiteral(
           position: (            
             15,
-            1,
+            20,
             1
           ),
           properties: [            
@@ -307,13 +307,13 @@ Program(
               key: "a",
               position: (                
                 15,
-                2,
+                25,
                 1
               ),
               value: NumericLiteral(
                 position: (                  
                   15,
-                  1,
+                  24,
                   1
                 ),
                 value: 1.0
@@ -324,13 +324,13 @@ Program(
               key: "b",
               position: (                
                 15,
-                2,
+                31,
                 1
               ),
               value: NumericLiteral(
                 position: (                  
                   15,
-                  1,
+                  30,
                   1
                 ),
                 value: 6.0
@@ -343,7 +343,7 @@ Program(
       ],
       position: (        
         15,
-        1,
+        3,
         2
       ),
       then: [        
@@ -352,7 +352,7 @@ Program(
             StringLiteral(
               position: (                
                 16,
-                3,
+                26,
                 15
               ),
               value: "dicts working"
@@ -361,14 +361,14 @@ Program(
           caller: Identifier(
             position: (              
               16,
-              1,
+              10,
               5
             ),
             symbol: "print"
           ),
           position: (            
             16,
-            1,
+            10,
             5
           )
         )
@@ -379,7 +379,7 @@ Program(
       condition: Identifier(
         position: (          
           19,
-          2,
+          9,
           4
         ),
         symbol: "null"
@@ -388,7 +388,7 @@ Program(
       ],
       position: (        
         19,
-        1,
+        3,
         2
       ),
       then: [        
@@ -397,7 +397,7 @@ Program(
             StringLiteral(
               position: (                
                 20,
-                3,
+                19,
                 8
               ),
               value: "broken"
@@ -406,14 +406,14 @@ Program(
           caller: Identifier(
             position: (              
               20,
-              1,
+              10,
               5
             ),
             symbol: "print"
           ),
           position: (            
             20,
-            1,
+            10,
             5
           )
         )
@@ -425,7 +425,7 @@ Program(
         left: Identifier(
           position: (            
             23,
-            2,
+            10,
             5
           ),
           symbol: "print"
@@ -433,13 +433,13 @@ Program(
         operator: "==",
         position: (          
           23,
-          2,
+          10,
           5
         ),
         right: Identifier(
           position: (            
             23,
-            1,
+            19,
             5
           ),
           symbol: "print"
@@ -449,7 +449,7 @@ Program(
       ],
       position: (        
         23,
-        1,
+        3,
         2
       ),
       then: [        
@@ -458,7 +458,7 @@ Program(
             StringLiteral(
               position: (                
                 24,
-                3,
+                30,
                 19
               ),
               value: "native funcs work"
@@ -467,14 +467,14 @@ Program(
           caller: Identifier(
             position: (              
               24,
-              1,
+              10,
               5
             ),
             symbol: "print"
           ),
           position: (            
             24,
-            1,
+            10,
             5
           )
         )
@@ -490,14 +490,14 @@ Program(
         ReturnStatement(
           position: (            
             27,
-            1,
+            24,
             6
           ),
           value: BinaryExpression(
             left: Identifier(
               position: (                
                 27,
-                1,
+                26,
                 1
               ),
               symbol: "a"
@@ -505,13 +505,13 @@ Program(
             operator: "+",
             position: (              
               27,
-              1,
+              26,
               1
             ),
             right: Identifier(
               position: (                
                 27,
-                1,
+                30,
                 1
               ),
               symbol: "b"
@@ -522,7 +522,7 @@ Program(
       name: "add",
       position: (        
         27,
-        1,
+        5,
         4
       )
     ),
@@ -532,7 +532,7 @@ Program(
         left: Identifier(
           position: (            
             29,
-            2,
+            8,
             3
           ),
           symbol: "add"
@@ -540,13 +540,13 @@ Program(
         operator: "==",
         position: (          
           29,
-          2,
+          8,
           3
         ),
         right: Identifier(
           position: (            
             29,
-            1,
+            15,
             3
           ),
           symbol: "add"
@@ -556,7 +556,7 @@ Program(
       ],
       position: (        
         29,
-        1,
+        3,
         2
       ),
       then: [        
@@ -565,7 +565,7 @@ Program(
             StringLiteral(
               position: (                
                 30,
-                3,
+                23,
                 12
               ),
               value: "funcs work"
@@ -574,14 +574,14 @@ Program(
           caller: Identifier(
             position: (              
               30,
-              1,
+              10,
               5
             ),
             symbol: "print"
           ),
           position: (            
             30,
-            1,
+            10,
             5
           )
         )

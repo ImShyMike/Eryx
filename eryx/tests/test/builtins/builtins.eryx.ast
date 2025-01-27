@@ -6,7 +6,7 @@ Program(
       names: None,
       position: (        
         1,
-        1,
+        6,
         6
       )
     ),
@@ -17,7 +17,7 @@ Program(
       names: None,
       position: (        
         2,
-        1,
+        7,
         6
       )
     ),
@@ -30,7 +30,7 @@ Program(
       ],
       position: (        
         3,
-        1,
+        5,
         4
       )
     ),
@@ -41,7 +41,7 @@ Program(
       names: None,
       position: (        
         4,
-        1,
+        7,
         6
       )
     ),
@@ -55,7 +55,7 @@ Program(
                 NumericLiteral(
                   position: (                    
                     6,
-                    8,
+                    18,
                     1
                   ),
                   value: 1.0
@@ -64,7 +64,7 @@ Program(
                 NumericLiteral(
                   position: (                    
                     6,
-                    1,
+                    21,
                     1
                   ),
                   value: 2.0
@@ -72,7 +72,7 @@ Program(
               ],
               position: (                
                 6,
-                7,
+                17,
                 1
               )
             )
@@ -82,20 +82,20 @@ Program(
             object: Identifier(
               position: (                
                 6,
-                3,
+                11,
                 4
               ),
               symbol: "math"
             ),
             position: (              
               6,
-              3,
+              11,
               4
             ),
             property: Identifier(
               position: (                
                 6,
-                5,
+                15,
                 3
               ),
               symbol: "min"
@@ -103,7 +103,7 @@ Program(
           ),
           position: (            
             6,
-            3,
+            11,
             4
           )
         )
@@ -111,14 +111,14 @@ Program(
       caller: Identifier(
         position: (          
           6,
-          1,
+          6,
           5
         ),
         symbol: "print"
       ),
       position: (        
         6,
-        1,
+        6,
         5
       )
     )

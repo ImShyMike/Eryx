@@ -5,7 +5,7 @@ Program(
         StringLiteral(
           position: (            
             2,
-            3,
+            60,
             22
           ),
           value: "this will be printed"
@@ -14,14 +14,14 @@ Program(
       caller: Identifier(
         position: (          
           2,
-          1,
+          37,
           5
         ),
         symbol: "print"
       ),
       position: (        
         2,
-        1,
+        37,
         5
       )
     )

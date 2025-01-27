@@ -5,14 +5,14 @@ Program(
       identifier: Identifier(
         position: (          
           1,
-          1,
+          7,
           3
         ),
         symbol: "lst"
       ),
       position: (        
         1,
-        1,
+        3,
         3
       ),
       value: ArrayLiteral(
@@ -20,7 +20,7 @@ Program(
           NumericLiteral(
             position: (              
               1,
-              2,
+              12,
               1
             ),
             value: 1.0
@@ -29,7 +29,7 @@ Program(
           NumericLiteral(
             position: (              
               1,
-              1,
+              15,
               1
             ),
             value: 2.0
@@ -38,7 +38,7 @@ Program(
           NumericLiteral(
             position: (              
               1,
-              1,
+              18,
               1
             ),
             value: 3.0
@@ -46,7 +46,7 @@ Program(
         ],
         position: (          
           1,
-          1,
+          11,
           1
         )
       )
@@ -57,20 +57,20 @@ Program(
       identifier: Identifier(
         position: (          
           3,
-          1,
+          8,
           3
         ),
         symbol: "obj"
       ),
       position: (        
         3,
-        1,
+        4,
         3
       ),
       value: ObjectLiteral(
         position: (          
           3,
-          1,
+          12,
           1
         ),
         properties: [          
@@ -78,13 +78,13 @@ Program(
             key: "a",
             position: (              
               3,
-              2,
+              17,
               1
             ),
             value: NumericLiteral(
               position: (                
                 3,
-                1,
+                16,
                 1
               ),
               value: 1.0
@@ -95,13 +95,13 @@ Program(
             key: "b",
             position: (              
               3,
-              2,
+              23,
               1
             ),
             value: NumericLiteral(
               position: (                
                 3,
-                1,
+                22,
                 1
               ),
               value: 3.0
@@ -116,20 +116,20 @@ Program(
       identifier: Identifier(
         position: (          
           5,
-          1,
+          11,
           6
         ),
         symbol: "string"
       ),
       position: (        
         5,
-        1,
+        4,
         3
       ),
       value: StringLiteral(
         position: (          
           5,
-          1,
+          22,
           8
         ),
         value: "Hello,"
@@ -142,7 +142,7 @@ Program(
           left: Identifier(
             position: (              
               7,
-              3,
+              10,
               3
             ),
             symbol: "lst"
@@ -150,7 +150,7 @@ Program(
           operator: "+",
           position: (            
             7,
-            3,
+            10,
             3
           ),
           right: ArrayLiteral(
@@ -158,7 +158,7 @@ Program(
               NumericLiteral(
                 position: (                  
                   7,
-                  2,
+                  15,
                   1
                 ),
                 value: 4.0
@@ -167,7 +167,7 @@ Program(
               NumericLiteral(
                 position: (                  
                   7,
-                  1,
+                  18,
                   1
                 ),
                 value: 5.0
@@ -175,7 +175,7 @@ Program(
             ],
             position: (              
               7,
-              1,
+              14,
               1
             )
           )
@@ -184,14 +184,14 @@ Program(
       caller: Identifier(
         position: (          
           7,
-          1,
+          6,
           5
         ),
         symbol: "print"
       ),
       position: (        
         7,
-        1,
+        6,
         5
       )
     ),
@@ -202,7 +202,7 @@ Program(
           left: Identifier(
             position: (              
               8,
-              3,
+              10,
               3
             ),
             symbol: "obj"
@@ -210,13 +210,13 @@ Program(
           operator: "+",
           position: (            
             8,
-            3,
+            10,
             3
           ),
           right: ObjectLiteral(
             position: (              
               8,
-              1,
+              14,
               1
             ),
             properties: [              
@@ -224,13 +224,13 @@ Program(
                 key: "c",
                 position: (                  
                   8,
-                  2,
+                  19,
                   1
                 ),
                 value: NumericLiteral(
                   position: (                    
                     8,
-                    1,
+                    18,
                     1
                   ),
                   value: 6.0
@@ -243,14 +243,14 @@ Program(
       caller: Identifier(
         position: (          
           8,
-          1,
+          6,
           5
         ),
         symbol: "print"
       ),
       position: (        
         8,
-        1,
+        6,
         5
       )
     ),
@@ -261,7 +261,7 @@ Program(
           left: Identifier(
             position: (              
               9,
-              3,
+              13,
               6
             ),
             symbol: "string"
@@ -269,13 +269,13 @@ Program(
           operator: "+",
           position: (            
             9,
-            3,
+            13,
             6
           ),
           right: StringLiteral(
             position: (              
               9,
-              1,
+              25,
               9
             ),
             value: " World!"
@@ -285,14 +285,14 @@ Program(
       caller: Identifier(
         position: (          
           9,
-          1,
+          6,
           5
         ),
         symbol: "print"
       ),
       position: (        
         9,
-        1,
+        6,
         5
       )
     ),
@@ -303,7 +303,7 @@ Program(
           left: Identifier(
             position: (              
               10,
-              3,
+              10,
               3
             ),
             symbol: "obj"
@@ -311,13 +311,13 @@ Program(
           operator: "+",
           position: (            
             10,
-            3,
+            10,
             3
           ),
           right: ObjectLiteral(
             position: (              
               10,
-              1,
+              14,
               1
             ),
             properties: [              
@@ -325,13 +325,13 @@ Program(
                 key: "a",
                 position: (                  
                   10,
-                  2,
+                  19,
                   1
                 ),
                 value: NumericLiteral(
                   position: (                    
                     10,
-                    1,
+                    18,
                     1
                   ),
                   value: 6.0
@@ -344,14 +344,14 @@ Program(
       caller: Identifier(
         position: (          
           10,
-          1,
+          6,
           5
         ),
         symbol: "print"
       ),
       position: (        
         10,
-        1,
+        6,
         5
       )
     )

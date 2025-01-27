@@ -4,14 +4,14 @@ Program(
       name: "Colors",
       position: (        
         1,
-        1,
+        4,
         4
       ),
       values: [        
         Identifier(
           position: (            
             2,
-            1,
+            10,
             5
           ),
           symbol: "green"
@@ -20,7 +20,7 @@ Program(
         Identifier(
           position: (            
             3,
-            1,
+            10,
             5
           ),
           symbol: "black"
@@ -29,7 +29,7 @@ Program(
         Identifier(
           position: (            
             4,
-            1,
+            9,
             4
           ),
           symbol: "cyan"
@@ -38,7 +38,7 @@ Program(
         Identifier(
           position: (            
             5,
-            1,
+            12,
             7
           ),
           symbol: "magenta"
@@ -51,7 +51,7 @@ Program(
         Identifier(
           position: (            
             8,
-            3,
+            13,
             6
           ),
           symbol: "Colors"
@@ -60,14 +60,14 @@ Program(
       caller: Identifier(
         position: (          
           8,
-          1,
+          6,
           5
         ),
         symbol: "print"
       ),
       position: (        
         8,
-        1,
+        6,
         5
       )
     ),
@@ -79,20 +79,20 @@ Program(
           object: Identifier(
             position: (              
               10,
-              3,
+              13,
               6
             ),
             symbol: "Colors"
           ),
           position: (            
             10,
-            3,
+            13,
             6
           ),
           property: Identifier(
             position: (              
               10,
-              5,
+              19,
               5
             ),
             symbol: "green"
@@ -102,14 +102,14 @@ Program(
       caller: Identifier(
         position: (          
           10,
-          1,
+          6,
           5
         ),
         symbol: "print"
       ),
       position: (        
         10,
-        1,
+        6,
         5
       )
     )

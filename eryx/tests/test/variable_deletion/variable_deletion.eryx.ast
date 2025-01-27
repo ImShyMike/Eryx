@@ -5,20 +5,20 @@ Program(
       identifier: Identifier(
         position: (          
           1,
-          1,
+          7,
           1
         ),
         symbol: "x"
       ),
       position: (        
         1,
-        1,
+        5,
         5
       ),
       value: NumericLiteral(
         position: (          
           1,
-          1,
+          12,
           2
         ),
         value: 10.0
@@ -29,14 +29,14 @@ Program(
       identifier: Identifier(
         position: (          
           3,
-          1,
+          6,
           1
         ),
         symbol: "x"
       ),
       position: (        
         3,
-        1,
+        4,
         3
       )
     ),
@@ -46,20 +46,20 @@ Program(
       identifier: Identifier(
         position: (          
           5,
-          1,
+          8,
           1
         ),
         symbol: "x"
       ),
       position: (        
         5,
-        1,
+        6,
         5
       ),
       value: NumericLiteral(
         position: (          
           5,
-          1,
+          12,
           1
         ),
         value: 1.0
@@ -71,7 +71,7 @@ Program(
         Identifier(
           position: (            
             7,
-            3,
+            8,
             1
           ),
           symbol: "x"
@@ -80,14 +80,14 @@ Program(
       caller: Identifier(
         position: (          
           7,
-          1,
+          6,
           5
         ),
         symbol: "print"
       ),
       position: (        
         7,
-        1,
+        6,
         5
       )
     )
