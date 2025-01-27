@@ -4,6 +4,7 @@ from colorama import Fore
 
 from eryx.frontend.lexer import tokenize
 from eryx.frontend.parser import Parser
+from eryx.frontend.transpiler import transpile
 from eryx.runtime.environment import Environment, get_value
 from eryx.runtime.interpreter import evaluate
 from eryx.runtime.values import NullValue
@@ -24,6 +25,7 @@ def run_code(
     log_tokens: bool = False,
     environment: Environment | None = None,
     parser: Parser | None = None,
+    transpile_code: bool = False,
 ) -> str | None:
     """Run an Eryx file."""
 
@@ -47,6 +49,8 @@ def run_code(
             if log_ast:
                 print("AST:")
                 pprint(ast)
+            if transpile_code:
+                return transpile(ast.body, return_value=True)
         except RuntimeError as e:
             print(f"{Fore.RED}Parser Error{Fore.RESET}: {e}")
             return

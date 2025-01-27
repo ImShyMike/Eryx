@@ -1,15 +1,18 @@
-const codeEditor = CodeMirror.fromTextArea(document.getElementById("code-area"), {
-    lineNumbers: true,
-    mode: "text/x-go",
-    theme: "material-palenight",
-    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-    foldGutter: true,
-    extraKeys: {
-        "Ctrl-Q": function(cm) {
-            cm.foldCode(cm.getCursor());
-        }
+const codeEditor = CodeMirror.fromTextArea(
+    document.getElementById("code-area"),
+    {
+        lineNumbers: true,
+        mode: "text/x-go",
+        theme: "material-palenight",
+        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+        foldGutter: true,
+        extraKeys: {
+            "Ctrl-Q": function (cm) {
+                cm.foldCode(cm.getCursor());
+            },
+        },
     }
-});
+);
 
 const modeSelectDropdown = document.getElementById("mode-select");
 const output = document.getElementById("repl-output");
@@ -19,19 +22,21 @@ const editorHeader = document.getElementById("editor-header");
 let envId = null;
 
 async function getEnvId() {
-    return fetch('/repl', {
-        method: 'POST',
+    return fetch("/repl", {
+        method: "POST",
         headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
         },
-    }).then((response) => {
-        if (!response.ok) {
-            throw new Error('An unknown error has occurred :(');
-        }
-        return response.json();
-    }).catch(error => {
-        alert('Error fetching environment ID: ' + error.message);
-    });
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("An unknown error has occurred :(");
+            }
+            return response.json();
+        })
+        .catch((error) => {
+            alert("Error fetching environment ID: " + error.message);
+        });
 }
 
 async function runCode(code, mode, envId) {
@@ -42,39 +47,39 @@ async function runCode(code, mode, envId) {
 
     try {
         const response = await fetch(`/${mode}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),
         });
 
         if (!response.ok) {
-            throw new Error('An unknown error has occurred :(');
+            throw new Error("An unknown error has occurred :(");
         }
 
         return await response.json();
     } catch (error) {
-        alert('Error running code: ' + error.message);
+        alert("Error running code: " + error.message);
     }
 }
 
 function deleteEnvId() {
-    fetch('/repl?envId=' + envId , {
-        method: 'DELETE',
+    fetch("/repl?envId=" + envId, {
+        method: "DELETE",
         headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
         },
-    }).catch(error => {
-        alert('Error deleting environment ID: ' + error.message);
+    }).catch((error) => {
+        alert("Error deleting environment ID: " + error.message);
     });
 }
 
 function showRunning() {
     output.textContent = "Running...";
-};
+}
 
 function showExecutionResult(result) {
     output.innerHTML = result;
-};
+}
 
 document.getElementById("run-button").addEventListener("click", async () => {
     showRunning();
@@ -139,10 +144,6 @@ document.getElementById("export-button").addEventListener("click", () => {
     URL.revokeObjectURL(url);
 });
 
-document.getElementById("documentation-button").addEventListener("click", () => {
-    window.open("https://ImShyMike.github.io/Eryx", "_blank");
-});
-
 document.getElementById("settings-button").addEventListener("click", () => {
     document.getElementById("settings-menu").classList.toggle("show");
 });
@@ -170,12 +171,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const topBar = document.getElementById("topBar");
 
     setTimeout(() => {
-        if (!window.localStorage.getItem("hasSeenHelp")) {
+        if (
+            !(
+                window.localStorage.getItem("hasSeenHelp") &&
+                window.localStorage.getItem("hasSeenHelp") >
+                    Date.now() - 7 * 24 * 60 * 60 * 1000
+            )
+        ) {
             topBar.style.display = "flex";
         }
     }, 500);
 });
-  
+
 function closeTopBar() {
     const topBar = document.getElementById("topBar");
 
@@ -185,5 +192,5 @@ function closeTopBar() {
         topBar.style.display = "none";
     }, 500);
 
-    window.localStorage.setItem("hasSeenHelp", true);
+    window.localStorage.setItem("hasSeenHelp", Date.now());
 }

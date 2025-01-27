@@ -14,7 +14,7 @@ Available 'package' commands:
 ```
 
 !!! note "Default package repo"
-    The default package repository is [https://eryx-packages.shymike.tech](https://eryx-packages.shymike.tech).
+The default package repository is [https://eryx-packages.shymike.tech](https://eryx-packages.shymike.tech).
 
 ## Installing packages
 
@@ -34,7 +34,7 @@ The minimum package structure is:
 ```
 
 !!! note "Folder name"
-    The folder name does not matter, the name is set in the `package.toml` file.
+The folder name does not matter, the name is set in the `package.toml` file.
 
 ### Package Files
 
@@ -50,7 +50,7 @@ description="<description>"
 ```
 
 !!! note "README file"
-    All Eryx packages must contain a `README.md`.
+All Eryx packages must contain a `README.md`.
 
 ### Uploading Packages
 

@@ -1,6 +1,6 @@
 # Using the CLI
 
-The CLI is where all the eryx functionality is. With it you can [run programs](#running-a-program), [start the REPL](#starting-the-repl), [start the web IDE](#starting-the-web-ide), [run the all of the current version's tests](#running-the-tests) and [manage packages](#using-the-package-manager).
+The CLI is where all the eryx functionality is. With it you can [run programs](#running-a-program), [start the REPL](#starting-the-repl), [start the web IDE](#starting-the-web-ide), [run the all of the current version's tests](#running-the-tests), [transpile code into Python](#transpiling-into-python) and [manage packages](#using-the-package-manager).
 
 ```sh
 eryx [--version]
@@ -10,6 +10,7 @@ Available commands:
     run                 Run an Eryx file
     server              Start the web IDE
     test                Run the test suite
+    transpile           Transpile Eryx code
     package             Manage Eryx packages
 ```
 
@@ -32,9 +33,9 @@ eryx run [--ast] [--result] [--tokenize] <filepath>
 
 Debug arguments:
 
-* **--tokenize**: Print the tokenized code
-* **--ast**: Print the AST (Abstract Syntax Tree)
-* **--result**: Print the result of the code evaluation
+- **--tokenize**: Print the tokenized code
+- **--ast**: Print the AST (Abstract Syntax Tree)
+- **--result**: Print the result of the code evaluation
 
 ## Starting the repl
 
@@ -51,13 +52,13 @@ Eryx v0.1.3
 >
 ```
 
-To exit the REPL use either `CTRL + C` or use the command `exit()`.
+To exit the REPL use either `CTRL + C` or the command `exit()`.
 
 Debug arguments:
 
-* **--tokenize**: Print the tokenized code
-* **--ast**: Print the AST
-* **--result**: Print the result of the code evaluation
+- **--tokenize**: Print the tokenized code
+- **--ast**: Print the AST
+- **--result**: Print the result of the code evaluation
 
 ## Starting the web IDE
 
@@ -79,6 +80,19 @@ To run said tests use:
 ```sh
 eryx test
 ```
+
+## Transpiling into Python
+
+To transpile Eryx code Into python code, use the following command:
+
+```sh
+eryx transpile <filepath>
+```
+
+This will transpile your `.eryx` file into `.py`.
+
+!!! note "Transpiling code"
+The code transpiler is currently in beta and may not work sometimes. (please report any bugs [here](https://github.com/ImShyMike/Eryx/issues))
 
 ## Using the package manager
 
@@ -103,8 +117,8 @@ Install a package:
 eryx package install [--upgrade] [--server SERVER] <package-name>
 ```
 
-* **--upgrade**: Upgrades a package if it is already installed (or just install if not present)
-* **--server**: Change the package repository URL
+- **--upgrade**: Upgrades a package if it is already installed (or just install if not present)
+- **--server**: Change the package repository URL
 
 ### uninstall
 
@@ -130,7 +144,7 @@ Upload a package to a package repository:
 eryx package upload [--server SERVER] <package-name>
 ```
 
-* **--server**: Change the package repository URL
+- **--server**: Change the package repository URL
 
 ### delete
 
@@ -140,7 +154,7 @@ Delete a package from a package repository:
 eryx package delete [--server SERVER] <package-name>
 ```
 
-* **--server**: Change the package repository URL
+- **--server**: Change the package repository URL
 
 !!! note "Default package repo"
-    The default package repository is [https://eryx-packages.shymike.tech](https://eryx-packages.shymike.tech).
+The default package repository is [https://eryx-packages.shymike.tech](https://eryx-packages.shymike.tech).

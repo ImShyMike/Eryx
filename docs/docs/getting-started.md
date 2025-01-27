@@ -12,7 +12,7 @@ pip --version
 ```
 
 !!! warning "Python version"
-    The Python version **must** be above **3.10.0**
+The Python version **must** be above **3.10.0**
 
 Installing and verifying the installation is as simple as:
 

@@ -170,7 +170,7 @@ def get_value(value: RuntimeValue, inside_array: bool = False) -> str:
         result += "){ "
         for key, val in value.methods.items():
             result += f"{key}: {get_value(val, inside_array=True)}, "
-        result = result[:-2] + " }"
+        result = result[:-1] + " }"
 
     elif isinstance(value, EnumValue):
         result = f"{value.name}(" + "{ " + ", ".join(value.values.keys()) + " })"

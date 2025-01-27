@@ -13,10 +13,10 @@ print("World!"); # This is also a comment ; print("This will be printed")
 ```
 
 !!! note "Stopping line comments"
-    The `;` above makes it so the code after it is also executed, making the output:
+The `;` above makes it so the code after it is also executed, making the output:
 
     ```C linenums="1"
-    Hello, 
+    Hello,
     World!
     This will be printed
     ```
@@ -32,7 +32,7 @@ var = 100; # Redefining a variable's value does not need a semicolon
 ```
 
 !!! note "Semicolon usage"
-    All variable declarations **must** end in a semicolon (`;`)
+All variable declarations **must** end in a semicolon (`;`)
 
 ## Variable deletion
 
@@ -47,12 +47,12 @@ del var; # Delete it so it can be redeclared
 
 All currently suppoted value types are:
 
-* Numbers (currently there isn't a differnce between integers and floats)
-* Strings
-* Booleans
-* Arrays
-* Dictionaries/Objects
-* Nulls
+- Numbers (currently there isn't a differnce between integers and floats)
+- Strings
+- Booleans
+- Arrays
+- Dictionaries/Objects
+- Nulls
 
 ```sh linenums="1"
 let num = 1; # This is a number
@@ -76,7 +76,7 @@ import "math" as "meth"; # Imports the builtin 'math' module as 'meth'
 ```
 
 !!! note "Builtins"
-    Builtin modules and installed packages are imported without the ".eryx" (example: "math")
+Builtin modules and installed packages are imported without the ".eryx" (example: "math")
 
 ## Functions
 
@@ -91,19 +91,21 @@ print(add(1, 2)); # Output: 3
 
 ## Builtin functions
 
-* **print(** ... **)**: Print all values passed to it.
-* **input(** text? **)**: Get user input as a string, optionally prompt with a message.
-* **len(** item **)**: Get the length of a string, array, or object.
-* **exit(** code? **)**: Exit the program, optionally with a status code.
-* **str(** value? **)**: Convert a value to its string representation.
-* **int(** value? **)**: Convert a value to an integer.
-* **bool(** value? **)**: Convert a value to a boolean.
-* **array(** ... or string **)**: Create a new array from the given values or turn a string into an array.
-* **type(** value **)**: Get the type of the given value.
-* **range(** start, end?, step? **)**: Generates an array from start to end with step.
+| Function                                                             | Description                                                              |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| **print(** ... **)** -> null                                         | Print all values passed to it.                                           |
+| **input(** text?: str **)** -> str                                   | Get user input as a string, optionally prompt with a message.            |
+| **len(** item: str \| array \| object **)** -> number                | Get the length of a string, array, or object.                            |
+| **exit(** code?: number **)** -> null                                | Exit the program, optionally with a status code.                         |
+| **str(** value?: any **)** -> str                                    | Convert a value to its string representation.                            |
+| **int(** value?: str **)** -> number                                 | Convert a value to an integer.                                           |
+| **bool(** value?: any **)** -> number                                | Convert a value to a boolean.                                            |
+| **array(** ... \| string: str **)** -> array                         | Create a new array from the given values or turn a string into an array. |
+| **type(** value **)** -> str                                         | Get the type of the given value.                                         |
+| **range(** start: number, end?: number, step?: number **)** -> array | Generates an array from start to end with step.                          |
 
 !!! note "Values"
-    Values containing '?' are optional and '...' refers to any amount of arguments.
+Values containing '?' are optional and '...' refers to any amount of arguments.
 
 ## Builtin modules
 
@@ -111,74 +113,96 @@ Builtin modules can be imported using `import` (without ".eryx")
 
 ### math
 
-* **log(** x, base? **)**: Get the logarithm of a number with the specified base.
-* **sqrt(** x **)**: Get the square root of a number.
-* **random()**: Get a random number between 0 and 1.
-* **round(** x, digits? **)**: Round a number to the specified number of digits.
-* **sum(** array **)**: Get the sum of an array of numbers.
-* **min(** array **)**: Get the minimum value in an array of numbers.
-* **max(** array **)**: Get the maximum value in an array of numbers.
-* **abs(** x **)**: Get the absolute value of a number.
-* **pow(** base, exponent **)**: Get the result of raising a base to an exponent.
-* **log10(** x **)**: Get the base-10 logarithm of a number.
-* **sin(** x **)**: Get the sine of a number.
-* **cos(** x **)**: Get the cosine of a number.
-* **tan(** x **)**: Get the tangent of a number.
-* **asin(** x **)**: Get the arcsine of a number.
-* **acos(** x **)**: Get the arccosine of a number.
-* **atan(** x **)**: Get the arctangent of a number.
-* **floor(** x **)**: Get the largest integer less than or equal to a number.
-* **ceil(** x **)**: Get the smallest integer greater than or equal to a number.
-* **factorial(** x **)**: Get the factorial of a number.
+| Function                                                | Description                                                 |
+| ------------------------------------------------------- | ----------------------------------------------------------- |
+| **log(** x: number, base? **)** -> number               | Get the logarithm of a number with the specified base.      |
+| **sqrt(** x: number **)** -> number                     | Get the square root of a number.                            |
+| **random()** -> number                                  | Get a random number between 0 and 1.                        |
+| **round(** x: number, digits?: number **)** -> number   | Round a number to the specified number of digits.           |
+| **sum(** array: array **)** -> number                   | Get the sum of an array of numbers.                         |
+| **min(** array: array **)** -> number                   | Get the minimum value in an array of numbers.               |
+| **max(** array: array **)** -> number                   | Get the maximum value in an array of numbers.               |
+| **abs(** x: number **)** -> number                      | Get the absolute value of a number.                         |
+| **pow(** base: number, exponent: number **)** -> number | Get the result of raising a base to an exponent.            |
+| **log10(** x: number **)** -> number                    | Get the base-10 logarithm of a number.                      |
+| **sin(** x: number **)** -> number                      | Get the sine of a number.                                   |
+| **cos(** x: number **)** -> number                      | Get the cosine of a number.                                 |
+| **tan(** x: number **)** -> number                      | Get the tangent of a number.                                |
+| **asin(** x: number **)** -> number                     | Get the arcsine of a number.                                |
+| **acos(** x: number **)** -> number                     | Get the arccosine of a number.                              |
+| **atan(** x: number **)** -> number                     | Get the arctangent of a number.                             |
+| **floor(** x: number **)** -> number                    | Get the largest integer less than or equal to a number.     |
+| **ceil(** x: number **)** -> number                     | Get the smallest integer greater than or equal to a number. |
+| **factorial(** x: number **)** -> number                | Get the factorial of a number.                              |
 
 ### file
 
-* **read(** filename **)**: Read the contents of a file.
-* **write(** filename, content **)**: Write content to a file.
-* **append(** filename, content **)**: Append content to a file.
-* **exists(** filename **)**: Check if a file exists.
-* **delete(** filename **)**: Delete a file.
-* **copy(** source, destination **)**: Copy a file.
-* **move(** source, destination **)**: Move a file.
-* **list(** directory **)**: List files in a directory.
-* **size(** filename **)**: Get the size of a file.
+| Function                                              | Description                  |
+| ----------------------------------------------------- | ---------------------------- |
+| **read(** filename: str **)** -> str                  | Read the contents of a file. |
+| **write(** filename: str, content: str **)** -> null  | Write content to a file.     |
+| **append(** filename: str, content: str **)** -> null | Append content to a file.    |
+| **exists(** filename: str **)** -> bool               | Check if a file exists.      |
+| **delete(** filename: str **)** -> null               | Delete a file.               |
+| **copy(** source: str, destination: str **)** -> null | Copy a file.                 |
+| **move(** source: str, destination: str **)** -> null | Move a file.                 |
+| **list(** directory: str **)** -> array               | List files in a directory.   |
+| **size(** filename: str **)** -> number               | Get the size of a file.      |
 
 ### http
 
-* **get(** url **)**: Make a GET request to a URL.
-* **post(** url, data **)**: Make a POST request to a URL with data.
-* **put(** url, data **)**: Make a PUT request to a URL with data.
-* **delete(** url **)**: Make a DELETE request to a URL.
-* **urlencode(** data **)**: URL-encode a string.
-* **urldecode(** data **)**: URL-decode a string.
+| Function                                                    | Description                             |
+| ----------------------------------------------------------- | --------------------------------------- |
+| **get(** url: str **)** -> object{data, status}             | Make a GET request to a URL.            |
+| **post(** url: str, data: str **)** -> object{data, status} | Make a POST request to a URL with data. |
+| **put(** url: str, data: str **)** -> object{data, status}  | Make a PUT request to a URL with data.  |
+| **delete(** url: str **)** -> object{data, status}          | Make a DELETE request to a URL.         |
+| **urlencode(** data: str **)** -> str                       | URL-encode a string.                    |
+| **urldecode(** data: str **)** -> str                       | URL-decode a string.                    |
 
 ### time
 
-* **time()**: Get the current time in seconds since the epoch.
-* **sleep(** seconds **)**: Sleep for a specified number of seconds.
-* **format(** time **)**: Format a time value as a string.
-* **timezone_offset()**: Get the timezone offset in seconds.
+| Function                                 | Description                                      |
+| ---------------------------------------- | ------------------------------------------------ |
+| **time()** -> number                     | Get the current time in seconds since the epoch. |
+| **sleep(** seconds: number **)** -> null | Sleep for a specified number of seconds.         |
+| **format(** time: number **)** -> str    | Format a time value as a string.                 |
+| **timezone_offset()** -> number          | Get the timezone offset in seconds.              |
 
 ### string
 
-* **split(** string, separator **)**: Split a string by a separator.
-* **join(** array, separator **)**: Join an array of strings with a separator.
-* **replace(** string, search, replace **)**: Replace occurrences of a substring in a string.
-* **contains(** string, search **)**: Check if a string contains a substring.
+| Function                                                         | Description                                     |
+| ---------------------------------------------------------------- | ----------------------------------------------- |
+| **split(** string: str, separator: str **)** -> array            | Split a string by a separator.                  |
+| **join(** array: array, separator: str **)** -> str              | Join an array of strings with a separator.      |
+| **replace(** string: str, search: str, replace: str **)** -> str | Replace occurrences of a substring in a string. |
+| **contains(** string: str, search: str **)** -> bool             | Check if a string contains a substring.         |
 
 ### array
 
-* **push(** array, value **)**: Add a value to the end of an array.
-* **pop(** array **)**: Remove and return the last value from an array.
-* **shift(** array **)**: Remove and return the first value from an array.
-* **unshift(** array, value **)**: Add a value to the beginning of an array.
-* **sort(** array **)**: Sort an array of numbers.
+| Function                                            | Description                                      |
+| --------------------------------------------------- | ------------------------------------------------ |
+| **push(** array: array, value: any **)** -> null    | Add a value to the end of an array.              |
+| **pop(** array: array **)** -> any                  | Remove and return the last value from an array.  |
+| **shift(** array: array **)** -> any                | Remove and return the first value from an array. |
+| **unshift(** array: array, value: any **)** -> null | Add a value to the beginning of an array.        |
+| **sort(** array: array **)** -> null                | Sort an array of numbers.                        |
 
 ### os
 
-* **cwd()**: Get the current working directory.
-* **chdir(** directory **)**: Change the current working directory.
-* **env(** variable? **)**: Get the value of an environment variable or all environment variables if no variable is specified.
+| Function                                               | Description                                                                                        |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| **cwd()** -> str                                       | Get the current working directory.                                                                 |
+| **chdir(** directory: str **)** -> null                | Change the current working directory.                                                              |
+| **env(** variable?: str **)** -> str \| array[str]     | Get the value of an environment variable or all environment variables if no variable is specified. |
+| **exec(** command: str **)** -> object{output, status} | Executes a system command and return the result.                                                   |
+
+### json
+
+| Function                                   | Description                        |
+| ------------------------------------------ | ---------------------------------- |
+| **parse(** string: str **)** -> object     | Parse a string into a JSON object. |
+| **stringify(** object: object **)** -> str | Turn a JSON object into a string.  |
 
 ## Classes
 
@@ -221,7 +245,7 @@ print(Maths.sum(10, 5)); # Output: 15
 ```
 
 !!! note "Own property access"
-    Currently, there is no way to access properties from the class from within its own functions (like `self` (python) or `this` (javascript))
+Currently, there is no way to access properties from the class from within its own functions (like `self` (python) or `this` (javascript))
 
 ## Enums
 
@@ -246,37 +270,53 @@ Currently, all supported operators are:
 
 ### Arithmetic
 
-* **+** Add
-* **-** Subtract
-* **\*** Multiply
-* **/** Divide
-* **%** Modulo
-* **\*\*** Power
+- **+** Add
+- **-** Subtract
+- **\*** Multiply
+- **/** Divide
+- **%** Modulo
+- **\*\*** Power
+
+!!! note "+ Operator"
+The `+ (Add)` operator can also be used to concatenate strings, arrays and dictionaries/objects.
 
 ### Bitwise
 
-* **^** XOR
-* **&** AND
-* **|** OR
-* **<<** Left shift
-* **>>** Right shift
+- **^** XOR
+- **&** AND
+- **|** OR
+- **<<** Left shift
+- **>>** Right shift
 
 ### Logical
 
-* **&&** And
-* **||** Or
+- **&&** And
+- **||** Or
 
 ### Comparison
 
-* **==** Equals
-* **!=** Not equals
-* **<** Smaller
-* **>** Greater
-* **<=** Smaller or equal
-* **>=** Greater or equal
+- **==** Equals
+- **!=** Not equals
+- **<** Smaller
+- **>** Greater
+- **<=** Smaller or equal
+- **>=** Greater or equal
 
-!!! note "+ Operator"
-    The `+ (Add)` operator can also be used to concatenate strings, arrays and dictionaries/objects.
+### In place
+
+- **++** Add 1
+- **--** Subtract 1
+- **+=** Add
+- **-=** Subtract
+- **\*=** Multiply
+- **/=** Divide
+- **%=** Modulo
+- **^=** XOR
+- **&=** AND
+- **|=** OR
+
+!!! note "`++` and `--`"
+The `++` and `--` operators are used **before** the variable (example: `++variable`).
 
 ## Control structures
 
@@ -295,7 +335,7 @@ if (1 == 1) {
 Infinite loops, while loops and for loops are supported.
 
 !!! note "For Loops"
-    For loops can only iterate over arrays.
+For loops can only iterate over arrays.
 
 ```C linenums="1"
 loop {
@@ -318,5 +358,5 @@ for i in range(5) {
 
 Supported keywords are:
 
-* **break**: Exit the loop
-* **continue**: Skip to the next loop iteration
+- **break**: Exit the loop
+- **continue**: Skip to the next loop iteration

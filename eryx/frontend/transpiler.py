@@ -12,6 +12,7 @@ from eryx.frontend.ast import (
     ClassDeclaration,
     ContinueLiteral,
     DelStatement,
+    EnumDeclaration,
     Expression,
     ForStatement,
     FunctionDeclaration,
@@ -33,8 +34,11 @@ from eryx.frontend.parser import Parser
 parser = Parser()
 
 PRINT_OUTPUT = False
-
+IMPORT_ALIASES = {
+    "http": "requests",
+}
 OUT = {}
+
 
 def cprint(text: str | float | int = "", tabs: int = 0):
     """Print with tabs."""
@@ -99,7 +103,9 @@ def convert_value(value: Expression) -> str:
     return str(value)
 
 
-def transpile(parsed_code: List[Statement], tabs: int = 0, main: bool = False) -> None:
+def transpile(
+    parsed_code: List[Statement], tabs: int = 0, return_value: bool = False
+) -> None:
     """Main transpiler function."""
 
     for node in parsed_code:
@@ -218,12 +224,23 @@ def transpile(parsed_code: List[Statement], tabs: int = 0, main: bool = False) -
             cprint(f"[{', '.join([convert_value(v) for v in node.elements])}]", tabs)
 
         elif isinstance(node, ImportStatement):
-            if node.alias:
-                cprint(f"import {node.module} as {node.alias}", tabs)
+            name = node.module
+            if name in IMPORT_ALIASES:
+                if node.alias:
+                    cprint(f"import {IMPORT_ALIASES[name]} as {node.alias}", tabs)
+                elif node.names:
+                    cprint(
+                        f"from {IMPORT_ALIASES[name]} import {', '.join(node.names)}",
+                        tabs,
+                    )
+                else:
+                    cprint(f"import {IMPORT_ALIASES[name]} as {name}", tabs)
+            elif node.alias:
+                cprint(f"import {name} as {node.alias}", tabs)
             elif node.names:
-                cprint(f"from {node.module} import {', '.join(node.names)}", tabs)
+                cprint(f"from {name} import {', '.join(node.names)}", tabs)
             else:
-                cprint(f"import {node.module}", tabs)
+                cprint(f"import {name}", tabs)
 
         elif isinstance(node, ClassDeclaration):
             cprint(f"class {node.name}:", tabs)
@@ -263,44 +280,35 @@ def transpile(parsed_code: List[Statement], tabs: int = 0, main: bool = False) -
                     cprint(f"{method.identifier} = {method.value}", tabs)
             cprint()
 
+        elif isinstance(node, EnumDeclaration):
+            cprint(f"class {node.name}:")
+            for value in node.values:
+                if isinstance(value, Identifier):
+                    cprint(f'{value.symbol} = "{value.symbol}"', tabs + 1)
+
         else:
             print(f"Unkown type: {type(node)}")
 
-    if main:
+    if return_value:
         output = OUT.get("out", "")
         OUT["out"] = ""
         return output[:-1]
 
 
 if __name__ == "__main__":
-    SAMPLE_CODE = """class Test {
-    yes: String
-    a: Number
-    c: Boolean
-    g
-
-    abc: Number = 1;
-
-    func sum() {
-        print("doing something...");
-    }
-
-    func nothing() {}
+    SAMPLE_CODE = """enum Colors {
+    green
+    black
+    cyan
+    magenta
 }
 
-let tst = Test("aaaaa", 7, true, 1);
+print(Colors)
 
-tst.sum();
-tst.sum();
-
-print(Test)
-
-print(tst)
-
-print(tst.a, Test.abc)"""
+print(Colors.green)"""
 
     parsed = parser.produce_ast(SAMPLE_CODE)
-    print(transpile(parsed.body, main=True))
+    print(transpile(parsed.body, return_value=True))
 
     # with open("sample.py", "w", encoding="utf8") as f:
     # f.write(transpile(parsed))

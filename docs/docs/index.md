@@ -2,7 +2,7 @@
 
 Eryx is simple and easy to use programming language based on python/javascript that was made to be easy to learn and use.
 !!! note "Dynamic Typing in Eryx"
-    Eryx is a **dynamically typed language**. This means variables can change their type during runtime.
+Eryx is a **dynamically typed language**. This means variables can change their type during runtime.
 
 ## Useful urls
 
@@ -31,7 +31,8 @@ Available commands:
     repl                Start the REPL
     run                 Run an Eryx file
     server              Start the web IDE
-    test                Run the test suite
+    test                Run the test suite~
+    transpile           Transpile Eryx code
     package             Manage Eryx packages
 ```
 

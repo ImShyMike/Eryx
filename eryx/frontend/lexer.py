@@ -1,9 +1,9 @@
 """Lexer for the fronted."""
 
+from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Any, Tuple
 
-from attr import dataclass
 from colorama import Fore
 
 from eryx.utils.errors import syntax_error
@@ -137,10 +137,12 @@ class Token:
 
     value: Any
     type: TokenType
-    position: tuple[int, int, int] # (line, col, length)
+    position: tuple[int, int, int]  # (line, col, length)
 
 
-def is_skipable(char: str, current_line: int, current_col: int) -> Tuple[bool, int, int]:
+def is_skipable(
+    char: str, current_line: int, current_col: int
+) -> Tuple[bool, int, int]:
     """Check if a character is a skipable character."""
     if char in ("\n", "\r"):
         return (True, current_line + 1, 0)  # Skip newlines and carriage returns
@@ -162,6 +164,7 @@ def pop_src(src: list[str], current_col: int, count: int = 1) -> Tuple[str, int]
     for _ in range(count):
         result += src.pop(0)
     return result, current_col + len(result)
+
 
 def tokenize(source_code: str) -> list[Token]:
     """Tokenize the source code."""
@@ -186,7 +189,9 @@ def tokenize(source_code: str) -> list[Token]:
             continue
 
         # Skip skipable characters
-        skipable, current_line, current_col = is_skipable(src[0], current_line, current_col)
+        skipable, current_line, current_col = is_skipable(
+            src[0], current_line, current_col
+        )
         if skipable:  # spaces, newlines, tabs, and carriage returns
             _, current_col = pop_src(src, current_col)
             continue

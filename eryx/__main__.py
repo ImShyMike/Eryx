@@ -86,6 +86,10 @@ def main():
     # 'test' command
     subparsers.add_parser("test", help="Run the test suite")
 
+    # 'transpile' command
+    transpile_parser = subparsers.add_parser("transpile", help="Transpile Eryx code")
+    transpile_parser.add_argument("filepath", type=str, help="File path to transpile")
+
     # 'package' command
     package_parser = subparsers.add_parser("package", help="Manage Eryx packages")
     package_subparsers = package_parser.add_subparsers(
@@ -143,6 +147,7 @@ def main():
     if args.command == "repl":
         # Start the REPL
         start_repl(log_ast=args.ast, log_result=args.result, log_tokens=args.tokenize)
+
     elif args.command == "run":
         # Run an Eryx file
         try:
@@ -158,6 +163,7 @@ def main():
             print(
                 f"eryx: can't open file '{args.filepath}': [Errno {e.args[0]}] {e.args[1]}"
             )
+
     elif args.command == "server":
         # Start the web IDE
         start_ide(
@@ -165,9 +171,36 @@ def main():
             port=args.port,
             disable_file_io=args.no_file_io,
         )
+
     elif args.command == "test":
         # Run the test suite
         pytest.main(["-v", os.path.join(current_path, "tests", "run_tests.py")])
+
+    elif args.command == "transpile":
+        if os.path.exists(args.filepath):
+            with open(args.filepath, "r", encoding="utf8") as file:
+                source_code = file.read()
+                transpiled_code = run_code(source_code, transpile_code=True)
+
+            if transpiled_code:
+                new_filepath = args.filepath + ".py"
+                if os.path.exists(new_filepath):
+                    response = input(
+                        f"File '{os.path.basename(new_filepath)}' "
+                        "already exists. Overwrite? (y/n): "
+                    )
+                    if response.lower() != "y":
+                        print("Operation cancelled.")
+                        return
+
+                with open(new_filepath, "w", encoding="utf8") as file:
+                    file.write(transpiled_code)
+                print(f"Transpiled code saved to '{new_filepath}'")
+            else:
+                print("Transpilation failed.")
+        else:
+            print(f"File '{args.filepath}' not found.")
+
     elif args.command == "package":
         # Handling package subcommands
         try:
@@ -185,8 +218,10 @@ def main():
                 package_parser.print_help()
         except KeyboardInterrupt:
             print("\nOperation cancelled.")
+
     elif args.command is None:
         arg_parser.print_help()
+
     else:
         print(f"Unknown command: {args.command}")
 

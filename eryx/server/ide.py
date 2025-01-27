@@ -14,6 +14,7 @@ from flask import Flask, abort, jsonify, render_template, request
 from eryx.__init__ import CURRENT_VERSION
 from eryx.frontend.lexer import Token, tokenize
 from eryx.frontend.parser import Parser
+from eryx.frontend.transpiler import transpile
 from eryx.runtime.environment import Environment, get_value
 from eryx.runtime.interpreter import evaluate
 from eryx.utils.pretty_print import pprint
@@ -105,7 +106,7 @@ def index():
 @app.route("/<action>", methods=["POST"])
 def handle_actions(action):
     """Handle all IDE actions."""
-    if action not in ["tokenize", "ast", "run", "result"]:
+    if action not in ["tokenize", "ast", "run", "result", "transpile"]:
         abort(404)
 
     request_json = request.get_json()
@@ -132,6 +133,14 @@ def handle_actions(action):
             if action == "ast":
                 return jsonify(
                     {"result": ansi_to_html(pprint(ast_nodes, print_output=False))}
+                )
+            if action == "transpile":
+                return jsonify(
+                    {
+                        "result": ansi_to_html(
+                            transpile(ast_nodes.body, return_value=True)
+                        )
+                    }
                 )
         except (SyntaxError, RuntimeError, SystemExit) as e:
             if isinstance(e, SystemExit):

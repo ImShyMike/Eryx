@@ -1,4 +1,26 @@
-body, html {
+/* Catppuccin Macchiato theme https://catppuccin.com/palette */
+/* Edited to be a bit darker */
+:root {
+    --base: #282c3b;
+    --mantle: #222535;
+    --crust: #1d1f2e;
+
+    /* Text colors */
+    --text: #b6c0e5;
+
+    /* Overlay colors */
+    --surface0: #393d4f;
+    --surface1: #474c62;
+
+    /* Colors */
+    --blue: #7b99d5;
+    --lavender: #a7a9da;
+    --red: #c96e72;
+    --sky: #87bbc5;
+}
+
+body,
+html {
     font-family: system-ui, sans-serif;
     margin: 0;
     padding: 0;
@@ -6,22 +28,22 @@ body, html {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    background-color: #24273a;
-    color: #cdd6f4;
+    background-color: var(--base);
+    color: var(--text);
     overflow: hidden;
 }
 
 .header {
-    background-color: #1e2030;
+    background-color: var(--mantle);
     position: relative;
-    color: #cdd6f4;
+    color: var(--text);
     padding: 10px 20px;
     font-size: 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.05);
-    border-bottom: 1px solid #363a4f;
+    border-bottom: 1px solid var(--surface0);
 }
 
 .actions {
@@ -33,8 +55,8 @@ body, html {
 }
 
 .button {
-    background-color: #1e2030;
-    color: #181926 !important;
+    background-color: var(--mantle);
+    color: var(--mantle) !important;
     border: none;
     padding: 8px 8px;
     cursor: pointer;
@@ -47,7 +69,7 @@ body, html {
 }
 
 .icon-button:hover {
-    background-color: #91d7e3;
+    background-color: var(--sky);
 }
 
 .dropdown {
@@ -59,8 +81,8 @@ body, html {
     position: absolute;
     right: 0;
     top: 100%;
-    background-color: #1e2030;
-    border: 1px solid #494d64;
+    background-color: var(--mantle);
+    border: 1px solid var(--surface0);
     border-radius: 4px;
     padding: 10px;
     z-index: 1000;
@@ -76,13 +98,13 @@ body, html {
 .settings-menu button {
     display: block;
     margin-bottom: 8px;
-    color: #cdd6f4;
+    color: var(--text);
 }
 
 .name {
     font-size: 2rem;
 
-    background: linear-gradient(90deg, #c6a0f6  0%, #a8e6cf 100%);
+    background: linear-gradient(90deg, #c6a0f6 0%, #a8e6cf 100%);
 
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -92,8 +114,9 @@ body, html {
 }
 
 .CodeMirror {
-    border: 1px solid #363a4f;
+    border: 1px solid var(--crust);
     height: calc(100% - 2px);
+    user-select: none;
 }
 
 .container {
@@ -113,7 +136,8 @@ body, html {
     height: 100%;
 }
 
-.editor, .repl {
+.editor,
+.repl {
     flex: 1;
     padding: 10px;
     box-sizing: border-box;
@@ -123,35 +147,47 @@ body, html {
 }
 
 .editor {
-    border-right: 2px solid #494d64;
-    background-color: #24273a;
+    border-right: 2px solid var(--surface0);
+    background-color: var(--base);
     height: 100%;
 }
 
 .repl {
-    background-color: #1e2030;
+    background-color: var(--mantle);
     overflow: auto;
 }
 
-.editor-container, .repl-header {
+.editor-container,
+.repl-header {
     font-size: 1.2rem;
-    color: #cdd6f4;
+    color: var(--text);
     padding: 5px;
     font-weight: bold;
     margin-bottom: 10px;
-    background-color: #363a4f;
+    background-color: var(--crust);
     border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .output {
     white-space: pre-wrap;
     font-family: monospace;
-    color: #cdd6f4;
+    color: var(--text);
 }
 
-#clear-memory, #clear-console {
-    background-color: #8aadf4;
-    color: #1e2030;
+#mode-select {
+    background-color: var(--crust);
+    border: 3px solid var(--surface1);
+    border-radius: 6px;
+    color: var(--text);
+}
+
+#clear-memory,
+#clear-console {
+    background-color: var(--blue);
+    color: var(--mantle);
     border: none;
     padding: 8px 15px;
     cursor: pointer;
@@ -163,22 +199,21 @@ body, html {
     transition: background-color 0.3s ease;
 }
 
-#clear-memory:hover, #clear-console:hover {
-    background-color: #7dc4e4;
+#clear-memory:hover,
+#clear-console:hover {
+    background-color: var(--sky);
 }
 
 #redirect {
     text-decoration: none;
 }
 
-#name-edit {
-    margin-right: 8px;
-    margin-left: 4px;
+.menu-topic {
+    margin: 0px 0px 10px 0px;
 }
 
-.editor-container {
-    display: flex;
-    align-items: center;
+.icon {
+    margin-left: 4px;
 }
 
 #editor-header {
@@ -190,8 +225,8 @@ body, html {
     bottom: -100px;
     left: 0;
     width: 100%;
-    background-color: #b7bdf8;
-    color: #1e2030;
+    background-color: var(--lavender);
+    color: var(--mantle);
     padding: 10px 20px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     justify-content: space-between;
@@ -230,7 +265,7 @@ body, html {
     background: none;
     border: none;
     font-size: 20px;
-    color: #181926;
+    color: var(--mantle);
     cursor: pointer;
     margin-right: 40px;
     margin-left: 5px;
@@ -238,8 +273,8 @@ body, html {
 }
 
 ::selection {
-    background-color: #8aadf4;
-    color: #1e2030;
+    background-color: var(--blue);
+    color: var(--mantle);
 }
 
 @media (max-width: 768px) {
@@ -255,7 +290,8 @@ body, html {
         gap: 20px;
     }
 
-    body, html {
+    body,
+    html {
         font-size: 0.9rem;
     }
 

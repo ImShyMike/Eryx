@@ -23,7 +23,7 @@
     </div>
     <div class="container">
         <div class="header">
-            <span><a title="Github" id="redirect" href="https://github.com/ImShyMike/Eryx"><strong class="name">Eryx</strong></a> v{{ version }}</span>
+            <span><a title="Homepage" id="redirect" href="https://eryx.shymike.tech"><strong class="name">Eryx</strong></a> v{{ version }}</span>
             <div class="actions">
                 <button class="button" id="run-button" title="Run">
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#cad3f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
@@ -35,24 +35,33 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#cad3f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 8l-5-5-5 5M12 4.2v10.3"/></svg>
                 </button>
                 <button class="button" id="documentation-button" title="Documentation">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24"><path stroke="#cad3f5" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v13H7a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h12M9 3v14m7 0v4"/></svg>                      
+                    <a href="https://ImShyMike.github.io/Eryx"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24"><path stroke="#cad3f5" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v13H7a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h12M9 3v14m7 0v4"/></svg></a>
                 </button>
             </div>
             <div class="dropdown">
                 <button class="button" id="settings-button" title="Settings"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#cad3f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></button>
                 <div class="settings-menu" id="settings-menu">
-                    <label>
+                    <h5 class="menu-topic">Execution Settings</h5>
+                    <label class="text">
+                        Mode:
                         <select id="mode-select">
-                            <option value="run">Run</option>
+                            <option value="run" selected>Run</option>
                             <option value="result">Result</option>
                             <option value="tokenize">Tokenize</option>
                             <option value="ast">AST</option>
+                            <option value="transpile">Transpile</option>
                         </select>
                     </label>
-                    <label class="text">
+
+                    <h5 class="menu-topic">Memory Options</h5>
+                    <label class="text" style="margin-bottom: 10px;">
                         <input type="checkbox" id="memory-enabled"> REPL Mode
+                        <br><small>Enable this to preserve variables across axecutions.</small>
                     </label>
-                    <button class="button" id="clear-memory">Reload REPL</button>
+
+                    <button class="button" id="clear-memory">Restart REPL</button>
+
+                    <h5 class="menu-topic">Output</h5>
                     <button class="button" id="clear-console">Clear Output</button>
                 </div>
             </div>
@@ -60,7 +69,7 @@
         <div class="ide">
             <div class="editor">
                 <div class="editor-container">
-                    <svg id="name-edit" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cad3f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path><polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon></svg>
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cad3f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path><polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon></svg>
                     <div class="editor-header" id="editor-header">example.eryx</div>
                 </div>
                 <textarea id="code-area">func isSorted(arr, idx) {
@@ -77,7 +86,12 @@ let nums = [1, 2, 3, 4, 5];
 print(nums, isSorted(nums, len(nums) - 1))</textarea>
             </div>
             <div class="repl">
-                <div class="repl-header">Output</div>
+                <div class="repl-header">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 12 12">
+                        <path stroke="#cad3f5" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m2 3 3 3-3 3m5 0h3M4"/>
+                    </svg>
+                    Output
+                </div>
                 <div class="output" id="repl-output"></div>
             </div>
         </div>
