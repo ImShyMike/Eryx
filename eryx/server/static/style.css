@@ -54,9 +54,13 @@ html {
     text-align: center;
 }
 
+#cover {
+    display: none;
+}
+
 .button {
     background-color: var(--mantle);
-    color: var(--mantle) !important;
+    color: var(--mantle);
     border: none;
     padding: 8px 8px;
     cursor: pointer;
@@ -281,18 +285,50 @@ html {
     .ide {
         flex-direction: column;
     }
-}
 
-@media (max-width: 500px) {
+    #cover {
+        display: block;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 7%;
+        background-color: var(--crust);
+        z-index: 5;
+    }
+
+    .button {
+        background-color: var(--crust);
+    }
+
     .actions {
         position: fixed;
         top: calc(100% - 50px);
         gap: 20px;
+        z-index: 10;
     }
 
+    .editor {
+        flex: 0.97;
+    }
+
+    #settings-button {
+        background-color: var(--mantle);
+    }
+
+    .dropdown {
+        background-color: var(--mantle);
+    }
+}
+
+@media (max-width: 500px) {
     body,
     html {
         font-size: 0.9rem;
+    }
+
+    .actions {
+        gap: 15px;
     }
 
     .top-bar {

@@ -55,6 +55,7 @@ Available commands:
     run                 Run an Eryx file
     server              Start the web IDE
     test                Run the test suite
+    transpile           Transpile Eryx code
     package             Manage Eryx packages
 ```
 

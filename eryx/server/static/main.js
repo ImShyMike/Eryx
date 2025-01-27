@@ -14,6 +14,7 @@ const codeEditor = CodeMirror.fromTextArea(
     }
 );
 
+const editor = document.getElementById("editor");
 const modeSelectDropdown = document.getElementById("mode-select");
 const output = document.getElementById("repl-output");
 const keepMemory = document.getElementById("memory-enabled");
