@@ -462,6 +462,7 @@ def delete_package():
         return jsonify({"error": "Missing JSON data"}), 400
 
     package = json_data.get("package")
+    version = json_data.get("version")
     api_key = request.headers.get("X-API-Key")
 
     if not api_key:
@@ -484,6 +485,23 @@ def delete_package():
     if (not package.author_id == user.id) and (not user.is_admin):
         return jsonify({"error": "You are not the owner of this package"}), 403
 
+    if version:
+        release = get_release_by_version(package.id, version)
+        if not release:
+            return jsonify({"error": "Release not found"}), 404
+
+        db.session.delete(release)
+        db.session.commit()
+
+        try:
+            client.remove_object(PACKAGES_BUCKET, release.file_path)
+        except S3Error as e:
+            print("Failed to delete file", e)
+            return jsonify({"error": "Failed to delete package"}), 500
+
+        return jsonify({"message": "Release deleted successfully"}), 200
+
+    # If version is not specified
     for release in package.releases.all():
         db.session.delete(release)
         try:

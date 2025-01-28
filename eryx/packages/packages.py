@@ -377,6 +377,8 @@ def delete_package(package: str, server: str) -> None:
 
     key = get_key(server)
 
+    package_name, version = package.split("@") if "@" in package else (package, None)
+
     while True:
         answer = input(
             f"Are you sure you want to delete '{package}'\n"
@@ -391,10 +393,15 @@ def delete_package(package: str, server: str) -> None:
 
     try:
         response = None
+        payload = (
+            {"package": package_name}
+            if not version
+            else {"package": package_name, "version": version}
+        )
         response = requests.post(
             f"{server}/api/delete",
             headers={"X-API-Key": str(key), "Content-Type": "application/json"},
-            data=json.dumps({"package": package}).encode("utf-8"),
+            data=json.dumps(payload).encode("utf-8"),
             timeout=5,
         )
         response.raise_for_status()
