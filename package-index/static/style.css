@@ -104,6 +104,7 @@ main {
 
 #stuff {
     flex-grow: 1;
+    padding: 0 15px;
 }
 
 .grow {
@@ -173,11 +174,13 @@ button:hover {
 }
 
 #stats {
-    width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
+    text-align: center;
+    padding: 10px;
 }
 
 #stats p {
@@ -199,7 +202,10 @@ button:hover {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
     text-align: left;
+    max-height: 50%;
 }
 
 
@@ -211,12 +217,24 @@ button:hover {
 
 #top-packages ul {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
     padding: 0;
     margin: 0;
     gap: 1rem;
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 75%;;
+    position: relative;
+    scroll-behavior: smooth;
+    padding: 5px;
 }
+
 
 #top-packages li {
     background-color: var(--surface0);
@@ -227,13 +245,23 @@ button:hover {
     width: calc(33.333% - 1rem);
     box-sizing: border-box;
     transition: background-color 0.3s;
-    max-height: 300px;
+    min-height: 120px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    width: 100%;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    list-style-type: none;
+    margin: 0;
     justify-content: space-between;
     transition: border 0.5s ease;
     cursor: pointer;
+    box-shadow: -4px 4px 4px rgba(0, 0, 0, 0.2);
+}
+
+footer p {
+    margin: 10px 0;
 }
 
 #top-packages li:hover {
@@ -275,11 +303,6 @@ button:hover {
 
 /* Ensure scrolling only happens on smaller screens */
 @media (max-width: 900px) {
-    #top-packages li {
-        width: calc(50% - 1rem);
-        /* 2 items per row */
-    }
-
     :root {
         font-size: 1.05rem;
     }
@@ -288,14 +311,21 @@ button:hover {
     footer {
         padding: 0px 1.3rem;
     }
+
+    header h1 {
+        font-size: 1.3rem !important;
+    }
+
+    header a {
+        font-size: 1.3rem !important;
+    }
+
+    #top-packages ul {
+        max-width: 90%;
+    }
 }
 
 @media (max-width: 600px) {
-    #top-packages li {
-        width: 100%;
-        /* 1 item per row */
-    }
-
     :root {
         font-size: 0.95rem;
     }

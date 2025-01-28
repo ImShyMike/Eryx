@@ -30,7 +30,7 @@
     </header>
 
     <main class="grow">
-        <h3 id="stuff" class="text centered">Official package index for the <span class="strikethrough">best</span> worst programming language ever!</h3>
+        <h4 id="stuff" class="text centered">Official package index for the <span class="strikethrough">best</span> worst programming language ever!</h4>
         <section id="top-packages" class="grow">
             <h2 class="text centered">Top Packages</h2>
             <ul>
@@ -38,7 +38,7 @@
                     <li class="package-container" data-url="{{ url_for('package_detail', package_name=package.name) }}">
                         <div class="name-version">
                             <h3><a href="{{ url_for('package_detail', package_name=package.name) }}">{{ package.name }}</a></h3>
-                            <h4>{{ package.latest_version }}</h4>
+                            <h4>v{{ package.latest_version }}</h4>
                         </div>
                         <p>{{ package.description }}</p>
                         <div class="package-info">

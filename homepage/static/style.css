@@ -139,22 +139,9 @@ button {
 }
 
 button:hover {
-    filter: brightness(90%);
-    padding-right: 50px;
-}
-
-button .hover {
-    position: absolute;
-    right: -20px;
-    top: 50%;
-    transform: translateY(-50%);
-    opacity: 0;
-    transition: all 0.3s ease;
-}
-
-button:hover .hover {
-    right: 15px;
-    opacity: 1;
+    transform: translateY(-0.2em) scale(1.025);
+    box-shadow: 0 0 1em 0em rgba(0, 0, 0, 0.5);
+    filter: brightness(95%);
 }
 
 #example-container {
