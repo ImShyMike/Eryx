@@ -202,7 +202,6 @@ button:hover {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     text-align: left;
     max-height: 50%;
