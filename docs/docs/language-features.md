@@ -204,6 +204,23 @@ Builtin modules can be imported using `import` (without ".eryx")
 | **parse(** string: str **)** -> object     | Parse a string into a JSON object. |
 | **stringify(** object: object **)** -> str | Turn a JSON object into a string.  |
 
+### logging
+
+| Function                              | Description                 |
+| ------------------------------------- | --------------------------- |
+| **debug(** message: str **)** -> null | Print a debug log message.  |
+| **info(** message: str **)** -> null  | Print an info log message.  |
+| **warn(** message: str **)** -> null  | Print a warn log message.   |
+| **error(** message: str **)** -> null | Print an error log message. |
+
+### crypto
+
+| Function                           | Description            |
+| ---------------------------------- | ---------------------- |
+| **sha1(** data: str **)** -> str   | Hash data with SHA1.   |
+| **sha256(** data: str **)** -> str | Hash data with SHA256. |
+| **md5(** data: str **)** -> str    | Hash data with MD5.    |
+
 ## Classes
 
 Classes can be made using the `class` keyword:

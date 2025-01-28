@@ -47,7 +47,7 @@ from eryx.runtime.values import (
     RuntimeValue,
     StringValue,
 )
-from eryx.utils.pretty_print import pprint
+from eryx.utils.pretty_print import fmt_pos, pprint
 
 
 # Custom exception to manage returns/breaks/continues
@@ -70,11 +70,6 @@ class ContinueException(Exception):
 
     def __init__(self):
         pass
-
-
-def fmt_pos(node: Statement) -> str:
-    """Format position."""
-    return f" (Ln {node.position[0]}, Col {node.position[1] - node.position[2]})"
 
 
 # STATEMENTS
@@ -882,7 +877,7 @@ def eval_call_expression(
     func = evaluate(expression.caller, environment)
 
     if isinstance(func, NativeFunctionValue):
-        result = func.call(arguments, environment)
+        result = func.call(arguments, environment, expression)
         return result
 
     if isinstance(func, ClassValue):

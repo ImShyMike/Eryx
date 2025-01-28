@@ -1,16 +1,19 @@
 """Environment class for storing variables (also called scope)."""
 
+import hashlib
 import json
 import math
 import os
 import random
 import sys
 import time
+from datetime import datetime
 from pathlib import Path
 from urllib.parse import quote, unquote
 
 import requests
 
+from eryx.frontend.ast import CallExpression
 from eryx.runtime.values import (
     ArrayValue,
     BooleanValue,
@@ -24,6 +27,7 @@ from eryx.runtime.values import (
     RuntimeValue,
     StringValue,
 )
+from eryx.utils.pretty_print import fmt_pos
 
 BUILTINS = {}
 
@@ -182,7 +186,9 @@ def get_value(value: RuntimeValue, inside_array: bool = False) -> str:
 
 
 # Native functions
-def _print(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _print(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     values = []
     for arg in args:
         values.append(get_value(arg))
@@ -190,7 +196,9 @@ def _print(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return NullValue()
 
 
-def _range(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _range(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if len(args) == 1:
         if isinstance(args[0], NumberValue):
             return ArrayValue([NumberValue(i) for i in range(int(args[0].value))])
@@ -220,7 +228,9 @@ def _range(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot create range with {args}")
 
 
-def _input(args: list[RuntimeValue], env: Environment) -> RuntimeValue:
+def _input(
+    args: list[RuntimeValue], env: Environment, __: CallExpression
+) -> RuntimeValue:
     if env.disable_file_io:
         raise RuntimeError("Input function is disabled")
     if args and isinstance(args[0], StringValue):
@@ -230,7 +240,7 @@ def _input(args: list[RuntimeValue], env: Environment) -> RuntimeValue:
     return StringValue(result)
 
 
-def _len(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _len(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if isinstance(args[0], StringValue):
         return NumberValue(len(args[0].value))
 
@@ -243,7 +253,9 @@ def _len(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot get length of {args[0]}")
 
 
-def _exit(args: list[RuntimeValue], env: Environment) -> RuntimeValue:
+def _exit(
+    args: list[RuntimeValue], env: Environment, __: CallExpression
+) -> RuntimeValue:
     if env.disable_file_io:
         raise RuntimeError("Exit function is disabled")
     if args and isinstance(args[0], NumberValue):
@@ -251,13 +263,13 @@ def _exit(args: list[RuntimeValue], env: Environment) -> RuntimeValue:
     sys.exit(0)
 
 
-def _str(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _str(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if len(args) == 0:
         return StringValue("")
     return StringValue(get_value(args[0]))
 
 
-def _int(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _int(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if len(args) == 0:
         return NumberValue(0)
     if isinstance(args[0], (StringValue, NumberValue)):
@@ -265,7 +277,7 @@ def _int(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot convert {args[0]} to int")
 
 
-def _bool(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _bool(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if len(args) == 0:
         return BooleanValue(False)
     if isinstance(args[0], (StringValue, NumberValue, BooleanValue)):
@@ -277,7 +289,9 @@ def _bool(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot convert {args[0]} to bool")
 
 
-def _array(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _array(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if len(args) == 1:
         if isinstance(args[0], StringValue):
             return ArrayValue([StringValue(char) for char in args[0].value])
@@ -288,18 +302,20 @@ def _array(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return ArrayValue(args)
 
 
-def _type(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _type(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     return StringValue(type(args[0]).__name__)
 
 
 # TIME FUNCTIONS
 
 
-def _time(_: list[RuntimeValue], __: Environment) -> RuntimeValue:
+def _time(_: list[RuntimeValue], __: Environment, ___: CallExpression) -> RuntimeValue:
     return NumberValue(time.time())
 
 
-def _sleep(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _sleep(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing time argument")
     if not isinstance(args[0], NumberValue):
@@ -308,7 +324,9 @@ def _sleep(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return NullValue()
 
 
-def _formatTime(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _formatTime(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing time argument")
     if not isinstance(args[0], NumberValue):
@@ -318,14 +336,18 @@ def _formatTime(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     )
 
 
-def _getTimezoneOffset(_: list[RuntimeValue], __: Environment) -> RuntimeValue:
+def _getTimezoneOffset(
+    _: list[RuntimeValue], __: Environment, ___: CallExpression
+) -> RuntimeValue:
     return NumberValue(time.timezone)
 
 
 # FILE FUNCTIONS
 
 
-def _readFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _readFile(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing filename argument")
     if not isinstance(args[0], StringValue):
@@ -337,7 +359,9 @@ def _readFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
         raise RuntimeError(f"File '{args[0].value}' not found") from e
 
 
-def _writeFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _writeFile(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if len(args) < 2:
         raise RuntimeError("Missing filename or content argument")
     if not isinstance(args[0], StringValue):
@@ -352,7 +376,9 @@ def _writeFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return NullValue()
 
 
-def _appendFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _appendFile(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if len(args) < 2:
         raise RuntimeError("Missing filename or content argument")
     if not isinstance(args[0], StringValue):
@@ -367,7 +393,9 @@ def _appendFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return NullValue()
 
 
-def _fileExists(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _fileExists(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing filename argument")
     if not isinstance(args[0], StringValue):
@@ -375,7 +403,9 @@ def _fileExists(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return BooleanValue(Path(args[0].value).exists())
 
 
-def _deleteFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _deleteFile(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing filename argument")
     if not isinstance(args[0], StringValue):
@@ -387,7 +417,9 @@ def _deleteFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return NullValue()
 
 
-def _copyFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _copyFile(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if len(args) < 2:
         raise RuntimeError("Missing source or destination argument")
     if not isinstance(args[0], StringValue):
@@ -401,7 +433,9 @@ def _copyFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return NullValue()
 
 
-def _moveFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _moveFile(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if len(args) < 2:
         raise RuntimeError("Missing source or destination argument")
     if not isinstance(args[0], StringValue):
@@ -415,7 +449,9 @@ def _moveFile(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return NullValue()
 
 
-def _listFiles(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _listFiles(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing directory argument")
     if not isinstance(args[0], StringValue):
@@ -428,7 +464,9 @@ def _listFiles(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
         raise RuntimeError(f"Directory '{args[0].value}' not found") from e
 
 
-def _fileSize(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _fileSize(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing filename argument")
     if not isinstance(args[0], StringValue):
@@ -442,7 +480,9 @@ def _fileSize(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
 # HTTP FUNCTIONS
 
 
-def _getRequest(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _getRequest(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing URL argument")
     if not isinstance(args[0], StringValue):
@@ -459,7 +499,9 @@ def _getRequest(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
         raise RuntimeError(f"Error fetching URL '{args[0].value}'") from e
 
 
-def _postRequest(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _postRequest(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if len(args) < 2:
         raise RuntimeError("Missing URL or data argument")
     if not isinstance(args[0], StringValue):
@@ -478,7 +520,9 @@ def _postRequest(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
         raise RuntimeError(f"Error fetching URL '{args[0].value}'") from e
 
 
-def _putRequest(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _putRequest(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if len(args) < 2:
         raise RuntimeError("Missing URL or data argument")
     if not isinstance(args[0], StringValue):
@@ -497,7 +541,9 @@ def _putRequest(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
         raise RuntimeError(f"Error fetching URL '{args[0].value}'") from e
 
 
-def _deleteRequest(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _deleteRequest(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing URL argument")
     if not isinstance(args[0], StringValue):
@@ -514,7 +560,9 @@ def _deleteRequest(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
         raise RuntimeError(f"Error fetching URL '{args[0].value}'") from e
 
 
-def _urlEncode(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _urlEncode(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing data argument")
     if not isinstance(args[0], StringValue):
@@ -522,7 +570,9 @@ def _urlEncode(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return StringValue(quote(args[0].value))
 
 
-def _urlDecode(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _urlDecode(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing data argument")
     if not isinstance(args[0], StringValue):
@@ -533,7 +583,7 @@ def _urlDecode(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
 # MATH FUNCTIONS
 
 
-def _sqrt(args: list[RuntimeValue], _: Environment):
+def _sqrt(args: list[RuntimeValue], _: Environment, __: CallExpression):
     if not args:
         raise RuntimeError("Missing number value")
     if not isinstance(args[0], NumberValue):
@@ -541,11 +591,13 @@ def _sqrt(args: list[RuntimeValue], _: Environment):
     return NumberValue(args[0].value ** 0.5)
 
 
-def _random(_: list[RuntimeValue], __: Environment):
+def _random(_: list[RuntimeValue], __: Environment, ___: CallExpression):
     return NumberValue(random.random())
 
 
-def _round(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _round(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if len(args) == 0:
         return NumberValue(0)
     if len(args) == 1:
@@ -557,7 +609,7 @@ def _round(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot round {args[0]}")
 
 
-def _sum(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _sum(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if len(args) == 0:
         return NumberValue(0)
     if isinstance(args[0], ArrayValue):
@@ -566,7 +618,7 @@ def _sum(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot sum {args[0]}")
 
 
-def _min(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _min(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if len(args) == 0:
         return NumberValue(0)
     if isinstance(args[0], ArrayValue):
@@ -575,7 +627,7 @@ def _min(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot get min for {args[0]}")
 
 
-def _max(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _max(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if len(args) == 0:
         return NumberValue(0)
     if isinstance(args[0], ArrayValue):
@@ -584,7 +636,7 @@ def _max(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot get max for {args[0]}")
 
 
-def _abs(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _abs(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if len(args) == 0:
         return NumberValue(0)
     if isinstance(args[0], NumberValue):
@@ -592,7 +644,7 @@ def _abs(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot get abs for {args[0]}")
 
 
-def _pow(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _pow(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if len(args) < 2:
         raise RuntimeError("Missing base or exponent argument")
     if all(isinstance(i, NumberValue) for i in args):
@@ -600,7 +652,7 @@ def _pow(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot get pow for {args}")
 
 
-def _log(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _log(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if len(args) < 2:
         raise RuntimeError("Missing base or value argument")
     if all(isinstance(i, NumberValue) for i in args):
@@ -608,7 +660,9 @@ def _log(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot get log for {args}")
 
 
-def _log10(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _log10(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing value argument")
     if isinstance(args[0], NumberValue):
@@ -616,7 +670,7 @@ def _log10(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot get log10 for {args[0]}")
 
 
-def _sin(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _sin(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing value argument")
     if isinstance(args[0], NumberValue):
@@ -624,7 +678,7 @@ def _sin(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot get sin for {args[0]}")
 
 
-def _cos(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _cos(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing value argument")
     if isinstance(args[0], NumberValue):
@@ -632,7 +686,7 @@ def _cos(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot get cos for {args[0]}")
 
 
-def _tan(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _tan(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing value argument")
     if isinstance(args[0], NumberValue):
@@ -640,7 +694,7 @@ def _tan(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot get tan for {args[0]}")
 
 
-def _asin(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _asin(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing value argument")
     if isinstance(args[0], NumberValue):
@@ -648,7 +702,7 @@ def _asin(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot get asin for {args[0]}")
 
 
-def _acos(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _acos(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing value argument")
     if isinstance(args[0], NumberValue):
@@ -656,7 +710,7 @@ def _acos(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot get acos for {args[0]}")
 
 
-def _atan(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _atan(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing value argument")
     if isinstance(args[0], NumberValue):
@@ -664,7 +718,9 @@ def _atan(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot get atan for {args[0]}")
 
 
-def _floor(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _floor(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing value argument")
     if isinstance(args[0], NumberValue):
@@ -672,7 +728,7 @@ def _floor(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot get floor for {args[0]}")
 
 
-def _ceil(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _ceil(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing value argument")
     if isinstance(args[0], NumberValue):
@@ -680,7 +736,9 @@ def _ceil(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     raise RuntimeError(f"Cannot get ceil for {args[0]}")
 
 
-def _factorial(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _factorial(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing value argument")
     if isinstance(args[0], NumberValue):
@@ -691,7 +749,9 @@ def _factorial(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
 # STRING FUNCTIONS
 
 
-def _splitString(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _splitString(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if len(args) < 2:
         raise RuntimeError("Missing string or separator argument")
     if not isinstance(args[0], StringValue):
@@ -701,7 +761,9 @@ def _splitString(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return ArrayValue([StringValue(s) for s in args[0].value.split(args[1].value)])
 
 
-def _joinStrings(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _joinStrings(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if len(args) < 2:
         raise RuntimeError("Missing array or separator argument")
     if not isinstance(args[0], ArrayValue):
@@ -713,7 +775,9 @@ def _joinStrings(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return StringValue(args[1].value.join([s.value for s in args[0].elements]))  # type: ignore
 
 
-def _replaceString(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _replaceString(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if len(args) < 3:
         raise RuntimeError("Missing string, search or replace argument")
     if not isinstance(args[0], StringValue):
@@ -725,7 +789,9 @@ def _replaceString(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return StringValue(args[0].value.replace(args[1].value, args[2].value))
 
 
-def _stringContains(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _stringContains(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if len(args) < 2:
         raise RuntimeError("Missing string or search argument")
     if not isinstance(args[0], StringValue):
@@ -738,7 +804,7 @@ def _stringContains(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
 # ARRAY FUNCTIONS
 
 
-def _push(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _push(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if len(args) < 2:
         raise RuntimeError("Missing array or value argument")
     if not isinstance(args[0], ArrayValue):
@@ -747,7 +813,7 @@ def _push(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return NullValue()
 
 
-def _pop(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _pop(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing array argument")
     if not isinstance(args[0], ArrayValue):
@@ -755,7 +821,9 @@ def _pop(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return args[0].elements.pop()
 
 
-def _shift(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _shift(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing array argument")
     if not isinstance(args[0], ArrayValue):
@@ -763,7 +831,9 @@ def _shift(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return args[0].elements.pop(0)
 
 
-def _unshift(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _unshift(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if len(args) < 2:
         raise RuntimeError("Missing array or value argument")
     if not isinstance(args[0], ArrayValue):
@@ -772,7 +842,7 @@ def _unshift(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return NullValue()
 
 
-def _sort(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _sort(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing array argument")
     if not isinstance(args[0], ArrayValue):
@@ -786,11 +856,15 @@ def _sort(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
 # OS FUNCTIONS
 
 
-def _getCwd(_: list[RuntimeValue], __: Environment) -> RuntimeValue:
+def _getCwd(
+    _: list[RuntimeValue], __: Environment, ___: CallExpression
+) -> RuntimeValue:
     return StringValue(str(Path.cwd()))
 
 
-def _changeDir(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _changeDir(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing directory argument")
     if not isinstance(args[0], StringValue):
@@ -799,7 +873,9 @@ def _changeDir(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return NullValue()
 
 
-def _getEnv(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _getEnv(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if not args:
         return ObjectValue(
             {key: StringValue(value) for key, value in os.environ.items()}
@@ -809,7 +885,7 @@ def _getEnv(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
     return StringValue(os.environ.get(args[0].value, ""))
 
 
-def _exec(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _exec(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing command argument")
     if not isinstance(args[0], StringValue):
@@ -854,7 +930,9 @@ def value_to_json(value: RuntimeValue) -> dict | list | str | int | float | bool
     raise RuntimeError("Invalid value")
 
 
-def _jsonParse(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _jsonParse(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing JSON string argument")
     if not isinstance(args[0], StringValue):
@@ -867,13 +945,99 @@ def _jsonParse(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
         raise RuntimeError("Invalid JSON string") from e
 
 
-def _jsonStringify(args: list[RuntimeValue], _: Environment) -> RuntimeValue:
+def _jsonStringify(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
     if not args:
         raise RuntimeError("Missing JSON object argument")
     try:
         return StringValue(json.dumps(value_to_json(args[0])))
     except Exception as e:
         raise RuntimeError("Invalid JSON object") from e
+
+
+# LOGGING FUNCTIONS
+
+
+def print_log(log_type: str, expression: CallExpression, text: str) -> None:
+    """Print a log message."""
+    print(
+        f"{datetime.now().strftime('%d-%m-%Y %H:%M:%S.%f')} |"
+        f" {fmt_pos(expression)[2:-1]} | {log_type}  - {text}"
+    )
+
+
+def _debugLog(
+    args: list[RuntimeValue], _: Environment, expression: CallExpression
+) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing message argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Message must be a string")
+    print_log("DEBUG", expression, args[0].value)
+    return NullValue()
+
+
+def _infoLog(
+    args: list[RuntimeValue], _: Environment, expression: CallExpression
+) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing message argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Message must be a string")
+    print_log("INFO", expression, args[0].value)
+    return NullValue()
+
+
+def _warnLog(
+    args: list[RuntimeValue], _: Environment, expression: CallExpression
+) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing message argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Message must be a string")
+    print_log("WARN", expression, args[0].value)
+    return NullValue()
+
+
+def _errorLog(
+    args: list[RuntimeValue], _: Environment, expression: CallExpression
+) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing message argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Message must be a string")
+    print_log("ERROR", expression, args[0].value)
+    return NullValue()
+
+
+# CRYPTO FUNCTIONS
+
+
+def _sha1(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing data argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Data must be a string")
+    return StringValue(hashlib.sha1(args[0].value.encode()).hexdigest())
+
+
+def _sha256(
+    args: list[RuntimeValue], _: Environment, __: CallExpression
+) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing data argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Data must be a string")
+    return StringValue(hashlib.sha256(args[0].value.encode()).hexdigest())
+
+
+def _md5(args: list[RuntimeValue], _: Environment, __: CallExpression) -> RuntimeValue:
+    if not args:
+        raise RuntimeError("Missing data argument")
+    if not isinstance(args[0], StringValue):
+        raise RuntimeError("Data must be a string")
+    return StringValue(hashlib.md5(args[0].value.encode()).hexdigest())
 
 
 # Declare builtin modules
@@ -976,6 +1140,24 @@ BUILTINS["json"] = ObjectValue(
     {
         "parse": NativeFunctionValue(_jsonParse),
         "stringify": NativeFunctionValue(_jsonStringify),
+    },
+    immutable=True,
+)
+
+BUILTINS["logging"] = ObjectValue(
+    {
+        "info": NativeFunctionValue(_infoLog),
+        "warn": NativeFunctionValue(_warnLog),
+        "error": NativeFunctionValue(_errorLog),
+    },
+    immutable=True,
+)
+
+BUILTINS["crypto"] = ObjectValue(
+    {
+        "sha1": NativeFunctionValue(_sha1),
+        "sha256": NativeFunctionValue(_sha256),
+        "md5": NativeFunctionValue(_md5),
     },
     immutable=True,
 )

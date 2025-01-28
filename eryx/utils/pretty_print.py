@@ -4,6 +4,8 @@ Module to pretty print a class instance for debugging. (the code is actual garba
 
 from colorama import Fore
 
+from eryx.frontend.parser import Statement
+
 
 # https://stackoverflow.com/questions/395735/how-to-check-whether-a-variable-is-a-class-or-not
 def isclass(cls):
@@ -19,6 +21,10 @@ def isenum(cls):
 def isfunction(func):
     """Check if a variable is a function."""
     return str(type(func)) == "<class 'function'>"
+
+def fmt_pos(node: Statement) -> str:
+    """Format position."""
+    return f" (Ln {node.position[0]}, Col {node.position[1] - node.position[2]})"
 
 
 COLOR_DICT = {
