@@ -13,3 +13,4 @@ markdown
 bleach
 markupsafe
 humanize
+psycopg2 #Flask-SQLAlchemy doesnt auto import this for some reason
