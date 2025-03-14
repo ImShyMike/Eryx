@@ -125,8 +125,8 @@ def install(package: str, server: str, upgrade: bool) -> None:
             except FileNotFoundError:
                 pass
 
+        response = None
         try:
-            response = None
             response = requests.get(f"{server}download/{package}", timeout=5)
             response.raise_for_status()
             version = (
@@ -170,8 +170,8 @@ def install(package: str, server: str, upgrade: bool) -> None:
             except FileNotFoundError:
                 pass
 
+        response = None
         try:
-            response = None
             response = requests.get(
                 f"{server}download/{package_name}/{version}", timeout=5
             )
@@ -340,8 +340,8 @@ def upload_package(package_folder: str, server: str) -> None:
             return
 
         # Upload the package
+        response = None
         try:
-            response = None
             response = requests.post(
                 f"{server}/api/upload",
                 headers={"X-API-Key": str(key)},
@@ -391,8 +391,8 @@ def delete_package(package: str, server: str) -> None:
             return
         print("Invalid input")
 
+    response = None
     try:
-        response = None
         payload = (
             {"package": package_name}
             if not version

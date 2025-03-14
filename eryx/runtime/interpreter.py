@@ -372,6 +372,8 @@ def eval_for_statement(
         raise RuntimeError(
             "Expected an identifier as a variable." + fmt_pos(for_statement)
         )
+
+    variable_value = None
     try:
         iterator = evaluate(for_statement.iterator, environment)
         if not isinstance(iterator, ArrayValue):
@@ -379,7 +381,6 @@ def eval_for_statement(
                 "Expected an array as an iterator." + fmt_pos(for_statement)
             )
 
-        variable_value = None
         try:
             variable_value = environment.lookup_variable(for_statement.variable.symbol)
         except RuntimeError:
