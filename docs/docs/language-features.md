@@ -331,6 +331,8 @@ The `+ (Add)` operator can also be used to concatenate strings, arrays and dicti
 - **^=** XOR
 - **&=** AND
 - **|=** OR
+- **<<=** Left shift
+- **>>=** Right shift
 
 !!! note "`++` and `--`"
 The `++` and `--` operators are used **before** the variable (example: `++variable`).

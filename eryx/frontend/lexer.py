@@ -108,6 +108,11 @@ DOUBLE_CHAR_TOKENS = {
     "--": TokenType.BINARY_OPERATOR,
 }
 
+TRIPLE_CHAR_TOKENS = {
+    "<<=": TokenType.ASSIGNMENT_OPERATOR,
+    ">>=": TokenType.ASSIGNMENT_OPERATOR,
+}
+
 KEYWORDS = {
     "let": TokenType.LET,
     "const": TokenType.CONST,
@@ -144,18 +149,19 @@ def is_skipable(
     char: str, current_line: int, current_col: int
 ) -> Tuple[bool, int, int]:
     """Check if a character is a skipable character."""
-    if char in ("\n", "\r"):
-        return (True, current_line + 1, 0)  # Skip newlines and carriage returns
+    if char in ("\n"):
+        return (True, current_line + 1, 0)  # Skip newlines (increment line count)
 
     return (
         char
         in (
             " ",
             "\t",
+            "\r"
         ),
         current_line,
         current_col,
-    )  # Skip spaces and tabs
+    )  # Skip spaces, tabs carriage returns
 
 
 def pop_src(src: list[str], current_col: int, count: int = 1) -> Tuple[str, int]:
@@ -179,7 +185,7 @@ def tokenize(source_code: str) -> list[Token]:
 
         # Skip comments
         if comment:
-            if src[0] in ("\n", "\r"):
+            if src[0] in ("\n"):
                 current_line += 1  # Increment the line count
                 current_col = 0  # Reset the column count
                 comment = False
@@ -196,7 +202,15 @@ def tokenize(source_code: str) -> list[Token]:
             _, current_col = pop_src(src, current_col)
             continue
 
-        # Check for double character tokens first
+        # Check for triple character tokens first
+        if len(src) > 2 and src[0] + src[1] + src[2] in TRIPLE_CHAR_TOKENS:
+            token, current_col = pop_src(src, current_col, 3)
+            tokens.append(
+                Token(token, TRIPLE_CHAR_TOKENS[token], (current_line, current_col, 3))
+            )
+            continue
+
+        # Then check for double character tokens
         if len(src) > 1 and src[0] + src[1] in DOUBLE_CHAR_TOKENS:
             token, current_col = pop_src(src, current_col, 2)
             tokens.append(
@@ -204,7 +218,7 @@ def tokenize(source_code: str) -> list[Token]:
             )
             continue
 
-        # Check for single character tokens
+        # Finally check for single character tokens
         if src[0] in SINGLE_CHAR_TOKENS:
             token, current_col = pop_src(src, current_col)
 

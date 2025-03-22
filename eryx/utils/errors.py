@@ -3,7 +3,7 @@
 from colorama import Fore
 
 
-def get_line_strings(source_code: str, line: int) -> str:
+def get_line_string(source_code: str, line: int) -> str:
     """Get the line string from the source code."""
     lines = source_code.split("\n")
 
@@ -16,9 +16,8 @@ def syntax_error(
     """Handle a syntax error."""
     line, col, length = pos  # Unpack the position tuple
     col -= length - 1  # Subtract the length of the error from the column
-    print(pos)
 
-    line_text = get_line_strings(source_code, line)  # Get a snippet of the code
+    line_text = get_line_string(source_code, line)  # Get a snippet of the code
 
     error_line = (
         f"{Fore.CYAN}{str(line).rjust(3)}"

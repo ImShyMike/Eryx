@@ -103,6 +103,7 @@ def install(package: str, server: str, upgrade: bool) -> None:
 
     print(f"Installing package '{package}'")
 
+    # If not installing specific version
     if "@" not in package:
         package_name = package
         if CONFIG["installed_packages"] and package in CONFIG["installed_packages"]:
@@ -144,6 +145,7 @@ def install(package: str, server: str, upgrade: bool) -> None:
                 print("Error downloading package: ", e)
             return
 
+    # If installing specific version
     else:
         package_name, version = package.split("@")
 

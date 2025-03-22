@@ -111,6 +111,7 @@ def handle_actions(action):
 
     request_json = request.get_json()
     source_code = request_json["source_code"]
+    # Tokenize while capturing the output
     if action == "tokenize":
         output_buffer = io.StringIO()
         with redirect_stdout(output_buffer):
@@ -130,11 +131,14 @@ def handle_actions(action):
     with redirect_stdout(output_buffer):
         try:
             ast_nodes = parser.produce_ast(source_code)
+            
             if action == "ast":
+                # If AST is requested just return the pretty printed AST
                 return jsonify(
                     {"result": ansi_to_html(pprint(ast_nodes, print_output=False))}
                 )
             if action == "transpile":
+                # If transpilation is requested, return the transpiled code
                 return jsonify(
                     {
                         "result": ansi_to_html(
@@ -149,6 +153,7 @@ def handle_actions(action):
                 )
             return jsonify({"error": ansi_to_html(Fore.RED + str(e))})
     try:
+        # Handle REPL logic to keep track of environments
         env = None
         is_repl = False
         if "env_uuid" in request_json:
@@ -158,11 +163,14 @@ def handle_actions(action):
         env = env["env"] if env else Environment(disable_file_io=config.disable_file_io)
         output_buffer = io.StringIO()
         with redirect_stdout(output_buffer):
+            # If the action is not AST or transpile, evaluate the code
             result = evaluate(ast_nodes, env)
+            # If result is requested, return the result
             if action == "result":
                 return jsonify(
                     {"result": ansi_to_html(pprint(result, print_output=False))}
                 )
+        # "default" action, it runs the code and returns the output
         if action == "run":
             output = output_buffer.getvalue()
             if is_repl and not output:

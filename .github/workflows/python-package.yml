@@ -13,39 +13,52 @@ jobs:
         python-version: ["3.10"]
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install pytest pylint build
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Analysing the code with pylint
-      run: |
-        pylint --fail-under=9.5 --disable=R0401,E0611,E0401 $(git ls-files '*.py')
-    - name: Test with pytest
-      run: |
-        pytest -v ./eryx/tests/run_test.py
-    - name: Build package
-      run: |
-        python -m build
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: python-package
-        path: dist/
-    - name: Create GitHub beta release
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: beta-${{ github.run_number }}
-        name: "Beta Release ${{ github.run_number }}"
-        body: |
-          This is an automated beta release containing build artifacts from the latest commit.
-        draft: false # Automatically publish the release
-        prerelease: true
-        files: dist/*
-      env:
-        GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest pylint build
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Analysing the code with pylint
+        run: |
+          pylint --fail-under=9.5 --disable=R0401,E0611,E0401 $(git ls-files '*.py')
+
+      - name: Test with pytest
+        run: |
+          pytest -v ./eryx/tests/run_test.py
+
+      - name: Get version from __init__.py
+        id: get_version
+        run: |
+          VERSION=$(grep -Po '(?<=CURRENT_VERSION\s*=\s*")[^"]*' ./eryx/__init__.py)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Build package
+        run: |
+          python -m build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package
+          path: dist/
+
+      - name: Create GitHub beta release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: beta-${{ github.run_number }}
+          name: "Beta Release v${{ steps.get_version.outputs.version }}"
+          body: |
+            This is an automated beta release containing build artifacts from the latest commit.
+          draft: false # Automatically publish the release
+          prerelease: true
+          files: dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
