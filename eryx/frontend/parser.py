@@ -276,7 +276,8 @@ class Parser:
 
             value = self.parse_assignment_expression()
             return AssignmentExpression(left.position, left, value)
-        elif self.at().type == TokenType.ASSIGNMENT_OPERATOR:
+
+        if self.at().type == TokenType.ASSIGNMENT_OPERATOR:
             operator = self.next().value
             value = self.parse_assignment_expression()
             return AssignmentExpression(left.position, left, value, operator)
