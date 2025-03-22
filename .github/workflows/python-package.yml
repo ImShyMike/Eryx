@@ -37,7 +37,7 @@ jobs:
       - name: Get version from __init__.py
         id: get_version
         run: |
-          VERSION=$(grep -Po '(?<=CURRENT_VERSION\s*=\s*")[^"]*' ./eryx/__init__.py)
+          VERSION=$(grep -o 'CURRENT_VERSION = "[^"]*"' ./eryx/__init__.py | sed 's/.*= "//; s/"//')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Build package
