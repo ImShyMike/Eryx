@@ -200,6 +200,26 @@ code {
     color: var(--yellow);
 }
 
+footer {
+    background-color: var(--mantle);
+    color: var(--subtext0);
+    text-align: center;
+    width: 100%;
+    margin-top: 20px;
+    border-top: 1px solid var(--surface1);
+    font-size: 0.75rem;
+}
+
+a:link {
+    color: var(--blue);
+    text-decoration: none;
+}
+
+a:visited {
+    color: var(--blue);
+    text-decoration: none;
+}
+
 @media (max-width: 800px) {
     #name {
         font-size: 3rem;

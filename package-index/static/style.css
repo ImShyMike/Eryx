@@ -263,6 +263,16 @@ footer p {
     margin: 10px 0;
 }
 
+footer a:link {
+    color: var(--blue);
+    text-decoration: none;
+}
+
+footer a:visited {
+    color: var(--blue);
+    text-decoration: none;
+}
+
 #top-packages li:hover {
     border: 1px solid var(--lavender);
 }
