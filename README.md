@@ -63,7 +63,7 @@ Available commands:
 
 A huge thanks to [tylerlaceby](https://www.youtube.com/@tylerlaceby) for his ["Build a Custom Scripting Language In Typescript"](https://www.youtube.com/playlist?list=PL_2VhOvlMk4UHGqYCLWc6GO8FaPl8fQTh) series.
 
-Fronted design inspired by [modu](https://github.com/cyteon/modu) from [Cyteon](https://github.com/cyteon).
+Frontend design inspired by [modu](https://github.com/cyteon/modu) from [Cyteon](https://github.com/cyteon).
 
 ## License
 
