@@ -157,4 +157,4 @@ eryx package delete [--server SERVER] <package-name>
 - **--server**: Change the package repository URL
 
 !!! note "Default package repo"
-The default package repository is [https://eryx-packages.shymike.tech](https://eryx-packages.shymike.tech).
+The default package repository is [https://eryx-packages.shymike.dev](https://eryx-packages.shymike.dev).

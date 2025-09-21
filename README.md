@@ -1,4 +1,4 @@
-# [![Eryx](https://raw.githubusercontent.com/ImShyMike/Eryx/refs/heads/main/assets/eryx_small.png)](https://eryx.shymike.tech)
+# [![Eryx](https://raw.githubusercontent.com/ImShyMike/Eryx/refs/heads/main/assets/eryx_small.png)](https://eryx.shymike.dev)
 
 [![Package Build](https://img.shields.io/github/actions/workflow/status/ImShyMike/Eryx/python-package.yml?label=Package)](https://github.com/ImShyMike/Eryx/actions/workflows/python-package.yml)
 [![Documentation](https://img.shields.io/github/deployments/ImShyMike/Eryx/github-pages?label=Documentation)](https://shymike.is-a.dev/Eryx)
@@ -10,7 +10,7 @@
 [pypi_url]: https://pypi.org/project/Eryx
 [license]: https://github.com/ImShyMike/Eryx/blob/main/LICENSE
 
-## What is [Eryx](https://eryx.shymike.tech)?
+## What is [Eryx](https://eryx.shymike.dev)?
 
  Eryx is a decently fast and simple dynamically typed programming language similar to javascript/python.
 
@@ -23,11 +23,11 @@ Full documentation is available at [https://ImShyMike.github.io/Eryx](https://Im
 
 ## Online IDE
 
-An online IDE is hosted at [https://eryx-ide.shymike.tech](https://eryx-ide.shymike.tech). It utilizes the `eryx server` command but has the `os` and `file` modules and `input()` and `exit()` functions disabled (using `--no-file-io`).
+An online IDE is hosted at [https://eryx-ide.shymike.dev](https://eryx-ide.shymike.dev). It utilizes the `eryx server` command but has the `os` and `file` modules and `input()` and `exit()` functions disabled (using `--no-file-io`).
 
 ## Package Index
 
-The default package index is available at [https://eryx-packages.shymike.tech](https://eryx-packages.shymike.tech), it displays the top packages, allows users to upload packages and view other's packages.
+The default package index is available at [https://eryx-packages.shymike.dev](https://eryx-packages.shymike.dev), it displays the top packages, allows users to upload packages and view other's packages.
 
 ## Installation
 

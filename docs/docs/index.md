@@ -6,10 +6,10 @@ Eryx is a **dynamically typed language**. This means variables can change their 
 
 ## Useful urls
 
-- [:fontawesome-solid-house:](https://eryx.shymike.tech) Homepage
+- [:fontawesome-solid-house:](https://eryx.shymike.dev) Homepage
 - [:material-github:](https://github.com/ImShyMike/Eryx) GitHub Repository
-- [:fontawesome-solid-box-archive:](https://eryx-packages.shymike.tech) Package Index
-- [:material-console:](https://eryx-ide.shymike.tech) Online IDE
+- [:fontawesome-solid-box-archive:](https://eryx-packages.shymike.dev) Package Index
+- [:material-console:](https://eryx-ide.shymike.dev) Online IDE
 - [:fontawesome-brands-python:](https://pypi.org/project/Eryx) PyPI Package
 
 ## Quick start

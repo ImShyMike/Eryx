@@ -14,7 +14,7 @@ packages_dir = os.path.dirname(os.path.realpath(__file__))
 
 CFG_FILE = "packages.json"
 INSTALLED_PACKAGES_LOC = "installed"
-DEFAULT_SERVER = "https://eryx-packages.shymike.tech"
+DEFAULT_SERVER = "https://eryx-packages.shymike.dev"
 
 
 def get_config() -> dict:

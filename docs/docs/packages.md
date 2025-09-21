@@ -14,7 +14,7 @@ Available 'package' commands:
 ```
 
 !!! note "Default package repo"
-The default package repository is [https://eryx-packages.shymike.tech](https://eryx-packages.shymike.tech).
+The default package repository is [https://eryx-packages.shymike.dev](https://eryx-packages.shymike.dev).
 
 ## Installing packages
 
@@ -64,14 +64,14 @@ This will ask you for an API key (you will only have to do this once):
 
 ```sh
 Please visit the following url to get your API key:
-https://eryx-packages.shymike.tech/dashboard
+https://eryx-packages.shymike.dev/dashboard
 
 API Key:
 ```
 
 After entering your API key, the package will be uploaded and available at:
 
-`https://eryx-packages.shymike.tech/package/<package-name>`
+`https://eryx-packages.shymike.dev/package/<package-name>`
 
 And you can install it using:
 
