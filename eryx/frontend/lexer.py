@@ -153,12 +153,7 @@ def is_skipable(
         return (True, current_line + 1, 0)  # Skip newlines (increment line count)
 
     return (
-        char
-        in (
-            " ",
-            "\t",
-            "\r"
-        ),
+        char in (" ", "\t", "\r"),
         current_line,
         current_col,
     )  # Skip spaces, tabs carriage returns

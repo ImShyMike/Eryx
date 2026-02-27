@@ -27,7 +27,7 @@ def run_command(command, description):
 
 # 1. Run pylint
 PYLINT_CMD = (
-    "pylint --fail-under=9.5 --disable=R0401,E0611,E0401 " # ignore cyclic-import, no-name-in-module and import-error
+    "pylint --fail-under=9.5 --disable=R0401,E0611,E0401 "  # ignore cyclic-import, no-name-in-module and import-error
     + " ".join([file.strip() for file in os.popen("git ls-files *.py").readlines()])
 )
 run_command(PYLINT_CMD, "Linting with pylint")

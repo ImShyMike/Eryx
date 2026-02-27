@@ -22,6 +22,7 @@ def isfunction(func):
     """Check if a variable is a function."""
     return str(type(func)) == "<class 'function'>"
 
+
 def fmt_pos(node: Statement) -> str:
     """Format position."""
     return f" (Ln {node.position[0]}, Col {node.position[1] - node.position[2]})"

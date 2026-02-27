@@ -131,7 +131,7 @@ def handle_actions(action):
     with redirect_stdout(output_buffer):
         try:
             ast_nodes = parser.produce_ast(source_code)
-            
+
             if action == "ast":
                 # If AST is requested just return the pretty printed AST
                 return jsonify(
