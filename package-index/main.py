@@ -96,7 +96,8 @@ humanize = Humanize(app)
 app.wsgi_app = ProxyFix(
     app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1
 )
-app.wsgi_app = ForceHTTPS(app.wsgi_app)
+if os.getenv("FORCE_HTTPS", "false").lower() == "true":
+    app.wsgi_app = ForceHTTPS(app.wsgi_app)
 app.secret_key = os.getenv("SECRET_KEY")
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=7)
 
@@ -757,10 +758,13 @@ if __name__ == "__main__":
         db.create_all()
     # if not client.bucket_exists(PACKAGES_BUCKET):
     #    client.make_bucket(PACKAGES_BUCKET)
+
+    host = os.getenv("HOST", "0.0.0.0")
+    port = int(os.getenv("PORT", 5000))
+    
     app.run(
-        host="127.0.0.1",
-        port=5000,
-        ssl_context=("cert.pem", "key.pem"),  # Local certs for testing
+        host=host,
+        port=port,
         debug=False,
         use_reloader=False,
     )
