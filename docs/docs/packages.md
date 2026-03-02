@@ -13,8 +13,8 @@ Available 'package' commands:
     delete              Delete a package
 ```
 
-!!! note "Default package repo"
-The default package repository is [https://eryx-packages.shymike.dev](https://eryx-packages.shymike.dev).
+!!! info "Default package repo"
+    The default package repository is [https://eryx-packages.shymike.dev](https://eryx-packages.shymike.dev).
 
 ## Installing packages
 
@@ -33,8 +33,8 @@ The minimum package structure is:
  └── README.md
 ```
 
-!!! note "Folder name"
-The folder name does not matter, the name is set in the `package.toml` file.
+!!! info "Folder name"
+    The folder name does not matter, the name is set in the `package.toml` file.
 
 ### Package Files
 
@@ -49,8 +49,8 @@ version="<version>"
 description="<description>"
 ```
 
-!!! note "README file"
-All Eryx packages must contain a `README.md`.
+!!! warning "README file"
+    All Eryx packages must contain a `README.md`.
 
 ### Uploading Packages
 

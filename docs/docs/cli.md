@@ -91,8 +91,8 @@ eryx transpile <filepath>
 
 This will transpile your `.eryx` file into `.py`.
 
-!!! note "Transpiling code"
-The code transpiler is currently in beta and may not work sometimes. (please report any bugs [here](https://github.com/ImShyMike/Eryx/issues))
+!!! warning "Transpiling code"
+    The code transpiler is currently in beta and may not work sometimes. (please report any bugs [on github](https://github.com/ImShyMike/Eryx/issues))
 
 ## Using the package manager
 
@@ -156,5 +156,5 @@ eryx package delete [--server SERVER] <package-name>
 
 - **--server**: Change the package repository URL
 
-!!! note "Default package repo"
-The default package repository is [https://eryx-packages.shymike.dev](https://eryx-packages.shymike.dev).
+!!! info "Default package repo"
+    The default package repository is [https://eryx-packages.shymike.dev](https://eryx-packages.shymike.dev).

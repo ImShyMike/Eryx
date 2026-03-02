@@ -12,8 +12,8 @@ print("Hello, "); # This is a comment print("This will not be printed")
 print("World!"); # This is also a comment ; print("This will be printed")
 ```
 
-!!! note "Stopping line comments"
-The `;` above makes it so the code after it is also executed, making the output:
+!!! info "Stopping line comments"
+    The `;` above makes it so the code after it is also executed, making the output:
 
     ```C linenums="1"
     Hello,
@@ -31,8 +31,8 @@ const constant = true; # This is a constant
 var = 100; # Redefining a variable's value does not need a semicolon
 ```
 
-!!! note "Semicolon usage"
-All variable declarations **must** end in a semicolon (`;`)
+!!! info "Semicolon usage"
+    All variable declarations **must** end in a semicolon (`;`)
 
 ## Variable deletion
 
@@ -75,8 +75,8 @@ from "test.eryx" import ["add", "pi"]; # Imports the function 'add' and variable
 import "math" as "meth"; # Imports the builtin 'math' module as 'meth'
 ```
 
-!!! note "Builtins"
-Builtin modules and installed packages are imported without the ".eryx" (example: "math")
+!!! info "Builtins"
+    Builtin modules and installed packages are imported without the ".eryx" (example: "math")
 
 ## Functions
 
@@ -104,8 +104,8 @@ print(add(1, 2)); # Output: 3
 | **type(** value **)** -> str                                         | Get the type of the given value.                                         |
 | **range(** start: number, end?: number, step?: number **)** -> array | Generates an array from start to end with step.                          |
 
-!!! note "Values"
-Values containing '?' are optional and '...' refers to any amount of arguments.
+!!! info "Values"
+    Values containing '?' are optional and '...' refers to any amount of arguments.
 
 ## Builtin modules
 
@@ -261,8 +261,8 @@ class Maths {
 print(Maths.sum(10, 5)); # Output: 15
 ```
 
-!!! note "Own property access"
-Currently, there is no way to access properties from the class from within its own functions (like `self` (python) or `this` (javascript))
+!!! warning "Own property access"
+    Currently, there is no way to access properties from the class from within its own functions (like `self` (python) or `this` (javascript))
 
 ## Enums
 
@@ -294,8 +294,8 @@ Currently, all supported operators are:
 - **%** Modulo
 - **\*\*** Power
 
-!!! note "+ Operator"
-The `+ (Add)` operator can also be used to concatenate strings, arrays and dictionaries/objects.
+!!! info "+ Operator"
+    The `+ (Add)` operator can also be used to concatenate strings, arrays and dictionaries/objects.
 
 ### Bitwise
 
@@ -334,8 +334,8 @@ The `+ (Add)` operator can also be used to concatenate strings, arrays and dicti
 - **<<=** Left shift
 - **>>=** Right shift
 
-!!! note "`++` and `--`"
-The `++` and `--` operators are used **before** the variable (example: `++variable`).
+!!! info "`++` and `--`"
+    The `++` and `--` operators are used **before** the variable (example: `++variable`).
 
 ## Control structures
 
@@ -353,8 +353,8 @@ if (1 == 1) {
 
 Infinite loops, while loops and for loops are supported.
 
-!!! note "For Loops"
-For loops can only iterate over arrays.
+!!! info "For Loops"
+    For loops can only iterate over arrays.
 
 ```C linenums="1"
 loop {
