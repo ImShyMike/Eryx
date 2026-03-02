@@ -1,0 +1,9 @@
+[build]
+pkgManager = "pip"
+
+[start]
+cmd = "python -m eryx server --host 0.0.0.0 --port 80"
+
+[[ports]]
+port = 80
+description = "Eryx web IDE server"
