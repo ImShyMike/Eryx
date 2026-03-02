@@ -14,6 +14,7 @@ from eryx.packages.packages import (
     list_packages,
     uninstall,
     upload_package,
+    init_package
 )
 from eryx.runtime.repl import start_repl
 from eryx.runtime.runner import run_code
@@ -140,6 +141,12 @@ def main():
         default=DEFAULT_SERVER,
     )
 
+    # 'package init' subcommand
+    init_parser = package_subparsers.add_parser("init", help="Initialize a new package")
+    init_parser.add_argument(
+        "path", type=str, help="Path where the package should be initialized"
+    )
+
     # Parse the arguments
     args = arg_parser.parse_args()
 
@@ -214,6 +221,8 @@ def main():
                 upload_package(args.package_folder, args.server)
             elif args.package_command == "delete":
                 delete_package(args.package, args.server)
+            elif args.package_command == "init":
+                init_package(args.path)
             else:
                 package_parser.print_help()
         except KeyboardInterrupt:

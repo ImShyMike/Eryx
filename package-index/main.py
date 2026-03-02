@@ -366,7 +366,10 @@ def api_upload_package():
         if not existing_package.author_id == user.id:
             return jsonify({"error": "You are not the owner of this package"}), 403
 
-        if existing_package.latest_version and Version(existing_package.latest_version) >= version:
+        if (
+            existing_package.latest_version
+            and Version(existing_package.latest_version) >= version
+        ):
             return jsonify(
                 {
                     "error": f"Can not update package, uploaded version <= current "
@@ -761,7 +764,7 @@ if __name__ == "__main__":
 
     host = os.getenv("HOST", "0.0.0.0")
     port = int(os.getenv("PORT", 5000))
-    
+
     app.run(
         host=host,
         port=port,

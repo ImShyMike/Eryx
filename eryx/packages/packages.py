@@ -421,6 +421,54 @@ def delete_package(package: str, server: str) -> None:
         return
 
 
+def init_package(directory: str) -> None:
+    """Initialize a package in the specified directory."""
+
+    if not ("/" in directory or "\\" in directory):
+        default_name = os.path.basename(directory)
+        name = input(f"Package name (default: '{default_name}'): ") or default_name
+    else:
+        name = input("Package name: ")
+
+    if not name:
+        print("Package name cannot be empty")
+        return
+
+    confirmation = input(
+        f"Initialize package '{name}' in directory '{directory}'? (y/N): "
+    )
+    if confirmation.lower() not in ["y", "yes"]:
+        print("Cancelled!")
+        return
+
+    if not os.path.exists(directory):
+        os.mkdir(directory)
+
+    if not os.path.isdir(directory):
+        print(f"'{directory}' is not a directory")
+        return
+
+    if os.listdir(directory):
+        print(f"Directory '{directory}' is not empty")
+        return
+
+    with open(os.path.join(directory, "package.toml"), "w", encoding="utf8") as file:
+        file.write(
+            "[package]\n"
+            f'name = "{name}"\n'
+            'version = "0.1.0"\n'
+            'description = "An Eryx package"\n'
+        )
+
+    with open(os.path.join(directory, "main.eryx"), "w", encoding="utf8") as file:
+        file.write("# This is the package's entrypoint\n\nprint('Hello, Eryx!')\n")
+
+    with open(os.path.join(directory, "README.md"), "w", encoding="utf8") as file:
+        file.write(f"# {name}\n\nAn Eryx package.\n")
+
+    print(f"Package initialized in '{directory}'")
+
+
 def get_key(server: str) -> str | None:
     """Get and save the API key."""
 
