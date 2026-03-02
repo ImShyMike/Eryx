@@ -107,6 +107,7 @@ Available 'package' commands:
     list                List all installed packages
     upload              Upload a package
     delete              Delete a package
+    init                Initialize a package
 ```
 
 ### install
@@ -158,3 +159,11 @@ eryx package delete [--server SERVER] <package-name>
 
 !!! info "Default package repo"
     The default package repository is [https://eryx-packages.shymike.dev](https://eryx-packages.shymike.dev).
+
+### init
+
+Initialize a package in the specified directory:
+
+```sh
+eryx package init <directory>
+```
